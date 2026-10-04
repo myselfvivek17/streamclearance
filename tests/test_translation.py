@@ -60,3 +60,8 @@ def test_real_drift_translates_back_translates_blind_and_judges(monkeypatch):
     assert "BACK0" in calls[2] and "religious_offence" in calls[2]
     assert out[0].drift == "increased" and out[0].translated == "URDU0"
     assert out[0].back_translated == "BACK0"
+
+
+def test_drift_languages_in_hindi_my_malay():
+    assert config.COUNTRIES["IN"].drift_languages == ("Hindi",)
+    assert config.COUNTRIES["MY"].drift_languages == ("Malay",)
