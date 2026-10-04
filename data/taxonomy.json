@@ -1,0 +1,263 @@
+{
+ "version": 1,
+ "leaves": [
+  {
+   "id": "gambling.promotion",
+   "label": "Gambling promotion",
+   "description": "Advertising or promoting casinos, betting sites, lotteries or gambling apps, incl. promo codes and free bets.",
+   "category": "illegal_goods_or_gambling"
+  },
+  {
+   "id": "gambling.betting_tips",
+   "label": "Betting tips",
+   "description": "Tips, odds or predictions meant to help viewers place bets.",
+   "category": "illegal_goods_or_gambling"
+  },
+  {
+   "id": "gambling.unlawful_game",
+   "label": "Unlawful gaming",
+   "description": "Showing or running unlicensed games of chance, gaming houses or illegal lotteries.",
+   "category": "illegal_goods_or_gambling"
+  },
+  {
+   "id": "drugs.promotion",
+   "label": "Drug promotion",
+   "description": "Promoting the use or sale of illegal or dangerous drugs.",
+   "category": "illegal_goods_or_gambling"
+  },
+  {
+   "id": "drugs.sale",
+   "label": "Drug sale",
+   "description": "Offering to sell or supply illegal or controlled drugs.",
+   "category": "illegal_goods_or_gambling"
+  },
+  {
+   "id": "weapons.sale",
+   "label": "Weapons sale",
+   "description": "Selling or offering firearms, explosives or other prohibited weapons.",
+   "category": "illegal_goods_or_gambling"
+  },
+  {
+   "id": "goods.prohibited_sale",
+   "label": "Other prohibited goods",
+   "description": "Selling or promoting other restricted or prohibited goods or services (e.g. counterfeit, wildlife).",
+   "category": "illegal_goods_or_gambling"
+  },
+  {
+   "id": "health.cure_claim",
+   "label": "Health cure claim",
+   "description": "Claiming a product, food or remedy cures, prevents or treats a disease or condition.",
+   "category": "misinformation_public_order"
+  },
+  {
+   "id": "health.medicine_advertising",
+   "label": "Medicine advertising",
+   "description": "Advertising medicines, supplements or medical products/services to the public.",
+   "category": "misinformation_public_order"
+  },
+  {
+   "id": "health.misinformation",
+   "label": "Health misinformation",
+   "description": "False or misleading health information not tied to selling a product (e.g. vaccine myths).",
+   "category": "misinformation_public_order"
+  },
+  {
+   "id": "religion.insult",
+   "label": "Religious insult",
+   "description": "Mocking, insulting or disparaging a religion, its practices, figures or followers.",
+   "category": "religious_offence"
+  },
+  {
+   "id": "religion.blasphemy",
+   "label": "Blasphemy",
+   "description": "Content that may be treated as blasphemy or desecration of sacred texts, places or figures.",
+   "category": "religious_offence"
+  },
+  {
+   "id": "hate.group_hostility",
+   "label": "Hostility between groups",
+   "description": "Content promoting ill-will, hostility or contempt between racial, religious or other groups.",
+   "category": "hate_or_incitement"
+  },
+  {
+   "id": "hate.discrimination",
+   "label": "Discriminatory content",
+   "description": "Demeaning or dehumanising people for a protected trait (race, gender, disability, caste, etc.).",
+   "category": "hate_or_incitement"
+  },
+  {
+   "id": "hate.public_tranquillity",
+   "label": "Disturbing public tranquillity",
+   "description": "Content likely to disturb public peace, cause public alarm or provoke unrest.",
+   "category": "hate_or_incitement"
+  },
+  {
+   "id": "violence.incitement",
+   "label": "Incitement to violence",
+   "description": "Urging, encouraging or glorifying violence against people or property.",
+   "category": "violence_or_gore"
+  },
+  {
+   "id": "violence.gore",
+   "label": "Graphic violence",
+   "description": "Graphic depictions of injury, killing, torture or gore.",
+   "category": "violence_or_gore"
+  },
+  {
+   "id": "violence.cruelty_animals",
+   "label": "Animal cruelty",
+   "description": "Depicting or promoting cruelty to animals.",
+   "category": "violence_or_gore"
+  },
+  {
+   "id": "terrorism.support",
+   "label": "Terrorism support",
+   "description": "Praising, supporting, recruiting for or financing terrorist groups or acts.",
+   "category": "terrorism_or_extremism"
+  },
+  {
+   "id": "terrorism.instruction",
+   "label": "Terror instruction",
+   "description": "Instructions for attacks, weapons or explosives for terrorist purposes.",
+   "category": "terrorism_or_extremism"
+  },
+  {
+   "id": "extremism.violent_ideology",
+   "label": "Violent extremism",
+   "description": "Promoting violent extremist ideologies or movements.",
+   "category": "terrorism_or_extremism"
+  },
+  {
+   "id": "sexual.obscene",
+   "label": "Obscene content",
+   "description": "Pornographic, lewd or obscene sexual content.",
+   "category": "sexual_or_nudity"
+  },
+  {
+   "id": "sexual.indecent_profane",
+   "label": "Indecent or profane",
+   "description": "Indecent, vulgar, profane or culturally improper content short of pornography.",
+   "category": "sexual_or_nudity"
+  },
+  {
+   "id": "sexual.nudity",
+   "label": "Nudity",
+   "description": "Nudity or sexually suggestive imagery.",
+   "category": "sexual_or_nudity"
+  },
+  {
+   "id": "sexual.non_consensual_imagery",
+   "label": "Non-consensual intimate imagery",
+   "description": "Sharing intimate images or deepfakes of someone without consent.",
+   "category": "sexual_or_nudity"
+  },
+  {
+   "id": "child.csam",
+   "label": "Child sexual abuse material",
+   "description": "Sexual content involving minors.",
+   "category": "child_safety"
+  },
+  {
+   "id": "child.self_harm_inducement",
+   "label": "Inducing children to self-harm",
+   "description": "Content that may induce a child to harm themselves (dangerous challenges, self-harm).",
+   "category": "self_harm"
+  },
+  {
+   "id": "child.harmful_to_minors",
+   "label": "Harmful to minors",
+   "description": "Content unsuitable for or exploiting children (grooming, endangerment).",
+   "category": "child_safety"
+  },
+  {
+   "id": "self_harm.promotion",
+   "label": "Self-harm / suicide promotion",
+   "description": "Promoting or instructing self-harm, suicide or eating disorders.",
+   "category": "self_harm"
+  },
+  {
+   "id": "harassment.threats",
+   "label": "Threats",
+   "description": "Threatening, abusive or insulting words causing fear, alarm or distress.",
+   "category": "harassment_or_bullying"
+  },
+  {
+   "id": "harassment.bullying",
+   "label": "Bullying",
+   "description": "Targeted bullying, humiliation or cyberbullying of a person.",
+   "category": "harassment_or_bullying"
+  },
+  {
+   "id": "privacy.doxxing",
+   "label": "Doxxing",
+   "description": "Publishing someone's personal information (address, phone, ID) without consent.",
+   "category": "privacy_or_doxxing"
+  },
+  {
+   "id": "privacy.covert_recording",
+   "label": "Covert recording",
+   "description": "Recording or sharing people in private settings without consent.",
+   "category": "privacy_or_doxxing"
+  },
+  {
+   "id": "fraud.financial",
+   "label": "Financial fraud",
+   "description": "Scams, investment fraud, fake giveaways, phishing or get-rich-quick schemes.",
+   "category": "impersonation_or_fraud"
+  },
+  {
+   "id": "fraud.deceptive_advertising",
+   "label": "Deceptive advertising",
+   "description": "Misleading product claims or undisclosed paid promotion.",
+   "category": "impersonation_or_fraud"
+  },
+  {
+   "id": "impersonation.identity",
+   "label": "Impersonation",
+   "description": "Pretending to be another person, brand or official body.",
+   "category": "impersonation_or_fraud"
+  },
+  {
+   "id": "defamation.false_statement",
+   "label": "Defamation",
+   "description": "False statements of fact damaging a person's or organisation's reputation.",
+   "category": "defamation_or_false_info"
+  },
+  {
+   "id": "misinfo.public_order",
+   "label": "Misinformation (public order)",
+   "description": "False news or rumours likely to cause public fear, alarm or disorder.",
+   "category": "misinformation_public_order"
+  },
+  {
+   "id": "misinfo.election",
+   "label": "Election misinformation",
+   "description": "False information about elections, voting or candidates.",
+   "category": "misinformation_public_order"
+  },
+  {
+   "id": "national_security.state_threat",
+   "label": "National security",
+   "description": "Content threatening national security, defence or state secrets.",
+   "category": "national_security_or_sovereignty"
+  },
+  {
+   "id": "national_security.sovereignty",
+   "label": "Sovereignty / sedition",
+   "description": "Content against the sovereignty, integrity, ruler or constitutional order of the state (sedition).",
+   "category": "national_security_or_sovereignty"
+  },
+  {
+   "id": "ip.copyright",
+   "label": "Copyright",
+   "description": "Using copyrighted music, video or other works without permission.",
+   "category": "intellectual_property"
+  },
+  {
+   "id": "ip.trademark",
+   "label": "Trademark",
+   "description": "Unauthorised use of brands, logos or trademarks.",
+   "category": "intellectual_property"
+  }
+ ]
+}
