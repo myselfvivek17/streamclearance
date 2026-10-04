@@ -1,0 +1,135 @@
+[
+ {
+  "id": "MY/BETTING1953/s4(1)(e)",
+  "country": "MY",
+  "law_id": "BETTING1953",
+  "law_title": "Betting Act 1953 (Act 495)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_betting_act_1953.pdf",
+  "page": 8,
+  "section": "Section 4(1)(e)",
+  "verbatim_text": "(e) announces, exhibits or publishes, or causes to be announced, exhibited or published, either orally or by means of any letter, circular, telegram, placard, handbill, card, print, writing, design, sign, advertisement or otherwise, that a place is opened, kept or used as a common betting house or betting information centre within or without Malaysia, or in any other manner invites or solicits any person to commit a breach of any provisions of this Act, shall be guilty of an offence",
+  "summary": "It is an offence for anyone to announce, publish or advertise a betting house or betting information centre, in Malaysia or abroad, or to invite or solicit anyone to bet unlawfully. The Act was written for physical premises and print, but the words 'or otherwise', 'within or without Malaysia' and 'in any other manner invites or solicits' let it reach a creator who promotes an unlicensed betting site or bookmaker in an online video.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "s20: the exemption does not extend to section 6A of the Act, which still applies to the Totalizator Board and turf clubs",
+   "s20(a): only covers Totalizator Board officers, agents and employees 'when acting in the course of their duties as such' and persons 'lawfully investing money with or receiving any dividend from any agency of such Board'",
+   "s20(b): turf clubs are exempt only when 'acting in accordance with an approved scheme under section 16 of the Racing (Totalizator Board) Act 1961'; punters are exempt only when lawfully on a race course under the club's control or supervision and betting on a totalizator run under an approved scheme"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Fine of not less than RM20,000 and not more than RM200,000, and also imprisonment for a term not exceeding five years"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "MY/BETTING1953/s4(1)(a)",
+  "country": "MY",
+  "law_id": "BETTING1953",
+  "law_title": "Betting Act 1953 (Act 495)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_betting_act_1953.pdf",
+  "page": 7,
+  "section": "Section 4(1)(a)",
+  "verbatim_text": "Any person who— (a) being the owner or occupier, or having the use temporarily or otherwise, thereof, keeps or uses a place as a common betting house or betting information centre;",
+  "summary": "It is an offence to keep or use a place as a common betting house, meaning a place where a bookmaker takes bets by any means, or as a betting information centre, meaning a place that sends horse-race or sports information by telephone 'or other means' for unlawful betting. The Act targets physical premises, so applying it to a creator who takes bets or sends betting information through an online video is only by interpretation.",
+  "targets": [
+   "gambling.unlawful_game",
+   "gambling.betting_tips"
+  ],
+  "exceptions": [
+   "s20: the exemption does not extend to section 6A of the Act, which still applies to the Totalizator Board and turf clubs",
+   "s20(a): only covers Totalizator Board officers, agents and employees 'when acting in the course of their duties as such' and persons 'lawfully investing money with or receiving any dividend from any agency of such Board'",
+   "s20(b): turf clubs are exempt only when 'acting in accordance with an approved scheme under section 16 of the Racing (Totalizator Board) Act 1961'; punters are exempt only when lawfully on a race course under the club's control or supervision and betting on a totalizator run under an approved scheme"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page (stated on page 8 for s4(1): fine of RM20,000 to RM200,000 and also imprisonment up to five years)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "MY/BETTING1953/s6(1)",
+  "country": "MY",
+  "law_id": "BETTING1953",
+  "law_title": "Betting Act 1953 (Act 495)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_betting_act_1953.pdf",
+  "page": 8,
+  "section": "Section 6(1)",
+  "verbatim_text": "Any person who bets or wagers in a common betting house, or with a bookmaker on any premises or by any means, shall be guilty of an offence and shall, on conviction, be liable to a fine not exceeding five thousand ringgit or to imprisonment for a term not exceeding six months or to both.",
+  "summary": "It is an offence for anyone to bet with an unlawful bookmaker 'by any means' or in a common betting house. The Act was written for physical betting, but 'by any means' could cover a creator shown placing bets with an unlicensed bookmaker or betting site in a video.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "s20: the exemption does not extend to section 6A of the Act, which still applies to the Totalizator Board and turf clubs",
+   "s20(a): only covers Totalizator Board officers, agents and employees 'when acting in the course of their duties as such' and persons 'lawfully investing money with or receiving any dividend from any agency of such Board'",
+   "s20(b): turf clubs are exempt only when 'acting in accordance with an approved scheme under section 16 of the Racing (Totalizator Board) Act 1961'; punters are exempt only when lawfully on a race course under the club's control or supervision and betting on a totalizator run under an approved scheme"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Fine not exceeding RM5,000 or imprisonment not exceeding six months or both"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "MY/BETTING1953/s6A(1)",
+  "country": "MY",
+  "law_id": "BETTING1953",
+  "law_title": "Betting Act 1953 (Act 495)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_betting_act_1953.pdf",
+  "page": 9,
+  "section": "Section 6A(1)",
+  "verbatim_text": "Any person who for the purpose of betting or wagering in contravention of this Act announces or publishes or causes to be announced or published, either orally or by means of print, writing, sign or otherwise, the result of any public lottery or horse race or other sporting event shall be guilty of an offence",
+  "summary": "Makes it an offence for a person to announce or publish the result of a public lottery, horse race or other sporting event when the purpose is betting or wagering that breaks the Act. The words 'orally or by means of print, writing, sign or otherwise' are broad enough that a creator who announces such results in an online video for illegal betting may be covered, though the 1953 Act was written for physical betting premises and print, so applying it to video is by interpretation.",
+  "targets": [
+   "gambling.betting_tips",
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "s6A(2)(a): does not apply to anything published or announced about a horse race or its result in a newspaper printed or published under a licence issued under the Printing Presses and Publication Act 1984",
+   "s6A(2)(b): does not apply to any lottery promoted by the Social and Welfare Services Lotteries Board under the Social and Welfare Services Lotteries Board Act 1950 (that Act has since been repealed)",
+   "s6A(2)(c): subject to the terms of its permit, does not apply to any public lottery promoted under a permit granted under the Lotteries Act 1952",
+   "s6A(2)(d): does not apply to the Totalizator Board established under the Racing (Totalizator Board) Act 1961, its officers, agents and employees acting in the course of their duties, or turf club officers, members, agents and employees acting as agents of the Board under an approved scheme",
+   "s6A(2)(e): does not apply in other circumstances, or to other persons and authorities, that the Minister prescribes by order",
+   "Applies only where the announcement is 'for the purpose of betting or wagering in contravention of this Act'"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Fine of not less than RM5,000 and not more than RM50,000, and also imprisonment for a term not exceeding two years"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ }
+]

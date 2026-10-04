@@ -1,0 +1,200 @@
+[
+ {
+  "id": "MY/CGHA1953/s4(1)(g)",
+  "country": "MY",
+  "law_id": "CGHA1953",
+  "law_title": "Common Gaming Houses Act 1953 (Act 289)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_common_gaming_houses_act_1953.pdf",
+  "page": 9,
+  "section": "Section 4(1)(g)",
+  "verbatim_text": "(g) announces or publishes or causes to be announced or published either orally or by means of any print, writing, design, sign, or otherwise that any place is opened, kept, or used as a common gaming house or in any other manner invites or solicits any person to commit a breach of section 6 or section 9;",
+  "summary": "Makes it an offence for anyone to announce or publish, orally, in print or 'or otherwise', that a place operates as a common gaming house, or to invite or solicit anyone to game there or buy lottery tickets. The Act was written for physical gaming houses, so applying it to an online video promoting a casino, betting site or lottery relies on the broad wording 'or otherwise' and 'in any other manner' and is a matter of interpretation.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "s27: lotteries authorized or licensed under the Social and Welfare Services Lotteries Board Act 1950–1962 [Act 252] (since repealed by Act 470) or the Lotteries Act 1952 [Act 288] are excluded from 'gaming' and 'lottery' under this Act",
+   "s27: any sweepstake promoted by a racing club established in Peninsular Malaysia on the result of a horse race is excluded",
+   "s27A(1): notwithstanding this Act, the Betting Act 1953 or any other law relating to gaming, betting or lotteries, a company registered under the Companies Act 1965 (not a foreign company) may promote and organise gaming under a licence from the Minister of Finance, in respect of the games and premises and subject to the fees, duties, terms and conditions specified in the licence, for a period not exceeding three months (renewable)"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Fine of not less than RM5,000 and not more than RM50,000 and imprisonment for a term not exceeding three years; in addition, a fine of not less than RM5,000 and not more than RM50,000 for every gaming machine seized"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "MY/CGHA1953/s4(1)(h)",
+  "country": "MY",
+  "law_id": "CGHA1953",
+  "law_title": "Common Gaming Houses Act 1953 (Act 289)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_common_gaming_houses_act_1953.pdf",
+  "page": 9,
+  "section": "Section 4(1)(h)",
+  "verbatim_text": "(h) conducts in or through any newspaper or any other periodical publication, or in connection with any trade or business or the sale of any article to the public— (i) any competition in which prizes are offered for forecasts of the result either of a future event or of a past event the result of which is not yet ascertained or not yet generally known; or (ii) any other competition success in which does not depend to a substantial degree upon the exercise of skill,",
+  "summary": "Makes it an offence to run, through a newspaper or periodical, or in connection with a trade, business or sale of goods, a prize competition for forecasting results, or any other prize competition that does not depend substantially on skill. The Act targets print publications and physical trade, so applying it to a sponsored or business-linked video giveaway, prediction contest or luck-based draw is by interpretation.",
+  "targets": [
+   "gambling.unlawful_game",
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "s27: lotteries authorized or licensed under the Social and Welfare Services Lotteries Board Act 1950–1962 [Act 252] (since repealed by Act 470) or the Lotteries Act 1952 [Act 288] are excluded from 'gaming' and 'lottery' under this Act",
+   "s27: any sweepstake promoted by a racing club established in Peninsular Malaysia on the result of a horse race is excluded",
+   "s27A(1): notwithstanding this Act, the Betting Act 1953 or any other law relating to gaming, betting or lotteries, a company registered under the Companies Act 1965 (not a foreign company) may promote and organise gaming under a licence from the Minister of Finance, in respect of the games and premises and subject to the fees, duties, terms and conditions specified in the licence, for a period not exceeding three months (renewable)"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Fine of not less than RM5,000 and not more than RM50,000 and imprisonment for a term not exceeding three years; in addition, a fine of not less than RM5,000 and not more than RM50,000 for every gaming machine seized"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "MY/CGHA1953/s4A(a)-(b)",
+  "country": "MY",
+  "law_id": "CGHA1953",
+  "law_title": "Common Gaming Houses Act 1953 (Act 289)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_common_gaming_houses_act_1953.pdf",
+  "page": 10,
+  "section": "Section 4A(a) and (b)",
+  "verbatim_text": "(a) assists in the carrying on of a public lottery; (b) receives, directly or indirectly, any money or money’s worth for or in respect of any chance in any event or contingency connected with a public lottery or sells or offers for sale or gives or delivers or collects any lottery tickets;",
+  "summary": "Makes it an offence for anyone to assist in running a public lottery, take stakes for it, or sell, offer for sale, give or collect lottery tickets. The Act was written for physical lottery operations, so applying it to a video that offers or sells lottery tickets or entries online is by interpretation.",
+  "targets": [
+   "gambling.unlawful_game",
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "s27: lotteries authorized or licensed under the Social and Welfare Services Lotteries Board Act 1950–1962 [Act 252] (since repealed by Act 470) or the Lotteries Act 1952 [Act 288] are excluded from 'gaming' and 'lottery' under this Act",
+   "s27: any sweepstake promoted by a racing club established in Peninsular Malaysia on the result of a horse race is excluded",
+   "s27A(1): notwithstanding this Act, the Betting Act 1953 or any other law relating to gaming, betting or lotteries, a company registered under the Companies Act 1965 (not a foreign company) may promote and organise gaming under a licence from the Minister of Finance, in respect of the games and premises and subject to the fees, duties, terms and conditions specified in the licence, for a period not exceeding three months (renewable)"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Fine of not less than RM20,000 and not more than RM200,000 and imprisonment for a term not exceeding five years"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "MY/CGHA1953/s4A(c)-(d)",
+  "country": "MY",
+  "law_id": "CGHA1953",
+  "law_title": "Common Gaming Houses Act 1953 (Act 289)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_common_gaming_houses_act_1953.pdf",
+  "page": 10,
+  "section": "Section 4A(c) and (d)",
+  "verbatim_text": "(c) draws, throws, declares or exhibits, expressly or otherwise, the winner or winning number, ticket, lot, figure, design, symbol or other result of any public lottery; or (d) writes, prints or publishes or causes to be written, printed or published any lottery ticket or list of prizes or any announcement of the result of a public lottery or any announcement or riddle relating to a public lottery,",
+  "summary": "Makes it an offence for anyone to declare or exhibit public lottery winners or winning numbers, or to publish lottery tickets, prize lists, result announcements, or announcements or riddles about a public lottery, such as number-prediction riddles. The Act targets print and physical publication, so applying it to a video that shows lottery results, prize lists or number tips is by interpretation, although 'expressly or otherwise' and 'publishes' are broad.",
+  "targets": [
+   "gambling.promotion",
+   "gambling.betting_tips",
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "s27: lotteries authorized or licensed under the Social and Welfare Services Lotteries Board Act 1950–1962 [Act 252] (since repealed by Act 470) or the Lotteries Act 1952 [Act 288] are excluded from 'gaming' and 'lottery' under this Act",
+   "s27: any sweepstake promoted by a racing club established in Peninsular Malaysia on the result of a horse race is excluded",
+   "s27A(1): notwithstanding this Act, the Betting Act 1953 or any other law relating to gaming, betting or lotteries, a company registered under the Companies Act 1965 (not a foreign company) may promote and organise gaming under a licence from the Minister of Finance, in respect of the games and premises and subject to the fees, duties, terms and conditions specified in the licence, for a period not exceeding three months (renewable)"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Fine of not less than RM20,000 and not more than RM200,000 and imprisonment for a term not exceeding five years"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "MY/CGHA1953/s4B(b)",
+  "country": "MY",
+  "law_id": "CGHA1953",
+  "law_title": "Common Gaming Houses Act 1953 (Act 289)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_common_gaming_houses_act_1953.pdf",
+  "page": 10,
+  "section": "Section 4B(b)",
+  "verbatim_text": "(b) imports, manufactures, assembles, supplies, sells, assigns, charges, leases, hires, services, repairs, adapts or modifies, or carries out any combination of those activities in relation to, a gaming machine or any part of any gaming machine or any replacement part for any gaming machine,",
+  "summary": "Makes it an offence for anyone to supply, sell, lease, hire, service or modify gaming machines or their parts. This covers physical machines, so it would apply to a video only where the video is used to sell or supply gaming machines or parts, and even then by interpretation.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "s27: lotteries authorized or licensed under the Social and Welfare Services Lotteries Board Act 1950–1962 [Act 252] (since repealed by Act 470) or the Lotteries Act 1952 [Act 288] are excluded from 'gaming' and 'lottery' under this Act",
+   "s27: any sweepstake promoted by a racing club established in Peninsular Malaysia on the result of a horse race is excluded",
+   "s27A(1): notwithstanding this Act, the Betting Act 1953 or any other law relating to gaming, betting or lotteries, a company registered under the Companies Act 1965 (not a foreign company) may promote and organise gaming under a licence from the Minister of Finance, in respect of the games and premises and subject to the fees, duties, terms and conditions specified in the licence, for a period not exceeding three months (renewable)"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Fine of not less than RM10,000 and not more than RM100,000 for every gaming machine seized and imprisonment for a term not exceeding five years (penalty text continues on page 11)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "MY/CGHA1953/s8(1)",
+  "country": "MY",
+  "law_id": "CGHA1953",
+  "law_title": "Common Gaming Houses Act 1953 (Act 289)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_common_gaming_houses_act_1953.pdf",
+  "page": 12,
+  "section": "Section 8(1)",
+  "verbatim_text": "(1) Any person who instigates, promotes or intentionally facilitates the commission of an offence punishable under section 7 shall be guilty of an offence and shall, on conviction, be liable to a *fine of not less than twenty thousand ringgit and not more than two hundred thousand ringgit and shall also be punished with imprisonment for a term not exceeding five years.",
+  "summary": "Makes it an offence for anyone to instigate, promote or intentionally facilitate gaming in a public place, meaning streets, open spaces and any place the public may access. This targets physical public gaming, so applying it to a video encouraging or organising public gambling is by interpretation.",
+  "targets": [
+   "gambling.promotion",
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "s8(3): a person is not liable under this section merely because they committed the s7 offence of gaming in public",
+   "s27: lotteries authorized or licensed under the Social and Welfare Services Lotteries Board Act 1950–1962 [Act 252] (since repealed by Act 470) or the Lotteries Act 1952 [Act 288] are excluded from 'gaming' and 'lottery' under this Act",
+   "s27: any sweepstake promoted by a racing club established in Peninsular Malaysia on the result of a horse race is excluded",
+   "s27A(1): notwithstanding this Act, the Betting Act 1953 or any other law relating to gaming, betting or lotteries, a company registered under the Companies Act 1965 (not a foreign company) may promote and organise gaming under a licence from the Minister of Finance, in respect of the games and premises and subject to the fees, duties, terms and conditions specified in the licence, for a period not exceeding three months (renewable)"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Fine of not less than RM20,000 and not more than RM200,000 and imprisonment for a term not exceeding five years"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ }
+]
