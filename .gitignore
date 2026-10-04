@@ -4,3 +4,4 @@ __pycache__/
 .env
 *.key.json
 uploads/
+data/rules/*.dryrun.json
