@@ -1,0 +1,256 @@
+[
+ {
+  "id": "MY/OSA2025/Sch1/para1",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 65,
+  "section": "First Schedule, para 1",
+  "verbatim_text": "Content on child sexual abuse material as provided for under section 4 of the Sexual Offences against Children Act 2017 [ Act 792 ]",
+  "summary": "Content that is child sexual abuse material is harmful content (and, under the Second Schedule, priority harmful content) that online service providers must deal with.",
+  "targets": [
+   "child.csam"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/OSA2025/Sch1/para2",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 65,
+  "section": "First Schedule, para 2",
+  "verbatim_text": "Content on financial fraud",
+  "summary": "Content about financial fraud, such as scams, is harmful content (and, under the Second Schedule, priority harmful content) that online service providers must deal with.",
+  "targets": [
+   "fraud.financial"
+  ],
+  "exceptions": [
+   "Note (a): a content that promotes awareness or education relating to financial fraud is not a content on financial fraud"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/OSA2025/Sch1/para3",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 65,
+  "section": "First Schedule, para 3",
+  "verbatim_text": "Obscene content including content that may give rise to a feeling of disgust due to lewd portrayal which may offend a person’s manner on decency and modesty",
+  "summary": "Obscene or lewd content that may offend decency and modesty is harmful content that online service providers must deal with.",
+  "targets": [
+   "sexual.obscene"
+  ],
+  "exceptions": [
+   "Note (b): a content that portrays private parts for education, scientific or medical purposes is not an obscene or indecent content"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/OSA2025/Sch1/para4",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 65,
+  "section": "First Schedule, para 4",
+  "verbatim_text": "Indecent content including content which is profane in nature, improper and against generally accepted behavior or culture",
+  "summary": "Indecent, profane or culturally improper content is harmful content that online service providers must deal with.",
+  "targets": [
+   "sexual.indecent_profane"
+  ],
+  "exceptions": [
+   "Note (b): a content that portrays private parts for education, scientific or medical purposes is not an obscene or indecent content"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/OSA2025/Sch1/para5",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 65,
+  "section": "First Schedule, para 5",
+  "verbatim_text": "Content that may cause harassment, distress, fear or alarm by way of threatening, abusive or insulting words or communication or act",
+  "summary": "Threatening, abusive or insulting content that may cause harassment, distress, fear or alarm is harmful content that online service providers must deal with.",
+  "targets": [
+   "harassment.threats"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/OSA2025/Sch1/para6",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 65,
+  "section": "First Schedule, para 6",
+  "verbatim_text": "Content that may incite violence or terrorism",
+  "summary": "Content that may incite violence or terrorism is harmful content that online service providers must deal with.",
+  "targets": [
+   "violence.incitement",
+   "terrorism.support"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/OSA2025/Sch1/para7",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 65,
+  "section": "First Schedule, para 7",
+  "verbatim_text": "Content that may induce a child to cause harm to himself",
+  "summary": "Content that may lead a child to harm themselves, such as dangerous challenges or self-harm content, is harmful content that online service providers must deal with.",
+  "targets": [
+   "child.self_harm_inducement"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/OSA2025/Sch1/para8",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 65,
+  "section": "First Schedule, para 8",
+  "verbatim_text": "Content that may promote feelings of ill-will or hostility amongst the public at large or may disturb public tranquility",
+  "summary": "Content that may promote ill-will or hostility among the public or disturb public peace is harmful content that online service providers must deal with.",
+  "targets": [
+   "hate.group_hostility",
+   "hate.public_tranquillity"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/OSA2025/Sch1/para9",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 65,
+  "section": "First Schedule, para 9",
+  "verbatim_text": "Content that promotes the use or sale of dangerous drugs",
+  "summary": "Content that promotes using or selling dangerous drugs is harmful content that online service providers must deal with.",
+  "targets": [
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [
+   "Note (c): a content that promotes awareness or education relating to drug abuse is not a content that promotes the use or sale of dangerous drugs"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ }
+]
