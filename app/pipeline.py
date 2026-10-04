@@ -23,7 +23,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field, ValidationError
 
-from app import config, gemini, taxonomy
+from app import config, gemini, provisions, taxonomy
 from app.schemas import (
     RISK_ORDER, Category, CountryReport, Drift, DriftCheck, Finding, Inventory, Risk, RuleCard,
     RulesStatus, Segment, Uncovered,
@@ -162,12 +162,17 @@ _dryrun_lock = threading.Lock()
 
 
 def load_cards(code: str) -> tuple[list[RuleCard], RulesStatus]:
-    """Reviewed cards if present, else dry-run cards (generated on demand).
+    """Cards derived from provisions if the country has any (data/provisions),
+    else a rule-card file if present, else dry-run cards (generated on demand).
 
-    Cards straight from tools/build_rules.py carry needs_review=true; a file is
-    only "reviewed" once every card in it has been signed off.
+    Drafted provisions/cards carry needs_review=true; a country is only
+    "reviewed" once every card has been signed off.
     """
     country = config.COUNTRIES[code]
+    if provisions.has_provisions(code):
+        cards = provisions.cards_from_provisions(code)
+        status = "draft/unreviewed" if any(c.needs_review for c in cards) else "reviewed"
+        return cards, status
     if country.rules_path.exists():
         cards = _read_cards(country.rules_path)
         status: RulesStatus = "draft/unreviewed" if any(c.needs_review for c in cards) else "reviewed"

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from app import config, storage
+from app import config, provisions, storage
 
 
 def _ffmpeg() -> str | None:
@@ -29,6 +29,18 @@ def _isolated(tmp_path, monkeypatch):
     rules = tmp_path / "rules"
     rules.mkdir()
     monkeypatch.setattr(config, "RULES_DIR", rules)
+    # No provisions unless a test asks for them (see the `real_provisions` fixture).
+    monkeypatch.setattr(provisions, "PROVISIONS_DIR", tmp_path / "provisions")
+    provisions.reload()
+    yield
+    provisions.reload()
+
+
+@pytest.fixture
+def real_provisions(monkeypatch):
+    """The provisions committed under data/provisions."""
+    monkeypatch.setattr(provisions, "PROVISIONS_DIR", config.DATA_DIR / "provisions")
+    provisions.reload()
 
 
 @pytest.fixture(scope="session")

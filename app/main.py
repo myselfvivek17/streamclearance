@@ -12,7 +12,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from app import config, jobs, media
+from app import config, jobs, media, provisions
 from app.storage import TooLarge, get_storage
 
 log = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ def status():
 
 
 def _rules_status(c: config.CountryLaw) -> str:
-    if c.rules_path.exists():
+    if provisions.has_provisions(c.code) or c.rules_path.exists():
         from app.pipeline import load_cards
         return load_cards(c.code)[1]
     return "draft/unreviewed"

@@ -57,3 +57,15 @@ def test_search_bm25(store):
     assert "MY/MAS1956/cure" in [p.id for p in hits]
     assert retrieval.search("MY", "casino gaming house")[0].id == "MY/CGH1953/casino"
     assert retrieval.search("MY", "zzzz unrelated") == []
+
+
+def test_cards_derive_from_provisions(real_provisions):
+    from app import pipeline
+
+    cards, status = pipeline.load_cards("MY")
+    assert cards and status == "draft/unreviewed"
+    ids = {p.id for p in provisions.provisions_for("MY")}
+    assert {c.id for c in cards} == ids
+    assert all(len(c.quote) <= 300 and c.country == "MY" for c in cards)
+    rep = pipeline.stage_b(pipeline.mock_inventory(60), "MY", cards, rules_status=status, mock=True)
+    assert all(cid in ids for f in rep.findings for cid in f.rule_card_ids)
