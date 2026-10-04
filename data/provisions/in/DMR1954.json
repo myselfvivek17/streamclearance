@@ -8,23 +8,25 @@
   "source_pdf": "india_drugs_magic_remedies_act_1954.pdf",
   "page": 6,
   "section": "Section 3",
-  "verbatim_text": "Subject to the provisions of this Act,noperson shall take anypartin thepublicationof anyadvertisementreferringto anydrugin terms which suggest or arecalculated tolead to the use of thatdrugfor,— in women;or (b sexualpleasure;or C) thecorrectionofmenstrual disorderinwomen;or (p)]g the diagnosis,cure,mitigation,treatment or prevention of any disease, disorderorconditionspecifiedintheSchedule,oranyotherdisease, disorder or condition (by whatsoever name called)whichmaybe specified in therulesmadeunder thisAct:",
-  "summary": "No one may take part in publishing an advertisement that suggests a drug be used for miscarriage or preventing conception in women, for keeping up or improving sexual capacity or pleasure, for correcting menstrual disorders, or to diagnose, cure, mitigate, treat or prevent any disease or condition listed in the Schedule or in the rules.",
+  "verbatim_text": "Subject to the provisions of this Act, no person shall take anypartin thepublication of any advertisementreferring to any drugin terms which suggest or are calculated to lead to the use of that drug for, in women; or (b) themaintenance or improvementof the capacity ofhumanbeingsfor sexualpleasure;or (C) the correction of menstrual disorder in women; or [(d) the diagnosis, cure, mitigation, treatment or prevention of any disease, disorder or condition specified in the Schedule",
+  "summary": "Anyone who publishes or takes part in an advertisement suggesting a drug be used to cause a miscarriage or prevent conception, to maintain or improve sexual capacity or pleasure, to correct menstrual disorders, or to diagnose, cure, mitigate, treat or prevent any disease or condition listed in the Schedule or the rules commits an offence. Clause (a) is cut off in the OCR text on this page.",
   "targets": [
-   "health.cure_claim",
-   "health.medicine_advertising"
+   "health.medicine_advertising",
+   "health.cure_claim"
   ],
   "exceptions": [
-   "s14: does not apply to a treatise or book dealing with the s3 matters from a bona fide scientific or social standpoint",
-   "s14: does not apply to an advertisement relating to a drug sent confidentially, in the prescribed manner, only to a registered medical practitioner",
-   "s14: does not apply to an advertisement relating to a drug printed or published with the previous sanction of the Government",
-   "s15: the Central Government may by notification exempt specified drugs or classes of drug advertisements from ss3-6 (e.g. Government-approved contraceptives; information-only leaflets and journal ads aimed at registered medical practitioners, if the claims are not false or misleading)"
+   "s14(a): a signboard or notice displayed by a registered medical practitioner on their premises, saying that treatment for a disease, disorder or condition specified in Section 3, the Schedule or the rules is given in those premises",
+   "s14(b): a treatise or book dealing with any of the matters specified in Section 3 from a bona fide scientific or social standpoint",
+   "s14(c): any advertisement relating to any drug sent confidentially in the manner prescribed under Section 16 only to a registered medical practitioner",
+   "s14(d): any advertisement relating to a drug printed or published by the Government",
+   "s14(e): any advertisement relating to a drug printed or published by any person with the previous sanction of the Government (the cut-off date for that sanction continues beyond page 11)",
+   "s15: the Central Government may by notification exempt specified drugs, classes of drugs or classes of drug advertisements from ss3-6, fully or subject to conditions (e.g. Government-approved contraceptives; information-only leaflets and journal ads aimed at registered medical practitioners, if the claims are not false or misleading)"
   ],
   "duty_holder": "advertiser",
   "consequence": {
    "kind": "fine_or_prison",
    "timeframe": "not specified on this page",
-   "penalty": "Under s7, a first conviction can bring imprisonment of up to six months, or a fine, or both. A later conviction can bring imprisonment of up to one year, or a fine, or both."
+   "penalty": "Section 7: first conviction, imprisonment up to six months, or a fine, or both; any later conviction, imprisonment up to one year, or a fine, or both"
   },
   "review": {
    "status": "draft",
@@ -42,23 +44,24 @@
   "source_pdf": "india_drugs_magic_remedies_act_1954.pdf",
   "page": 8,
   "section": "Section 4",
-  "verbatim_text": "4.Prohibition of misleading advertisements relating to drugs.Subject to advertisementrelatingto a drugif the advertisementcontainsanymatterwhich, a) directly or directlygives a falseimpressionregarding the true character of the drug；or @ makesafalseclaimforthedrug;or （c)is otherwisefalse ormisleadingin anymaterial particular",
-  "summary": "No one may take part in publishing a drug advertisement that directly or indirectly gives a false impression of the drug's true character, makes a false claim for the drug, or is otherwise false or misleading in any material way.",
+  "verbatim_text": "Subject to the provisions of this Act, no person shall take any part in the publication of any advertisement relating to a drug if the advertisement contains any matter which, (a)directly or directly gives a false impression regarding the true character of thedrug;or [(9) makesafalseclaim forthe drug;or (c)is otherwise false or misleading in any material particular.",
+  "summary": "Anyone who publishes or takes part in a drug advertisement that gives a false impression of the drug's true character, makes a false claim for it, or is otherwise false or misleading in any material particular commits an offence.",
   "targets": [
    "fraud.deceptive_advertising",
    "health.medicine_advertising",
    "health.cure_claim"
   ],
   "exceptions": [
-   "s14: does not apply to an advertisement relating to a drug sent confidentially, in the prescribed manner, only to a registered medical practitioner",
-   "s14: does not apply to an advertisement relating to a drug printed or published with the previous sanction of the Government",
-   "s15: the Central Government may by notification exempt specified drugs or classes of drug advertisements from ss3-6 (e.g. Government-approved contraceptives; information-only leaflets and journal ads aimed at registered medical practitioners, if the claims are not false or misleading)"
+   "s14(c): any advertisement relating to any drug sent confidentially in the manner prescribed under Section 16 only to a registered medical practitioner",
+   "s14(d): any advertisement relating to a drug printed or published by the Government",
+   "s14(e): any advertisement relating to a drug printed or published by any person with the previous sanction of the Government (the cut-off date for that sanction continues beyond page 11)",
+   "s15: the Central Government may by notification exempt specified drugs, classes of drugs or classes of drug advertisements from ss3-6, fully or subject to conditions (e.g. Government-approved contraceptives; information-only leaflets and journal ads aimed at registered medical practitioners, if the claims are not false or misleading)"
   ],
   "duty_holder": "advertiser",
   "consequence": {
    "kind": "fine_or_prison",
    "timeframe": "not specified on this page",
-   "penalty": "Under s7, a first conviction can bring imprisonment of up to six months, or a fine, or both. A later conviction can bring imprisonment of up to one year, or a fine, or both."
+   "penalty": "Section 7: first conviction, imprisonment up to six months, or a fine, or both; any later conviction, imprisonment up to one year, or a fine, or both"
   },
   "review": {
    "status": "draft",
@@ -76,21 +79,21 @@
   "source_pdf": "india_drugs_magic_remedies_act_1954.pdf",
   "page": 9,
   "section": "Section 5",
-  "verbatim_text": "professionofadministeringmagicremediesshall takeanypartinthepublication claimstobeefficaciousfor anyof thepurposesspecified inSection3.",
-  "summary": "A person who practises, or claims to practise, administering magic remedies (talismans, mantras, kavachas or other charms) may not take part in publishing an advertisement claiming that such a remedy works for any purpose listed in Section 3, such as Schedule diseases, sexual capacity, menstrual disorders, miscarriage or preventing conception.",
+  "verbatim_text": "profession of administeringmagicremediesshall take anypartin thepublication of any advertisement referring to any magic remedy which directly or indirectly claims to be efficacious for any of the purposes specified in Section 3.",
+  "summary": "Anyone who practises, or claims to practise, administering magic remedies (talismans, mantras, kavachas or other charms) must not publish or take part in an advertisement claiming, directly or indirectly, that a magic remedy works for any Section 3 purpose. These purposes include sexual capacity, menstrual disorders, miscarriage or conception, and Schedule diseases.",
   "targets": [
    "health.cure_claim",
    "health.misinformation"
   ],
   "exceptions": [
-   "s14: does not apply to a treatise or book dealing with the s3 matters from a bona fide scientific or social standpoint",
-   "s15: the Central Government may by notification exempt specified drugs or classes of drug advertisements from ss3-6 (e.g. Government-approved contraceptives; information-only leaflets and journal ads aimed at registered medical practitioners, if the claims are not false or misleading)"
+   "s14(b): a treatise or book dealing with any of the matters specified in Section 3 from a bona fide scientific or social standpoint",
+   "s15: the Central Government may by notification exempt specified drugs, classes of drugs or classes of drug advertisements from ss3-6, fully or subject to conditions (e.g. Government-approved contraceptives; information-only leaflets and journal ads aimed at registered medical practitioners, if the claims are not false or misleading)"
   ],
   "duty_holder": "advertiser",
   "consequence": {
    "kind": "fine_or_prison",
    "timeframe": "not specified on this page",
-   "penalty": "Under s7, a first conviction can bring imprisonment of up to six months, or a fine, or both. A later conviction can bring imprisonment of up to one year, or a fine, or both."
+   "penalty": "Section 7: first conviction, imprisonment up to six months, or a fine, or both; any later conviction, imprisonment up to one year, or a fine, or both"
   },
   "review": {
    "status": "draft",
@@ -107,24 +110,23 @@
   "law_status": "in_force",
   "source_pdf": "india_drugs_magic_remedies_act_1954.pdf",
   "page": 16,
-  "section": "The Schedule (see Sections 3(d) and 14)",
-  "verbatim_text": "THE SCHEDULE [SeeSections3(d)and14] Sl. Nameofthedisease,disorderorcondition No. 1. Appendicitis 2. Arteriosclerosis 3. Blindness 4. Blood poisoning 5. Bright'sdisease 6. Cancer 7. Cataract 8. Deafness 9. Diabetes 10. Diseases anddisordersofthebrain 11. Diseasesanddisordersoftheopticalsystem 12. Diseases and disordersof theuterus 13. Disordersofmenstrualflow 14. Disordersofthenervoussystem 15. Disordersoftheprostaticgland 16. Dropsy 17. Epilepsy 18. Female diseases (ingeneral) 19. Fevers (in general) 20. Fits",
-  "summary": "Under section 3(d), no one may advertise a drug for diagnosing, curing, mitigating, treating or preventing any of the 54 listed diseases or conditions, including cancer, diabetes, heart disease, high or low blood pressure, epilepsy, obesity, sexual impotence, height (stature), sterility in women, tuberculosis and venereal diseases.",
+  "section": "The Schedule [See Sections 3(d) and 14]",
+  "verbatim_text": "THE SCHEDULE [See Sections 3(d) and 14] Sl. Nameofthedisease,disorderorcondition No. 1. Appendicitis 2. Arteriosclerosis 3. Blindness 4. Blood poisoning 5. Bright's disease 6. Cancer 7. Cataract 8. Deafness 9. Diabetes 10. Diseases anddisorders of thebrain 11. Diseasesanddisordersoftheopticalsystem 12. Diseasesanddisordersoftheuterus 13. Disordersofmenstrualflow 14. Disorders of thenervoussystem 15. Disorders of the prostatic gland 16. Dropsy 17. Epilepsy 18. Female diseases (in general) 19. Fevers (in general) 20. Fits 21. Formandstructureofthefemalebust",
+  "summary": "Under s3(d), no one may publish or take part in publishing an advertisement for a drug that suggests it can diagnose, cure, mitigate, treat or prevent any of the 54 listed diseases, disorders or conditions. The list includes appendicitis, blindness, cancer, cataract, deafness, diabetes, epilepsy, heart diseases, high or low blood pressure, obesity, sexual impotence, female bust form, stature, sterility in women, tuberculosis, tumours and venereal diseases. This applies to anyone who publishes such an ad, including a creator doing a paid promotion.",
   "targets": [
    "health.cure_claim",
    "health.medicine_advertising"
   ],
   "exceptions": [
-   "s14: does not apply to a treatise or book dealing with the s3 matters from a bona fide scientific or social standpoint",
-   "s14: does not apply to an advertisement relating to a drug sent confidentially, in the prescribed manner, only to a registered medical practitioner",
-   "s14: does not apply to an advertisement relating to a drug printed or published with the previous sanction of the Government",
-   "s15: the Central Government may by notification exempt specified drugs or classes of drug advertisements from ss3-6 (e.g. Government-approved contraceptives; information-only leaflets and journal ads aimed at registered medical practitioners, if the claims are not false or misleading)"
+   "Under s15, the Central Government may by notification exempt specified drugs, classes of drugs or classes of drug advertisements from ss3-6, fully or subject to conditions (page 12).",
+   "Notification G.S.R. 843 (29 May 1967) under s15 says clauses (c) and (d) of s3 do not apply to four classes of material: leaflets accompanying drug packings, drug ads in medical, pharmaceutical, scientific or technical journals, price lists or therapeutic indexes from licensed manufacturers, and medical literature distributed by medical detailers. Each must contain only the information registered medical practitioners need (indications, administration, dosage, side-effects, precautions), and for some classes it may be distributed only to medical professionals and licensed chemists. In every case the advertiser must prove that its claims are not false, exaggerated or misleading (pages 13-14).",
+   "Section 14 exceptions also apply to the Schedule, including advertisements sent confidentially to registered medical practitioners (s14(1)(c)). The full s14 text is not on these pages."
   ],
   "duty_holder": "advertiser",
   "consequence": {
    "kind": "fine_or_prison",
    "timeframe": "not specified on this page",
-   "penalty": "Under s7, a first conviction can bring imprisonment of up to six months, or a fine, or both. A later conviction can bring imprisonment of up to one year, or a fine, or both."
+   "penalty": "Section 7: first conviction, imprisonment up to six months, or a fine, or both; any later conviction, imprisonment up to one year, or a fine, or both"
   },
   "review": {
    "status": "draft",
