@@ -1,0 +1,1252 @@
+[
+ {
+  "id": "MY/MOHADV/4.3",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 10,
+  "section": "Guideline 4.3",
+  "verbatim_text": "Advertising to the public is only allowed for product which is registered with Drug Control Authority (DCA). No approval shall be given for Poisons as specified in the First Schedule of Poisons Act 1952 unless exempted as per Appendix 1;",
+  "summary": "Medicines may be advertised to the public only if the Drug Control Authority has registered them, and products listed as poisons in the Poisons Act 1952 cannot get advertising approval unless Appendix 1 exempts them.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Gums, lozenges and patches indicated for nicotine replacement therapy may be advertised with approval from the MAB.",
+   "New Chemical Entities meeting the stated criteria (new to Malaysia or within 18 months of launch with no similar drug available, new combinations of active ingredients, or new approved indications) may be advertised once through press releases."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/4.4(a)",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 11,
+  "section": "Guideline 4.4(a)",
+  "verbatim_text": "Advertisement should not contain any claims either directly or indirectly referring to:- a) the prevention, treatment, alleviation, cure or diagnosis of diseases and conditions as listed below:- 1. Diseases or defects of the kidney 2. Diseases or defects of the heart 3. Diabetes 4. Epilepsy or fits 5. Paralysis 6. Tuberculosis 7. Asthma 8. Leprosy 9. Cancer 10. Deafness 11. Drug addiction 12. Hernia or rupture 13. Diseases of the eye 14. Hypertension 15. Mental 16. Infertility",
+  "summary": "Medicine advertisements must not claim, directly or indirectly, to prevent, treat, relieve, cure or diagnose any listed disease, including kidney and heart disease, diabetes, epilepsy, cancer, asthma, hypertension, mental illness, infertility, impotence and venereal disease.",
+  "targets": [
+   "health.cure_claim"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/4.4(b)-(d)",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 11,
+  "section": "Guideline 4.4(b)-(d)",
+  "verbatim_text": "(b) Practicing contraception among human beings; (c) Improving the condition or functioning of the human kidney or heart, or improving the sexual function or sexual performance of human beings; (d) Procuring the miscarriage of women.",
+  "summary": "Medicine advertisements must not make claims about contraception, about improving kidney or heart function or sexual performance, or about causing a miscarriage.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/4.5",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 12,
+  "section": "Guideline 4.5",
+  "verbatim_text": "Advertisements should not contain any statements or visual presentations which might lead to or support acts of violence, criminal or illegal activity or appear to condone such acts or activities.",
+  "summary": "Medicine advertisements must not include words or visuals that could lead to, support or seem to approve of violence or illegal activity.",
+  "targets": [
+   "violence.incitement"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/4.7",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 12,
+  "section": "Guideline 4.7",
+  "verbatim_text": "Advertisements should not contain statements or visual presentations which is, or likely to be interpreted to be contrary or offensive to the standard of morality or decency prevailing in the Malaysian society or in any way defamatory or humiliating to any segment of the public.",
+  "summary": "Medicine advertisements must not include content that offends Malaysian standards of morality or decency, or that defames or humiliates any part of the public.",
+  "targets": [
+   "sexual.indecent_profane",
+   "hate.discrimination"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/4.8",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 12,
+  "section": "Guideline 4.8",
+  "verbatim_text": "Advertisements should not: a) contain any statement(s) which either explicitly or by implication disparages the medical professio n; or the value o f professional attention and treatment ; or another product; b) discredit or unfairly attack other products, advertisers or advertisements directly or by implication.",
+  "summary": "Medicine advertisements must not run down the medical profession or the value of professional treatment, and must not unfairly attack competing products, advertisers or advertisements.",
+  "targets": [
+   "defamation.false_statement"
+  ],
+  "exceptions": [
+   "Comparisons of products from the same registration holder are allowed if substantiated."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/4.9",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 13,
+  "section": "Guideline 4.9",
+  "verbatim_text": "Advertisements should not contain any statement or visual presentation which, whether directly or by implication, is likely to mislead the consumer about any product.",
+  "summary": "Medicine advertisements must not include any statement or visual that is likely to mislead consumers about a product.",
+  "targets": [
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/4.11",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 13,
+  "section": "Guideline 4.11",
+  "verbatim_text": "Advertisements should not: a) be framed as to abuse the trust of the consumer or exploit his lack of experience or knowledge; b) play on fear by containing any statement or illustration likely to induce fear on the part of the viewer or listener that he is suffering, or may, without diagnosis or treatment, suffer or suffer more severely, from diseases or conditions of the human body; c) play on superstition or exploit the superstitious; d) directly, or by implication, exploit the religious requirement(s) or belief(s) of any community.",
+  "summary": "Medicine advertisements must not abuse consumers' trust, scare viewers into thinking they are ill or will get worse without treatment, exploit superstition, or exploit any community's religious beliefs.",
+  "targets": [
+   "fraud.deceptive_advertising",
+   "health.misinformation"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/4.12",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 14,
+  "section": "Guideline 4.12",
+  "verbatim_text": "Advertisers are not allowed to misuse the phrase “HALAL” or a ny statement /pictorial relating to Islamic religion, which includes the use of the verses of the Quran in their advertisement for the purpose of misleading the consumers.",
+  "summary": "Medicine advertisements must not misuse the word \"HALAL\", Islamic statements or images, or Quran verses to mislead consumers.",
+  "targets": [
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "Medicines or medicinal products that already have Halal certification may show the Halal logo, provided JAKIM or a body recognised by JAKIM certified it."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/4.14",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 14,
+  "section": "Guideline 4.14",
+  "verbatim_text": "KKLIU number must be clearly displayed on every page which has been approved by MAB. The name, address and contact number of the advertiser must also been clearly stated in the page.",
+  "summary": "Online medicine advertisements must clearly show the KKLIU approval number from the Medicine Advertisements Board (MAB) and the advertiser's name, address and contact number, and must clearly separate MAB-approved medicine advertising from other health-product advertising.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/5.1",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 16,
+  "section": "Guideline 5.1",
+  "verbatim_text": "Advertisement with a celebrity endorsement must be stated with a statement: “The effect of the product may vary among individuals”.",
+  "summary": "Medicine advertisements with a celebrity endorsement must include the disclaimer \"The effect of the product may vary among individuals\" and must not mislead consumers; the celebrity is accountable for the advertisement.",
+  "targets": [
+   "fraud.deceptive_advertising",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/5.2(a)",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 16,
+  "section": "Guideline 5.2(a)",
+  "verbatim_text": "Advertisements should not:- (a) Have any visual and/or audio presentation of doctors, dentists, pharmacists, scientists, nurses and other paramedics, etc., which give the impression of professional or scientific advice, recommendation or endorsement; or",
+  "summary": "Medicine advertisements must not show or feature doctors, pharmacists, scientists, nurses or other health workers in a way that suggests professional or scientific endorsement.",
+  "targets": [
+   "fraud.deceptive_advertising",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/5.2(b)",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 17,
+  "section": "Guideline 5.2, item (b)",
+  "verbatim_text": "Contain statements giving the impression of professional by scientific advice, endorsement or recommendation made by associations or persons who appear in the advertisements and who are presented either directly or by implication, as being qualified to give such advice, endorsement or recommendation eg the use of white coat, stethoscope, healthcare professional environment / any expression that provides undue authority that the product is recommended by a healthcare professional",
+  "summary": "Medicine advertisements must not suggest professional or scientific endorsement, for example a presenter in a white coat, with a stethoscope or in a clinical setting, or anything implying a healthcare professional recommends the product.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "Endorsement by professional bodies may be allowed with the consent from the respective professional bodies, authorised in writing and produced upon demand."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/5.3",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 17,
+  "section": "Guideline 5.3 User Testimonials",
+  "verbatim_text": "Advertisement may include testimonials but the individual who give the testimony must be genuinely exist and responsible as well as a ccountable to the advertisement and its testimonials must refer to indications approved. Advertisement with a testimonial must be stated with a statement: “The effect of the product may vary among individuals”.",
+  "summary": "Testimonials in medicine advertisements must come from real, accountable people, must only refer to approved indications and must carry the disclaimer 'The effect of the product may vary among individuals'.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/5.5",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 18,
+  "section": "Guideline 5.5 Tests, Trials and Research References",
+  "verbatim_text": "Research results, reference to or quotes from technical and scientific literature of conference, workshop, seminar etc. should not be misused. Statistics should not be presented to imply that they have a greater validity than is the case. Scientific term(s) or jargon that is irrelevant should not be used to make claims that appear to have a scientific basis which they do not possess.",
+  "summary": "Medicine advertisements must not misuse research, overstate statistics or use irrelevant scientific jargon to make claims look scientifically backed.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "Reference to tests or trials by a named hospital, clinic, institute, laboratory, college or professional/official organisation is permissible if authorised and approved by that organisation."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/5.6",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 19,
+  "section": "Guideline 5.6 Comparative Advertising",
+  "verbatim_text": "be made on a factual and fair basis and is capable of substantiation. The intent and connotation of the advertisement should be to inform and not to discredit, disparage, degrade, or attack competitors, competing products or services directly or by implication; b) be unambiguous, clearly understandable and should not mislead by distortion, undue emphasis or omissions;",
+  "summary": "Comparative medicine advertising must be factual, fair and capable of substantiation. It must not disparage or attack competitors, explicitly identify a competing product, or mislead by distortion or omission.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/5.7",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 20,
+  "section": "Guideline 5.7 Encouragement of Unnecessary Purchase or Indiscriminate Use",
+  "verbatim_text": "Advertisements should not directly or indirectly encourage indiscriminate, unnecessary, or excessive use of the advertised product. No advertisement should state or imply that good health is likely to be jeopardised solely because there is lack of dietary supplementation with vitamins. Vitamins should not be advertised in any manner that they are a substitute for a balanced diet.",
+  "summary": "Medicine and vitamin advertisements must not encourage excessive or unnecessary use, claim that health suffers without vitamin supplements, or present vitamins as a substitute for a balanced diet.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/5.8",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 20,
+  "section": "Guideline 5.8 Healthy Lifestyle Advice",
+  "verbatim_text": "Advertising should not undermine healt hy lifestyle advice or health promoting behaviour such as exercise, healthy eating or smoking cessation. Similarly, advertising must also not promote behaviours which are damaging to health (e.g. alcoholism, unhealthy diets, sedentary lifestyle or smoking).",
+  "summary": "Medicine advertisements must not undermine healthy-lifestyle advice or promote behaviours damaging to health, such as drinking, smoking, unhealthy diets or a sedentary lifestyle.",
+  "targets": [
+   "health.medicine_advertising",
+   "health.misinformation"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/5.9",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 20,
+  "section": "Guideline 5.9 Hyperboles",
+  "verbatim_text": "Superlatives and hyperboles cannot be used to imply or claim or infer the superiority of the advertised product. The general public should not be led to over -estimate the value of a product whether by exaggeration or unrealistic comparisons or statements.",
+  "summary": "Medicine advertisements must not use superlatives, hyperbole or exaggeration to claim the product is superior or to inflate its value. Banned superlative words are listed in Appendix 3.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/5.11",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 21,
+  "section": "Guideline 5.11 Self-medication",
+  "verbatim_text": "Advertisements should also not suggest that it is acceptable to self -medicate when consumers may require consultation from health professionals. It should encourage individual to share information wit h the pharmacists or health care practitioner so that they can ensure the medicine will be suitable for the intended user. It is also unacceptable to encourage long -term use of products indicated for self -limiting conditions in advertisements. Advertising should not encourage consumers to discontinue the use of prescribed medicines.",
+  "summary": "Medicine advertisements must not encourage self-medication where professional consultation may be needed, long-term use for self-limiting conditions, or stopping prescribed medicines.",
+  "targets": [
+   "health.medicine_advertising",
+   "health.misinformation"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/5.12",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 22,
+  "section": "Guideline 5.12 Unwarranted Anxiety",
+  "verbatim_text": "Advertising should not induce unwa rranted anxiety among consumers about their condition by suggesting that the condition is of greater severity than is actually the case. Similarly, advertising should also not suggest that the condition will deteriorate if the consumer does not use the product or brand featured.",
+  "summary": "Medicine advertisements must not frighten viewers by exaggerating how serious a condition is or by suggesting it will get worse without the advertised product.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/6.0",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 23,
+  "section": "Guideline Part 6, 6.0 Introduction (Therapeutic Claims)",
+  "verbatim_text": "There should not be any words, phrases or illustrations in advertisements which claim or imply the cure of any ailment, illness or disease other than from the relief of its symptoms unless approved by the MAB.",
+  "summary": "Medicine advertisements must not claim or imply that a product cures any ailment, illness or disease beyond relieving symptoms, unless the MAB has approved the claim.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Relief of symptoms may be claimed.",
+   "Cure claims approved by the MAB."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/6.2",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 24,
+  "section": "Guideline 6.2 Claims Relating to Anti-aging",
+  "verbatim_text": "Advertisements should not suggest or imply a product will control, retard or reverse the physiological processes associated with ageing or premature ageing unless approved by the DCA in the product indication.",
+  "summary": "Medicine advertisements must not claim a product controls, slows or reverses ageing unless the DCA has approved that indication.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Claims approved by the DCA in the product indication."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/6.3",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 24,
+  "section": "Guideline 6.3 Claims Concerning the Brain, Memory and Concentration",
+  "verbatim_text": "Claims relating to ‘improvement or enhancement of brain or memory functions’, ‘improving mental performance, IQ or intelligence’ or ‘prolonging, improving or enhancing concentration’ are not acceptable unless approved by the DCA in the product indication",
+  "summary": "Medicine advertisements must not claim a product improves brain function, memory, IQ, intelligence or concentration unless the DCA has approved that indication.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Claims approved by the DCA in the product indication."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/6.4",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 24,
+  "section": "Guideline 6.4 Claims Relating to Immunity against Specific Disease(s)",
+  "verbatim_text": "Advertisements should not claim to provide immunity against specific diseases unless approved by the DCA in the product indication.",
+  "summary": "Medicine advertisements must not claim a product gives immunity against specific diseases unless the DCA has approved that indication.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Claims approved by the DCA in the product indication."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/6.5",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 24,
+  "section": "Guideline 6.5 Claims Relating to Stress",
+  "verbatim_text": "Advertisements should not purport the use of a particular product is needed to prevent or reduce the stress of modern living unless approved by DCA in the product indication.",
+  "summary": "Medicine advertisements must not claim a product is needed to prevent or reduce the stress of modern living unless the DCA has approved that indication.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Claims approved by the DCA in the product indication."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/6.6",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 24,
+  "section": "Guideline 6.6 Claims Relating to Performance in Sports and Studies",
+  "verbatim_text": "Advertisements should not imply that consumption of a particular product can improve performance in sports and studies unless approved by DCA in the product indication.",
+  "summary": "Medicine advertisements must not imply a product improves performance in sports or studies unless the DCA has approved that indication.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Claims approved by the DCA in the product indication."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/6.7",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 25,
+  "section": "Guideline 6.7 Claims Concerning Weight Management Products",
+  "verbatim_text": "There should not be claims that a product offers quick weight loss results or physiological thermogenic (fat-burning) activity. Misleading claims on eating such as ‘Eat as much as you like’ should not be advertised.",
+  "summary": "Ads for weight-loss products must not claim quick weight loss or fat-burning (thermogenic) effects, and must not make misleading eating claims such as 'eat as much as you like'.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/7.1",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 26,
+  "section": "Guideline 7.1 'Before' and 'After' Claims",
+  "verbatim_text": "Advertisements should not contain improper, exaggerated or misleading claims or visuals to represent changes in the human body. Care should be given to ensure that all claims used are related to the approved product indication and the degree of severity for which the product is indicated. The claims should not depict a more serious or chronic condition.",
+  "summary": "Medicine ads must not use exaggerated or misleading before-and-after claims or visuals of body changes, and must not show a more serious condition than the one the product is approved for.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/7.4",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 27,
+  "section": "Guideline 7.4 Natural Claims",
+  "verbatim_text": "Advertisements should not suggest that the efficacy or safety of a product is due to the fact that it is natural nor claim that a product is ‘natural’ unless all of its components are naturally occurring.",
+  "summary": "Medicine ads must not suggest a product works or is safe because it is natural, and must not call a product 'natural' unless all of its ingredients occur naturally.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "If the active ingredient is natural, the claim may be made but must be confined to that ingredient",
+   "Where only one ingredient is natural, the claim must be limited to it, e.g. 'contains natural ingredient X'",
+   "Products with a natural mode of action that mimics a physiological mechanism (e.g. bulk-laxatives) may claim 'acts naturally' or 'works naturally'",
+   "'Organic' claims are acceptable if supported by substantiation from relevant certifying bodies"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/7.6",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 28,
+  "section": "Guideline 7.6 Safety Claims",
+  "verbatim_text": "Claims pertaining to product safety should not imply, whether directly or indirectly that the product is not associated with or free from any side effects. Phrases such as “No side effects”, “No harmful effects”, “No toxic or adverse effects” are disallowed.",
+  "summary": "Medicine ads must not claim or imply that a product has no side effects, for example by saying 'no side effects' or 'no harmful effects'.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "Statements about side effects are allowed if specific and based on data approved by the DCA or on published data that is referenced"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/7.7",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 28,
+  "section": "Guideline 7.7 Specific Pharmacokinetic Related Claims",
+  "verbatim_text": "Claims of effectiveness relating to speed of action, absorption, dissolution, distribution, or other pharmacokinetic particulars are only acceptable if substantiated by evidence or is indicated in the approved label. Dosage instructions for once -a-day dosing do not necessarily mean that a claim of 24-hour relief is acceptable.",
+  "summary": "Medicine ads may only make speed or duration claims (e.g. 'fast', 'instant', 'all-day', '24-hour relief') if the claim is backed by evidence or appears on the approved label.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "Acceptable if substantiated by evidence or indicated in the approved label"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/8.1",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 30,
+  "section": "Guideline 8.1 Pregnant or Lactating Women",
+  "verbatim_text": "Advertisements should not suggest or recommend any medicinal products, with the exception of some vitamin and mineral supplements, for use by pregnant or lactating women. Advertisements should not convey a message that it is routine practice for pregnant women to take medicines or medicinal products; and that the unborn baby’s development would be affected if these products were not taken.",
+  "summary": "Medicine ads must not recommend medicinal products to pregnant or breastfeeding women, or suggest that taking them is routine or that the baby's development depends on them.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Some vitamin and mineral supplements",
+   "Promoting use during pregnancy is acceptable when the DCA has approved that use; such ads must encourage caution and tell women to consult their healthcare professional before use"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/8.2",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 30,
+  "section": "Guideline 8.2 Others (children, young people, aging population)",
+  "verbatim_text": "Advertisements addressed or portrayed to children or young people, or aging population which likely to be seen by them, should not contain anything, whether in illustration or otherwise, which might result in harming them physically, mentally, morally; or which exploits their credulity, their lack of experience or their natural sense of loyalty. For example, images depicting children handling medicines or medicinal products without supervision.",
+  "summary": "Medicine ads aimed at or likely to be seen by children, young people or older people must not contain anything that could harm them or exploit their trust or inexperience, such as showing children handling medicines without supervision.",
+  "targets": [
+   "health.medicine_advertising",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/9.0",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 31,
+  "section": "Guideline 9.0 Mandatory Statement",
+  "verbatim_text": "Each advertisement must include approved registration number by the DCA anywhere on the advertisement in a clear manner and a statement: “This is a medicine / supplement / traditional product advertisement” (Select where appropriate) For an audio advertisement, it is sufficient to mention: “This is a medicine advertisement approved by the Medicine Advertisements Board”",
+  "summary": "Every medicine, supplement or traditional product ad must clearly show its DCA registration number and state that it is a medicine, supplement or traditional product advertisement.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "For audio advertisements it is enough to say: 'This is a medicine advertisement approved by the Medicine Advertisements Board'",
+   "Words with the same meaning may be used"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/9.1",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 31,
+  "section": "Guideline 9.1 Nicotine Replacement Therapy Products",
+  "verbatim_text": "Advertisements for gums, lozenges and patches indicated f or nicotine replacement therapy should contain the warning statement: “This product is not suitable for children. Do not use this product if you have serious heart disease, are pregnant or breast feeding. Not to be used by non-smokers. Consult your healthcare professional before use.”",
+  "summary": "Ads for nicotine replacement gums, lozenges and patches must include the required warning about children, heart disease, pregnancy, non-smokers and consulting a healthcare professional.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Words conveying the same meaning may be used"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/9.2",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 31,
+  "section": "Guideline 9.2 Weight Loss Products",
+  "verbatim_text": "Products for weight loss or weight reduction should include the following statement: “This should be taken with a balanced diet and regular exercise.”",
+  "summary": "Ads for weight-loss products must include a statement that the product should be taken with a balanced diet and regular exercise.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Words conveying the same meaning may be used"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/10.1",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 32,
+  "section": "Guideline 10.1 Advertorials and others",
+  "verbatim_text": "Hence advertorials which describe the historical use or current research of herbal ingredients or vitamins (such as ginseng, garlic, tongkat ali, vitamin C etc.) without reference to the registered pharmaceutical product may therefore be used without approval from MAB subject to the followings: a) The product brand name, pictorial representation or any reference to the product website should not be i ncluded as this would be considered as indirect advertisement of the product.",
+  "summary": "Exception: educational content about herbal ingredients or vitamins needs no MAB approval if it does not name, show or link to a product; doing so counts as an indirect product advertisement.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Advertorials on the historical use or current research of herbal ingredients or vitamins may be used without MAB approval if they do not refer to the product brand, picture or website, include a disclaimer to seek professional healthcare advice, and are not tied in with ads for registered products containing those ingredients"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/10.6",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 34,
+  "section": "Guideline 10.6 (Free Gift)",
+  "verbatim_text": "Advertisement of products which includes free gift is allowed. Free gift cannot be the same as the product advertised, traditional or any pharmaceutical products. Examples of free gift allowed are pen, mug, calculator etc. The value of the free gift is not allowed to be mentioned in the advertisement.",
+  "summary": "Medicine adverts to the public may offer a free gift only if it is not the same product or another traditional or pharmaceutical product, and the advert must not state what the gift is worth.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Advertisements including a free gift are allowed if the gift is a non-pharmaceutical item such as a pen, mug or calculator and its value is not mentioned"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/App1",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 38,
+  "section": "Appendix 1, List of Poisons products which may be advertised to the public",
+  "verbatim_text": "List of Poisons products which may be advertised to the public 1. Gums, lozenges and patches indicated for nicotine replacement therapy 2. New Chemical Entities (NCE), only for products which comply with the following criteria: i. New drugs which are available in Malaysia for the first time or within 18 months after being marketed / launched and no other similar drug available in Malaysia; ii. New combinations of active pharmaceutical ingredients or; iii. New approved indications",
+  "summary": "Lists the only poison-classified medicines that may be advertised to the public: nicotine replacement gums, lozenges and patches, and qualifying new chemical entities.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Nicotine replacement therapy gums, lozenges and patches may be advertised to the public",
+   "New Chemical Entities meeting the stated criteria (new in Malaysia for the first time or within 18 months of launch with no similar drug, new combinations, or new approved indications) may be advertised",
+   "The list is not exhaustive and may be subject to change"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/App2(a)",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 39,
+  "section": "Appendix 2(a)",
+  "verbatim_text": "The list is reproduced as follows:- 1. Diseases or defects of the kidney 2. Diseases or defects of the heart 3. Diabetes 4. Epilepsy or fits 5. Paralysis 6. Tuberculosis 7. Asthma 8. Leprosy 9. Cancer 10. Deafness 11. Drug addiction 12. Hernia or rupture 13. Diseases of the eye 14. Hypertension 15. Mental 16. Infertility 17. Frigidity 18. Impairment of the sexual function or impotency 19. Venereal disease 20. Nervous debility, or other complaint or infirmity, arising from or relating to sexual intercourse.",
+  "summary": "Adverts aimed at the public must not refer to preventing, diagnosing or treating the listed diseases (such as kidney and heart disease, diabetes, cancer, asthma, hypertension, mental illness, infertility, impotence and venereal disease) unless the Medicine Advertisements Board has approved them.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Allowed if approved by the Medicine Advertisements Board (MAB)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/App2(b)-(d)",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 39,
+  "section": "Appendix 2(b)-(d)",
+  "verbatim_text": "(b) Practicing contraception among human beings: (c) Improving the condition or functioning of the human kidney or heart, or improving the sexual function or sexual performance of human beings: (d) Procuring the miscarriage of women.",
+  "summary": "Adverts aimed at the public must not promote contraception, improving kidney or heart function, improving sexual function or performance, or causing a miscarriage unless the Medicine Advertisements Board has approved them.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Allowed if approved by the Medicine Advertisements Board (MAB)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MOHADV/App3",
+  "country": "MY",
+  "law_id": "MOHADV",
+  "law_title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public",
+  "law_status": "guideline",
+  "source_pdf": "malaysia_moh_medicine_advertising_guideline.pdf",
+  "page": 40,
+  "section": "Appendix 3",
+  "verbatim_text": "Superlatives descriptors, words or phrases not allowed in advertisements: 1. Anti-aging 2. Anti-stress 3. Any percentage (unless substantiated) 4. Aphrodisiac 5. Arousal 6. Complete cure 7. Effective (for traditional and supplements) 8. Enhancement of sexual organs 9. Excellent 10. Fabulous, Fantastic 11. Guaranteed 12. Hormone releaser 13. Ideal 14. Instant cure 15. Libido 16. Longevity 17. Miraculously, miracle, magic, magical 18. Mythical 19. No. 1 (unless substantiated) 20. No side effect 21. Perpetual youth 22. Potent 23. Powerful 24. Saintly, heavenly",
+  "summary": "Medicine adverts must not use banned superlatives or claims such as 'complete cure', 'instant cure', 'guaranteed', 'no side effect', 'miracle', 'aphrodisiac', 'anti-aging', 'No. 1', 'best', 'only' or 'world's best', or any word that means the same thing.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "'Any percentage' and 'No. 1' are allowed if substantiated",
+   "'Effective' is banned only for traditional products and supplements"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ }
+]
