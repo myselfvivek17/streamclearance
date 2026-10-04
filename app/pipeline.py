@@ -4,6 +4,9 @@ Stage A: video -> Inventory (one Gemini video call per video).
 Stage B: Inventory + one country's rule cards -> CountryReport (one call per
 country, run concurrently under a small cap). Findings citing card IDs that
 are not in that country's cards are dropped by `validate_findings`.
+Translation drift: each flagged line with speech is translated into the
+country's main language, back-translated blind, and Gemini judges whether the
+risk changed.
 
 Every stage has a deterministic mock used when `config.mock_mode()` is true
 (no GEMINI_API_KEY, or SC_MOCK=1), so the whole app runs without a key.
@@ -22,7 +25,8 @@ from pydantic import BaseModel, ValidationError
 
 from app import config, gemini
 from app.schemas import (
-    RISK_ORDER, Category, CountryReport, Finding, Inventory, Risk, RuleCard, RulesStatus, Segment,
+    RISK_ORDER, Category, CountryReport, Drift, DriftCheck, Finding, Inventory, Risk, RuleCard,
+    RulesStatus, Segment,
 )
 from app.validate import validate_findings
 
@@ -301,6 +305,157 @@ def _mock_findings(inventory: Inventory, country: str, cards: list[RuleCard]) ->
             rationale="(mock) hallucinated citation; the validator must drop this.",
         ))
     return out
+
+
+# ================================================================ translation drift
+
+class _Text(BaseModel):
+    index: int
+    text: str
+
+
+class _Judgement(BaseModel):
+    index: int
+    drift: Drift
+    explanation: str
+
+
+TRANSLATE_SYSTEM = """You are a professional subtitle translator. Translate each item \
+faithfully and naturally, the way a dubbing studio would, keeping tone, idioms and \
+jokes as a native speaker would render them. Do not soften or sharpen anything. \
+Return one output per input index."""
+
+JUDGE_SYSTEM = """You review dubbed lines for a content-compliance tool. For each item \
+you get the original line, its translation and an independent back-translation, plus \
+the risk categories already flagged for that moment.
+
+drift = "increased" if the translated version is likely to read as MORE offensive, \
+inflammatory, defamatory or otherwise riskier to that country's audience than the \
+original (e.g. a joke that becomes an insult, an idiom that becomes literal violence); \
+"reduced" if clearly less risky; otherwise "none". explanation: one or two sentences \
+naming the exact words that shifted."""
+
+
+def _overlaps(f: Finding, s: Segment) -> bool:
+    return (f.start_s < s.end_s and s.start_s < f.end_s) or f.start_s == s.start_s
+
+
+def flagged_segments(inventory: Inventory, report: CountryReport) -> list[Segment]:
+    """Segments with speech that overlap at least one finding, capped."""
+    out = [s for s in inventory.segments
+           if s.transcript.strip() and any(_overlaps(f, s) for f in report.findings)]
+    return out[: config.MAX_DRIFT_SEGMENTS]
+
+
+def _categories_at(report: CountryReport, seg: Segment) -> list[str]:
+    return sorted({f.category.value for f in report.findings if _overlaps(f, seg)})
+
+
+def translation_check(
+    inventory: Inventory, report: CountryReport, language: str, *, mock: bool | None = None,
+    mock_increase: bool = False,
+) -> list[DriftCheck]:
+    """Translate -> blind back-translate -> judge, for one country and language."""
+    mock = config.mock_mode() if mock is None else mock
+    segs = flagged_segments(inventory, report)
+    if not segs:
+        return []
+    if mock:
+        return _mock_drift(segs, language, increase_first=mock_increase)
+
+    country = config.COUNTRIES[report.country]
+    items = [{"index": i, "text": s.transcript} for i, s in enumerate(segs)]
+    translated = _by_index(gemini.generate_json(
+        f"Translate into {language} for viewers in {country.name}.\n{json.dumps(items, ensure_ascii=False)}",
+        list[_Text], model=config.SC_MODEL_FAST, system_instruction=TRANSLATE_SYSTEM), _Text)
+    # Back-translate without the original in context so the model can't just copy it.
+    back_items = [{"index": i, "text": translated[i].text} for i in sorted(translated)]
+    back = _by_index(gemini.generate_json(
+        f"Translate into English.\n{json.dumps(back_items, ensure_ascii=False)}",
+        list[_Text], model=config.SC_MODEL_FAST, system_instruction=TRANSLATE_SYSTEM), _Text)
+    judge_items = [
+        {"index": i, "original": segs[i].transcript, "translation": translated[i].text,
+         "back_translation": back[i].text, "flagged_categories": _categories_at(report, segs[i])}
+        for i in sorted(translated) if i in back
+    ]
+    if not judge_items:
+        return []
+    judged = _by_index(gemini.generate_json(
+        f"Audience: {country.name}, language: {language}.\n"
+        f"{json.dumps(judge_items, ensure_ascii=False)}",
+        list[_Judgement], model=config.SC_MODEL_SMART, system_instruction=JUDGE_SYSTEM), _Judgement)
+    return [
+        DriftCheck(start_s=segs[i].start_s, end_s=segs[i].end_s, language=language,
+                   original=segs[i].transcript, translated=translated[i].text,
+                   back_translated=back[i].text, drift=judged[i].drift,
+                   explanation=judged[i].explanation)
+        for i in sorted(judged) if i in translated and i in back and 0 <= i < len(segs)
+    ]
+
+
+def _by_index(raw, model: type[BaseModel]) -> dict[int, BaseModel]:
+    out = {}
+    for item in raw if isinstance(raw, list) else []:
+        try:
+            m = model.model_validate(item)
+        except ValidationError:
+            continue
+        out[m.index] = m
+    return out
+
+
+_MOCK_BACK = {
+    "Honestly, fasting this month is pointless. Just eat the snacks, God won't mind.":
+        "Honestly, this month's fast is useless. Just eat the snacks, God does not care about it.",
+}
+
+
+def _mock_drift(segs: list[Segment], language: str, *, increase_first: bool) -> list[DriftCheck]:
+    out = []
+    for i, s in enumerate(segs):
+        increased = increase_first and i == 0
+        out.append(DriftCheck(
+            start_s=s.start_s, end_s=s.end_s, language=language, original=s.transcript,
+            translated=f"(mock {language} translation) {s.transcript}",
+            back_translated=_MOCK_BACK.get(s.transcript, s.transcript) if increased else s.transcript,
+            drift="increased" if increased else "none",
+            explanation=(
+                "(mock) The dubbed line turns a throwaway joke into a flat statement that the "
+                "religious practice is useless and that God doesn't care, which reads as more "
+                "dismissive to observant viewers." if increased else
+                "(mock) Meaning and tone survive translation."),
+        ))
+    return out
+
+
+async def run_translation(
+    inventory: Inventory, reports: dict[str, CountryReport], *, mock: bool | None = None,
+) -> list[str]:
+    """Fill report.translation for every country with a drift language. Returns errors."""
+    mock = config.mock_mode() if mock is None else mock
+    sem = asyncio.Semaphore(max(1, config.GEMINI_CONCURRENCY))
+    tasks = [(cc, lang) for cc, rep in reports.items()
+             for lang in config.COUNTRIES[cc].drift_languages if rep.findings]
+    # Mock: exactly one deterministic "increased" example, on the first eligible pair.
+    first = next((t for t in tasks if flagged_segments(inventory, reports[t[0]])), None)
+
+    async def one(cc: str, lang: str):
+        async with sem:
+            return await asyncio.to_thread(
+                translation_check, inventory, reports[cc], lang, mock=mock,
+                mock_increase=(cc, lang) == first)
+
+    results = await asyncio.gather(*(one(cc, lang) for cc, lang in tasks), return_exceptions=True)
+    if mock and tasks:
+        await asyncio.sleep(config.mock_delay_s())
+    errors = []
+    for (cc, lang), res in zip(tasks, results):
+        if isinstance(res, BaseException):
+            log.error("translation check failed for %s/%s: %r", cc, lang, res)
+            errors.append(f"translation {cc}/{lang}: {_public_error(res)}")
+            continue
+        reports[cc].translation.extend(res)
+    return errors
 
 
 # ================================================================ orchestration
