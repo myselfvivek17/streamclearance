@@ -78,6 +78,7 @@ class Inventory(BaseModel):
     duration_s: float = Field(ge=0)
     languages: list[str] = []
     segments: list[Segment] = []
+    speech_transcribed: bool | None = None  # OPENROUTER-TEMP
 
 
 class Finding(_Timed):

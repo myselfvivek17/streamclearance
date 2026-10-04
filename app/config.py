@@ -38,9 +38,30 @@ def gemini_api_key() -> str | None:
     return os.getenv("GEMINI_API_KEY") or None
 
 
+PROVIDERS = ("gemini", "openrouter", "mock")
+
+
+def provider() -> str:
+    """SC_MOCK=1 forces mock; else SC_PROVIDER if set; else the first configured key; else mock."""
+    if os.getenv("SC_MOCK") == "1":
+        return "mock"
+    forced = os.getenv("SC_PROVIDER", "").strip().lower()
+    if forced:
+        if forced not in PROVIDERS:
+            raise ValueError(f"SC_PROVIDER must be one of {', '.join(PROVIDERS)}")
+        return forced
+    if gemini_api_key():
+        return "gemini"
+    if os.getenv("OPENROUTER_API_KEY"): return "openrouter"  # OPENROUTER-TEMP
+    return "mock"
+
+
+if provider() == "openrouter" and not os.getenv("SC_GEMINI_CONCURRENCY"): GEMINI_CONCURRENCY = 1  # OPENROUTER-TEMP
+
+
 def mock_mode() -> bool:
-    """Mock unless a key is set; SC_MOCK=1 forces mock even with a key."""
-    return os.getenv("SC_MOCK") == "1" or not gemini_api_key()
+    """Mock unless a provider key is set; SC_MOCK=1 forces mock even with a key."""
+    return provider() == "mock"
 
 
 def mock_delay_s() -> float:

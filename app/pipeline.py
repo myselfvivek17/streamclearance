@@ -85,7 +85,10 @@ def stage_a(video_path: Path, duration_s: float | None = None, *, mock: bool | N
             log.warning("stage A: dropping segment at %.1fs past duration %.1fs", s.start_s, duration_s)
             continue
         kept.append(s.model_copy(update={"end_s": min(s.end_s, duration_s)}))
-    return Inventory(duration_s=duration_s, languages=draft.languages, segments=kept)
+    return Inventory(
+        duration_s=duration_s, languages=draft.languages, segments=kept,
+        speech_transcribed=raw.get("speech_transcribed"),  # OPENROUTER-TEMP
+    )
 
 
 _MOCK_SEGMENTS = [

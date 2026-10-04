@@ -12,6 +12,7 @@ is takedown or geo-blocking in that country.
 | `app/config.py` | Paths, model IDs (`SC_MODEL_FAST`, `SC_MODEL_SMART`), country → law map |
 | `app/schemas.py` | Pydantic models: `RuleCard`, `Segment`, `Inventory`, `Finding`, `CountryReport`, `Report`, `Category` |
 | `app/gemini.py` | The only module that calls Gemini (google-genai, AI Studio key) |
+| `app/openrouter_backend.py` | **Temporary** OpenRouter bridge (free models only); see below |
 | `app/validate.py` | `validate_findings()` drops findings with unknown card IDs or out-of-range timestamps |
 | `app/storage.py` | Local `uploads/` and `jobs/` behind a small interface (swap for GCS later) |
 | `app/media.py` | ffprobe duration (optional; skipped if ffprobe is missing) |
@@ -63,6 +64,40 @@ python3.12 -m venv .venv
 cp .env.example .env         # .env is gitignored
 # put your AI Studio key in GEMINI_API_KEY=
 ```
+
+## Temporary OpenRouter bridge
+
+Until a Gemini AI Studio key exists, `app/gemini.py` can dispatch to
+`app/openrouter_backend.py`. Provider order: `SC_MOCK=1` forces mock; else
+`SC_PROVIDER` (`gemini|openrouter|mock`) if set; else Gemini if
+`GEMINI_API_KEY` is set; else OpenRouter if `OPENROUTER_API_KEY` is set; else mock.
+
+- **Free models only.** `SC_OR_MODEL` (default `google/gemma-4-31b-it:free`,
+  fallback `google/gemma-4-26b-a4b-it:free` on 429/5xx/unavailable). Any model id
+  not ending in `:free` is refused before a request is sent. Every call asks for
+  usage accounting and is logged to `jobs/usage.log`; a non-zero cost stops all
+  further OpenRouter calls with an error.
+- Gemma 4 takes no audio, so speech is transcribed first by
+  `SC_OR_AUDIO_MODEL` (default `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free`)
+  and merged into the stage A prompt. If that fails the inventory gets
+  `speech_transcribed: false` and the report shows a note.
+- Video is transcoded to ≤480p / mono 32k audio (ffmpeg) and sent inline (max
+  20 MB). If OpenRouter rejects video, frames every 2 s (max 60) are sent instead.
+- JSON: `json_schema` → `json_object` → schema in the prompt, then one repair
+  call, validated with Pydantic.
+- Free-tier limits: concurrency defaults to 1, at least 3.5 s between calls,
+  `Retry-After` honoured.
+
+### Removing OpenRouter
+
+1. `git rm app/openrouter_backend.py tests/test_openrouter.py`
+2. Delete every line containing `OPENROUTER-TEMP`:
+   `grep -rn OPENROUTER-TEMP app` (app/config.py ×2, app/gemini.py ×3,
+   app/schemas.py, app/pipeline.py, app/static/app.js).
+3. Remove `"openrouter"` from `PROVIDERS` in `app/config.py`, the OpenRouter
+   block from `.env.example`, this section, and the
+   table row above; drop `OPENROUTER_API_KEY` from `.env`.
+4. `.venv/bin/pytest -q`.
 
 ## Building rule cards
 

@@ -24,6 +24,7 @@ def _isolated(tmp_path, monkeypatch):
     monkeypatch.setenv("SC_MOCK", "1")
     monkeypatch.setenv("SC_MOCK_DELAY", "0")
     monkeypatch.delenv("SC_ACCESS_CODE", raising=False)
+    monkeypatch.delenv("SC_PROVIDER", raising=False)
     monkeypatch.setattr(storage, "_storage", storage.LocalStorage(tmp_path / "store"))
     rules = tmp_path / "rules"
     rules.mkdir()

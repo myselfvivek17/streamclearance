@@ -254,6 +254,7 @@ function renderReport(report) {
   const errs = $("report-errors");
   errs.hidden = !report.errors.length;
   errs.textContent = report.errors.length ? `Some checks failed: ${report.errors.join("; ")}` : "";
+  if (report.inventory && report.inventory.speech_transcribed === false) { errs.hidden = false; errs.textContent += " Note: speech could not be transcribed, so spoken content may be missing from this report."; } // OPENROUTER-TEMP
 
   $("country-reports").replaceChildren(...report.countries.map(renderCountry));
   $("disclaimer").textContent = report.disclaimer;

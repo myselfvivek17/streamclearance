@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any, TypeVar
 
 from app import config
+from app import openrouter_backend  # OPENROUTER-TEMP
 
 log = logging.getLogger(__name__)
 
@@ -96,6 +97,7 @@ def generate_json(
     temperature: float = 0.2,
 ) -> Any:
     """Call Gemini with structured JSON output and return the parsed JSON."""
+    if config.provider() == "openrouter": return openrouter_backend.generate_json(prompt, response_schema, system_instruction=system_instruction, temperature=temperature)  # OPENROUTER-TEMP
     model = model or config.SC_MODEL_SMART
     cfg = _config(response_schema, system_instruction, temperature)
     log.info("gemini.generate_json model=%s prompt_chars=%d", model, len(prompt))
@@ -122,6 +124,7 @@ def generate_json_with_video(
     The uploaded file is deleted afterwards (best effort; AI Studio also expires
     files after 48h).
     """
+    if config.provider() == "openrouter": return openrouter_backend.generate_json_with_video(video_path, mime_type, prompt, response_schema, system_instruction=system_instruction, temperature=temperature)  # OPENROUTER-TEMP
     model = model or config.SC_MODEL_FAST
     client = _get_client()
     log.info("gemini.files.upload %s (%d bytes)", video_path.name, video_path.stat().st_size)
