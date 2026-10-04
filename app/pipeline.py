@@ -1,20 +1,30 @@
 """Analysis pipeline.
 
 Stage A: video -> Inventory (one Gemini video call per video).
+Stage B: Inventory + one country's rule cards -> CountryReport (one call per
+country, run concurrently under a small cap). Findings citing card IDs that
+are not in that country's cards are dropped by `validate_findings`.
 
 Every stage has a deterministic mock used when `config.mock_mode()` is true
 (no GEMINI_API_KEY, or SC_MOCK=1), so the whole app runs without a key.
 """
 from __future__ import annotations
 
+import asyncio
+import json
 import logging
 import math
+import threading
+from collections.abc import Awaitable, Callable
 from pathlib import Path
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from app import config, gemini
-from app.schemas import Category, Inventory, Segment
+from app.schemas import (
+    RISK_ORDER, Category, CountryReport, Finding, Inventory, Risk, RuleCard, RulesStatus, Segment,
+)
+from app.validate import validate_findings
 
 log = logging.getLogger(__name__)
 
@@ -114,3 +124,224 @@ def mock_inventory(duration_s: float | None) -> Inventory:
         ))
     return Inventory(duration_s=round(duration, 2), languages=["en"], segments=segments)
 
+
+
+# ================================================================ rule cards
+
+_dryrun_lock = threading.Lock()
+
+
+def load_cards(code: str) -> tuple[list[RuleCard], RulesStatus]:
+    """Reviewed cards if present, else dry-run cards (generated on demand).
+
+    Cards straight from tools/build_rules.py carry needs_review=true; a file is
+    only "reviewed" once every card in it has been signed off.
+    """
+    country = config.COUNTRIES[code]
+    if country.rules_path.exists():
+        cards = _read_cards(country.rules_path)
+        status: RulesStatus = "draft/unreviewed" if any(c.needs_review for c in cards) else "reviewed"
+        return cards, status
+
+    with _dryrun_lock:
+        if not country.dryrun_rules_path.exists():
+            from tools import build_rules
+
+            log.warning("%s: no rule cards; generating dry-run cards", code)
+            # The dry-run mock deliberately emits invented quotes; their REJECT lines are noise here.
+            br_log = logging.getLogger("build_rules")
+            level, br_log.level = br_log.level, logging.ERROR
+            try:
+                cards, rejected = build_rules.build_cards(
+                    country, build_rules.mock_generate_factory(build_rules.load_pages(country)))
+            finally:
+                br_log.setLevel(level)
+            log.info("%s: %d dry-run cards (%d rejected)", code, len(cards), len(rejected))
+            country.dryrun_rules_path.parent.mkdir(parents=True, exist_ok=True)
+            country.dryrun_rules_path.write_text(json.dumps(
+                [c.model_dump(mode="json") for c in cards], ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8")
+    return _read_cards(country.dryrun_rules_path), "draft/unreviewed"
+
+
+def _read_cards(path: Path) -> list[RuleCard]:
+    return [RuleCard.model_validate(c) for c in json.loads(path.read_text(encoding="utf-8"))]
+
+
+# ================================================================ stage B
+
+STAGE_B_SYSTEM = """You check a video's timestamped inventory against ONE country's \
+rule cards and report which moments risk being taken down or geo-blocked there.
+
+Rules:
+- Cite ONLY rule card ids from the list you are given (field "id"). Never invent ids, \
+sections or laws. If no card fits a moment, do not flag it.
+- A finding covers one moment (start_s/end_s inside the video, taken from the \
+inventory) and one category; rule_card_ids lists every card it relies on.
+- risk: "red" = content clearly falls in a category the cited card targets (likely \
+takedown/geo-block); "amber" = arguable or context-dependent; do not emit "green" findings.
+- Frame risk honestly: most cards place duties on PLATFORMS (remove/disable access). Say \
+what the platform would have to do. Only mention consequences for the creator when a \
+cited card's applies_to is "creator" or "both", and then quote its penalty.
+- rationale: 1-3 sentences tying the specific words/visuals to the card's conduct.
+- suggested_fix: a concrete edit (cut, reword, blur, add context/disclaimer) that would \
+lower the risk while keeping the creator's intent.
+- Satire, news and educational context can lower risk; say so in the rationale.
+- Return an empty array if nothing is risky."""
+
+
+def worst_risk(findings: list[Finding]) -> Risk:
+    return max((f.risk for f in findings), key=RISK_ORDER.__getitem__, default="green")
+
+
+def stage_b(
+    inventory: Inventory,
+    country: str,
+    cards: list[RuleCard],
+    *,
+    rules_status: RulesStatus = "reviewed",
+    mock: bool | None = None,
+) -> CountryReport:
+    """Inventory + one country's cards -> validated CountryReport."""
+    mock = config.mock_mode() if mock is None else mock
+    law = config.COUNTRIES[country]
+    raw = _mock_findings(inventory, country, cards) if mock else _gemini_findings(inventory, law, cards)
+
+    parsed: list[Finding] = []
+    for item in raw:
+        try:
+            parsed.append(Finding.model_validate({**item, "creator_liability": False}))
+        except ValidationError as e:
+            log.warning("%s: dropping malformed finding: %s", country, e.errors()[0]["msg"])
+    findings = validate_findings(parsed, cards, inventory.duration_s)
+    findings = [f for f in findings if f.risk != "green"]
+
+    by_id = {c.id: c for c in cards}
+    findings = [
+        f.model_copy(update={"creator_liability": any(
+            by_id[cid].applies_to in ("creator", "both") for cid in f.rule_card_ids)})
+        for f in sorted(findings, key=lambda f: (f.start_s, -RISK_ORDER[f.risk]))
+    ]
+    cited = sorted({cid for f in findings for cid in f.rule_card_ids})
+    return CountryReport(
+        country=country,
+        law=law.law,
+        label=law.label,
+        overall_risk=worst_risk(findings),
+        findings=findings,
+        rules_status=rules_status,
+        risk_framing=_risk_framing(findings),
+        cited_cards=[by_id[cid] for cid in cited],
+        dropped_findings=len(raw) - len(findings),
+    )
+
+
+def _risk_framing(findings: list[Finding]) -> str:
+    if not findings:
+        return "No moments matched this country's rule cards."
+    if any(f.creator_liability for f in findings):
+        return ("Takedown or geo-blocking by the platform is the main risk. At least one cited "
+                "provision also applies to the person who posts the content; see its penalty.")
+    return ("The cited provisions place duties on platforms, so the practical risk is takedown "
+            "or geo-blocking of this video in this country, not liability for the creator.")
+
+
+def _gemini_findings(inventory: Inventory, law: config.CountryLaw, cards: list[RuleCard]) -> list[dict]:
+    card_json = json.dumps(
+        [c.model_dump(mode="json", exclude={"needs_review", "country", "law"}) for c in cards],
+        ensure_ascii=False)
+    caveat = f" ({law.label})" if law.label else ""
+    prompt = (
+        f"Country: {law.name} ({law.code})\nLaw: {law.law}{caveat}\n"
+        f"Video duration: {inventory.duration_s:.1f}s\n\n"
+        f"RULE CARDS:\n{card_json}\n\n"
+        f"VIDEO INVENTORY:\n{inventory.model_dump_json(exclude={'duration_s'})}\n\n"
+        "Return the findings as a JSON array."
+    )
+    out = gemini.generate_json(
+        prompt, list[Finding], model=config.SC_MODEL_SMART, system_instruction=STAGE_B_SYSTEM)
+    return [x for x in out if isinstance(x, dict)] if isinstance(out, list) else []
+
+
+_MOCK_RISK: dict[Category, dict[str, Risk]] = {
+    Category.religious_offence: {"IN": "amber", "AU": "green", "MY": "red", "SG": "amber", "PK": "red"},
+    Category.misinformation_public_order: {"IN": "amber", "AU": "amber", "MY": "amber", "SG": "red", "PK": "amber"},
+    Category.illegal_goods_or_gambling: {"IN": "amber", "AU": "amber", "MY": "red", "SG": "red", "PK": "red"},
+}
+_MOCK_FIX: dict[Category, str] = {
+    Category.religious_offence: "Cut the line about fasting, or reframe it as your own experience without mocking the practice.",
+    Category.misinformation_public_order: "Remove the cure claim or replace it with a sourced, accurate statement.",
+    Category.illegal_goods_or_gambling: "Drop the casino promo code and on-screen link for this market, or geo-restrict the upload.",
+}
+
+
+def _mock_findings(inventory: Inventory, country: str, cards: list[RuleCard]) -> list[dict]:
+    """Deterministic findings, plus one invented card id that the validator must drop."""
+    if not cards:
+        return []
+    out: list[dict] = []
+    for seg in inventory.segments:
+        for cat in seg.categories:
+            risk = _MOCK_RISK.get(cat, {}).get(country, "amber")
+            if risk == "green":
+                continue
+            card = next((c for c in cards if c.category == cat), cards[0])
+            out.append(dict(
+                start_s=seg.start_s, end_s=seg.end_s, category=cat.value,
+                rule_card_ids=[card.id], risk=risk,
+                suggested_fix=_MOCK_FIX.get(cat, "Review this moment before publishing."),
+                rationale=(f"(mock) \"{seg.transcript[:80]}\" may fall under {card.section} "
+                           f"({card.category.value.replace('_', ' ')})."),
+            ))
+    if inventory.segments:
+        seg = inventory.segments[0]
+        out.append(dict(
+            start_s=seg.start_s, end_s=seg.end_s, category="other",
+            rule_card_ids=[f"{country}-999"], risk="red", suggested_fix="-",
+            rationale="(mock) hallucinated citation; the validator must drop this.",
+        ))
+    return out
+
+
+# ================================================================ orchestration
+
+async def run_countries(
+    inventory: Inventory,
+    countries: list[str],
+    *,
+    mock: bool | None = None,
+    on_start: Callable[[str], Awaitable[None]] | None = None,
+    on_done: Callable[[str, CountryReport | None, str | None], Awaitable[None]] | None = None,
+) -> dict[str, CountryReport | Exception]:
+    """Stage B for every country concurrently, at most GEMINI_CONCURRENCY at a time."""
+    mock = config.mock_mode() if mock is None else mock
+    sem = asyncio.Semaphore(max(1, config.GEMINI_CONCURRENCY))
+
+    async def one(cc: str) -> CountryReport | Exception:
+        async with sem:
+            if on_start:
+                await on_start(cc)
+            try:
+                cards, status = await asyncio.to_thread(load_cards, cc)
+                if mock:
+                    await asyncio.sleep(config.mock_delay_s())
+                report = await asyncio.to_thread(
+                    stage_b, inventory, cc, cards, rules_status=status, mock=mock)
+            except Exception as e:  # noqa: BLE001 - reported per country
+                log.exception("stage B failed for %s", cc)
+                if on_done:
+                    await on_done(cc, None, _public_error(e))
+                return e
+            if on_done:
+                await on_done(cc, report, None)
+            return report
+
+    results = await asyncio.gather(*(one(cc) for cc in countries))
+    return dict(zip(countries, results))
+
+
+def _public_error(e: Exception) -> str:
+    """Error text safe to show users (never includes request details or keys)."""
+    if isinstance(e, gemini.GeminiUnavailable):
+        return str(e)
+    return f"{type(e).__name__}: {str(e)[:200]}"

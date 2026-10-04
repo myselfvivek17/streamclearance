@@ -9,6 +9,14 @@ from pydantic import BaseModel, Field, model_validator
 CountryCode = Literal["IN", "AU", "MY", "SG", "PK"]
 AppliesTo = Literal["platform", "creator", "both"]
 Risk = Literal["red", "amber", "green"]
+RulesStatus = Literal["reviewed", "draft/unreviewed"]
+Drift = Literal["none", "reduced", "increased"]
+
+DISCLAIMER = (
+    "Advisory only, not legal advice. Most of these laws place duties on platforms; "
+    "the practical risk is takedown or geo-blocking in that country."
+)
+RISK_ORDER: dict[str, int] = {"green": 0, "amber": 1, "red": 2}
 
 
 class Category(str, Enum):
@@ -79,6 +87,19 @@ class Finding(_Timed):
     risk: Risk
     suggested_fix: str
     rationale: str
+    # Set by us from the cited cards, never by the model: True only when a cited
+    # card says the poster (not just the platform) can be liable.
+    creator_liability: bool = False
+
+
+class DriftCheck(_Timed):
+    """M4: does a flagged line's risk change once translated for this audience?"""
+    language: str
+    original: str
+    translated: str
+    back_translated: str
+    drift: Drift
+    explanation: str
 
 
 class CountryReport(BaseModel):
@@ -87,13 +108,19 @@ class CountryReport(BaseModel):
     label: str | None = None
     overall_risk: Risk
     findings: list[Finding] = []
+    rules_status: RulesStatus = "reviewed"
+    risk_framing: str = ""
+    cited_cards: list[RuleCard] = []
+    dropped_findings: int = 0
+    translation: list[DriftCheck] = []
+    disclaimer: str = DISCLAIMER
 
 
 class Report(BaseModel):
     video_id: str
     duration_s: float = Field(ge=0)
     countries: list[CountryReport] = []
-    disclaimer: str = (
-        "Advisory only, not legal advice. Most of these laws place duties on platforms; "
-        "the practical risk is takedown or geo-blocking in that country."
-    )
+    mock: bool = False
+    inventory: Inventory | None = None
+    errors: list[str] = []
+    disclaimer: str = DISCLAIMER
