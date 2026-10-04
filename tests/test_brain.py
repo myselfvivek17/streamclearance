@@ -1,0 +1,84 @@
+import asyncio
+
+from app import brain, pipeline, provisions
+from app.brain import agents, verifier
+from app.brain.agents import CriticVerdict, MomentAssessment
+from app.schemas import CountryReport
+
+
+def _inv():
+    return pipeline.mock_inventory(60)
+
+
+def _seg(inv, leaf):
+    return next(s for s in inv.segments if leaf in s.leaves)
+
+
+def test_mock_brain_my_multi_law(real_provisions):
+    inv = _inv()
+    rep = asyncio.run(brain.assess_country(inv, "MY", mock=True))
+    CountryReport.model_validate(rep.model_dump())
+    assert rep.brain == "adk" and rep.dropped_findings >= 1  # the planted invented id
+    cure = [f for f in rep.findings if f.leaf == "health.cure_claim"]
+    assert cure and all(pid.split("/")[1] in ("MAS1956", "MOHADV") for f in cure for pid in f.rule_card_ids)
+    # no MY gambling or religion law is loaded: those moments are "not covered", never cited
+    assert not [f for f in rep.findings if f.leaf in ("gambling.promotion", "religion.insult")]
+    assert {"gambling.promotion", "religion.insult"} <= {u.leaf for u in rep.uncovered}
+    assert not any("drugs" in t for p in rep.cited_provisions for t in p.targets)
+    assert {law.id for law in rep.laws} >= {"OSA2025", "MAS1956"}
+    assert {p.id for p in rep.cited_provisions} == {pid for f in rep.findings for pid in f.rule_card_ids}
+    assert rep.badge == "red"
+
+
+def test_verifier_drops_foreign_wrong_leaf_and_out_of_range(real_provisions):
+    inv = _inv()
+    cure, casino = _seg(inv, "health.cure_claim"), _seg(inv, "gambling.promotion")
+    mas = next(p.id for p in provisions.provisions_for("MY") if p.law_id == "MAS1956")
+    drugs = next(p.id for p in provisions.provisions_for("MY") if "drugs.promotion" in p.targets)
+    a = lambda seg, leaf, ids, **kw: MomentAssessment(start_s=seg.start_s, end_s=seg.end_s, leaf=leaf,
+                                                     covered_by=ids, **kw)
+    v = verifier.verify([
+        a(cure, "health.cure_claim", [mas, "IN/X/1"]),          # kept, foreign id removed
+        a(casino, "gambling.promotion", [drugs]),               # drug provision for casino: dropped
+        a(casino, "drugs.promotion", [drugs]),                  # leaf not tagged on moment: dropped
+        a(cure, "health.cure_claim", [mas]).model_copy(update={"end_s": 999}),  # out of range
+        a(casino, "gambling.promotion", []),                    # honest "not covered"
+    ], "MY", inv)
+    assert [x.covered_by for x in v.covered] == [[mas]]
+    assert v.removed_citations == 1 and v.dropped == 3
+    assert [x.leaf for x in v.not_covered] == ["gambling.promotion"]
+
+
+def test_critic_verdicts():
+    base = dict(start_s=0, end_s=1, leaf="health.cure_claim", covered_by=["x"], risk="red")
+    found = [MomentAssessment(**base), MomentAssessment(**base), MomentAssessment(**base)]
+    kept, removed, changes = agents.apply_verdicts(found, [
+        CriticVerdict(index=1, action="downgrade", risk="amber", reason="education context"),
+        CriticVerdict(index=2, action="remove", reason="does not cover"),
+        CriticVerdict(index=7, action="remove"),  # out of range: ignored
+    ])
+    assert [k.risk for k in kept] == ["red", "amber"] and changes == 2
+    assert kept[1].critic_note == "Critic: education context" and len(removed) == 1
+    # a "downgrade" can never raise risk
+    kept, _, changes = agents.apply_verdicts([MomentAssessment(**{**base, "risk": "amber"})],
+                                             [CriticVerdict(index=0, action="downgrade", risk="red")])
+    assert kept[0].risk == "amber" and changes == 0
+
+
+def test_workflow_runs_parallel_countries(real_provisions, tiny_video):
+    path, _ = tiny_video
+    done = []
+
+    async def on_done(cc, rep, err):
+        done.append((cc, err))
+
+    inv, results = asyncio.run(brain.run(path, 60.0, ["MY", "IN"], mock=True, on_done=on_done))
+    assert inv.segments and sorted(done) == [("IN", None), ("MY", None)]
+    assert results["MY"].brain == "adk" and results["MY"].findings
+    assert results["IN"].brain == "legacy" and results["IN"].notes  # no IN provisions yet
+
+
+def test_badge_check_when_only_uncovered():
+    rep = CountryReport(country="MY", law="x", overall_risk="green",
+                        uncovered=[{"start_s": 0, "end_s": 1, "category": "other"}])
+    assert rep.badge == "check"

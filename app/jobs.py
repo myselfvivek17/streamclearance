@@ -78,14 +78,6 @@ async def run_job(job: dict[str, Any]) -> None:
         if meta is None or path is None:
             raise FileNotFoundError("uploaded video not found")
 
-        _set(job, "inventory", "running")
-        if mock:
-            await asyncio.sleep(config.mock_delay_s())
-        inventory = await asyncio.to_thread(pipeline.stage_a, path, meta.get("duration_s"), mock=mock)
-        _set(job, "inventory", "done", f"{len(inventory.segments)} segments")
-
-        current = "countries"
-
         async def on_start(cc: str) -> None:
             _set(job, f"country:{cc}", "running")
 
@@ -95,10 +87,28 @@ async def run_job(job: dict[str, Any]) -> None:
             else:
                 n = len(rep.findings)
                 _set(job, f"country:{cc}", "done",
-                     f"{rep.overall_risk} · {n} finding{'s' * (n != 1)}")
+                     f"{rep.badge} · {n} finding{'s' * (n != 1)}")
 
-        results = await pipeline.run_countries(
-            inventory, job["countries"], mock=mock, on_start=on_start, on_done=on_done)
+        if config.brain() == "adk":
+            from app import brain
+
+            async def on_stage(key: str, status: str, detail: str) -> None:
+                nonlocal current
+                current = "countries" if (key, status) == ("inventory", "done") else current
+                _set(job, key, status, detail)
+
+            inventory, results = await brain.run(
+                path, meta.get("duration_s"), job["countries"], mock=mock,
+                on_stage=on_stage, on_start=on_start, on_done=on_done)
+        else:
+            _set(job, "inventory", "running")
+            if mock:
+                await asyncio.sleep(config.mock_delay_s())
+            inventory = await asyncio.to_thread(pipeline.stage_a, path, meta.get("duration_s"), mock=mock)
+            _set(job, "inventory", "done", f"{len(inventory.segments)} segments")
+            current = "countries"
+            results = await pipeline.run_countries(
+                inventory, job["countries"], mock=mock, on_start=on_start, on_done=on_done)
         reports = {cc: r for cc, r in results.items() if isinstance(r, CountryReport)}
         errors = [f"{cc}: {pipeline.public_error(r)}" for cc, r in results.items()
                   if isinstance(r, Exception)]

@@ -64,6 +64,14 @@ def mock_mode() -> bool:
     return provider() == "mock"
 
 
+def brain() -> str:
+    """SC_BRAIN=adk (default): ADK Workflow over provisions; "legacy": stage A + stage B on rule cards."""
+    value = os.getenv("SC_BRAIN", "adk").strip().lower()
+    if value not in ("adk", "legacy"):
+        raise ValueError("SC_BRAIN must be adk or legacy")
+    return value
+
+
 def mock_delay_s() -> float:
     """Pause per mocked stage so the progress UI is visible (0 in tests)."""
     return float(os.getenv("SC_MOCK_DELAY", "0.6"))
