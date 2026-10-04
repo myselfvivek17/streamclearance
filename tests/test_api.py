@@ -117,3 +117,11 @@ def test_static_ui_served():
         js = client.get("/app.js").text
         # model text is only ever inserted as text, never parsed as HTML
         assert not re.search(r"(inner|outer)HTML\s*=|insertAdjacentHTML|document\.write", js)
+
+
+def test_law_pdf_per_registry_law():
+    client = TestClient(app)
+    r = client.get("/api/laws/MY/MAS1956/pdf")
+    assert r.status_code == 200 and r.headers["content-type"] == "application/pdf"
+    assert client.get("/api/laws/MY/NOPE/pdf").status_code == 404
+    assert client.get("/api/laws/IN/MAS1956/pdf").status_code == 404

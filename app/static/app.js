@@ -5,7 +5,9 @@
 const $ = (id) => document.getElementById(id);
 const state = { videoId: null, jobId: null, job: null, countries: [], pollTimer: null };
 
-const RISK_LABEL = { red: "High risk", amber: "Review", green: "Clear" };
+const RISK_LABEL = { red: "High risk", amber: "Review", green: "Clear", check: "Check: not covered by loaded laws" };
+const STATUS_LABEL = { in_force: "in force", amended: "as amended", guideline: "guideline, not an Act", bill: "bill, not yet law" };
+const badgeOf = (c) => c.badge || c.overall_risk;
 const CATEGORY_LABEL = (c) => c.replace(/_/g, " ").replace(/\bor\b/g, "/");
 
 // ------------------------------------------------------------------ helpers
@@ -249,7 +251,7 @@ function renderReport(report) {
   if (report.mock) $("mock-banner").hidden = false;
 
   $("summary").replaceChildren(...report.countries.map((c) => el("a", { href: `#cr-${c.country}` },
-    el("span", { class: "pill" }, c.country, el("span", { class: `badge ${c.overall_risk}` }, c.overall_risk)))));
+    el("span", { class: "pill" }, c.country, el("span", { class: `badge ${badgeOf(c)}` }, badgeOf(c))))));
 
   const errs = $("report-errors");
   errs.hidden = !report.errors.length;
@@ -263,50 +265,94 @@ function renderReport(report) {
 
 function renderCountry(c) {
   const meta = state.countries.find((x) => x.code === c.country) || {};
+  const brain = c.brain === "adk";
   const cards = Object.fromEntries(c.cited_cards.map((k) => [k.id, k]));
+  const provs = Object.fromEntries((c.cited_provisions || []).map((p) => [p.id, p]));
   const findings = c.findings.length
-    ? el("ol", { class: "findings" }, c.findings.map((f) => renderFinding(c, f, cards)))
-    : el("p", { class: "empty" }, "No moments in this video matched this country's rule cards.");
+    ? el("ol", { class: "findings" }, c.findings.map((f) => renderFinding(c, f, cards, provs)))
+    : el("p", { class: "empty" }, brain
+      ? "No moment in this video is covered by a loaded provision of this country's laws."
+      : "No moments in this video matched this country's rule cards.");
+  const badge = badgeOf(c);
 
   return el("article", { class: "card country-report", id: `cr-${c.country}` },
     el("div", { class: "cr-head" },
       el("h3", {}, meta.name || c.country),
-      el("span", { class: `badge ${c.overall_risk}` }, `${c.overall_risk} · ${RISK_LABEL[c.overall_risk]}`),
+      el("span", { class: `badge ${badge}` }, `${badge} · ${RISK_LABEL[badge]}`),
       c.rules_status !== "reviewed"
-        ? el("span", { class: "badge draft", title: "Rule cards have not been reviewed by a person yet" }, "draft rules")
+        ? el("span", { class: "badge draft", title: "Provisions/rule cards have not been reviewed by a person yet" }, "draft rules")
         : null),
-    el("p", { class: "cr-law" }, c.law, c.label ? el("span", { class: "note" }, ` · ${c.label}`) : null),
+    brain ? renderLaws(c) : el("p", { class: "cr-law" }, c.law, c.label ? el("span", { class: "note" }, ` · ${c.label}`) : null),
     el("p", { class: "framing" }, c.risk_framing),
     findings,
     (c.uncovered || []).length
       ? el("div", { class: "uncovered" },
-          el("p", { class: "k" }, "Not covered by this law (check other local laws):"),
+          el("p", { class: "k" }, brain
+            ? "Not covered by any loaded law (other local laws may still apply):"
+            : "Not covered by this law (check other local laws):"),
           el("ul", {}, c.uncovered.map((u) => el("li", {},
             el("button", { class: "chip", type: "button", onclick: () => seek(u.start_s),
               title: "Jump to this moment" }, `▶ ${fmtTime(u.start_s)}–${fmtTime(u.end_s)}`),
-            ` ${CATEGORY_LABEL(u.category)}`))))
+            ` ${u.leaf || CATEGORY_LABEL(u.category)}`,
+            u.note ? el("span", { class: "muted" }, ` · ${u.note}`) : null))))
       : null,
     c.dropped_findings
-      ? el("p", { class: "empty" }, `${c.dropped_findings} model suggestion(s) were dropped by the citation validator.`)
+      ? el("p", { class: "empty" }, `${c.dropped_findings} model suggestion(s) were dropped by the citation ${brain ? "verifier" : "validator"}.`)
       : null,
+    c.critic_changes
+      ? el("p", { class: "empty" }, `The critic changed ${c.critic_changes} finding(s).`)
+      : null,
+    (c.notes || []).map((n) => el("p", { class: "empty" }, n)),
   );
 }
 
-function renderFinding(c, f, cards) {
+function renderLaws(c) {
+  return el("div", { class: "laws" },
+    el("p", { class: "k" }, "Laws loaded for this country:"),
+    el("ul", {}, (c.laws || []).map((l) => el("li", {},
+      el("a", { href: l.pdf_url, target: "_blank", rel: "noopener" }, l.title),
+      el("span", { class: "muted" }, ` · ${STATUS_LABEL[l.status] || l.status} · ${l.provisions} provision${l.provisions === 1 ? "" : "s"}`),
+      l.label ? el("span", { class: "note" }, ` · ${l.label}`) : null))));
+}
+
+function renderFinding(c, f, cards, provs) {
   const drift = c.translation.filter((d) => overlaps(d, f));
   return el("li", { class: `finding ${f.risk}` },
     el("div", { class: "f-head" },
       el("button", { class: "chip", type: "button", onclick: () => seek(f.start_s),
         title: "Jump to this moment" }, `▶ ${fmtTime(f.start_s)}–${fmtTime(f.end_s)}`),
       el("span", { class: `badge ${f.risk}` }, f.risk),
-      el("span", { class: "cat" }, CATEGORY_LABEL(f.category)),
+      el("span", { class: "cat" }, f.leaf || CATEGORY_LABEL(f.category)),
       f.creator_liability ? el("span", { class: "badge creator" }, "creator liability") : null,
+      f.exception_applies ? el("span", { class: "badge draft" }, "exception may apply") : null,
       drift.map((d) => el("span", { class: `badge drift-${d.drift}` }, `${d.language}: drift ${d.drift}`)),
     ),
     el("div", { class: "f-row" }, el("span", { class: "k" }, "Why"), f.rationale),
+    f.exception_applies && f.exception_reason
+      ? el("div", { class: "f-row" }, el("span", { class: "k" }, "Exception"), f.exception_reason) : null,
+    f.critic_note ? el("div", { class: "f-row" }, el("span", { class: "k" }, "Critic"), f.critic_note) : null,
     el("div", { class: "f-row" }, el("span", { class: "k" }, "Suggested fix"), f.suggested_fix),
-    f.rule_card_ids.map((id) => renderCite(c.country, cards[id], id)),
+    f.rule_card_ids.map((id) => provs[id] ? renderProvision(provs[id]) : renderCite(c.country, cards[id], id)),
     drift.map(renderDrift),
+  );
+}
+
+function renderProvision(p) {
+  const href = `/api/laws/${encodeURIComponent(p.country)}/${encodeURIComponent(p.law_id)}/pdf#page=${encodeURIComponent(p.page)}`;
+  const k = p.consequence || {};
+  return el("div", { class: "cite" },
+    el("div", { class: "src" },
+      el("strong", {}, p.section),
+      el("span", {}, p.law_title),
+      p.law_status !== "in_force" ? el("span", { class: "note" }, STATUS_LABEL[p.law_status] || p.law_status) : null,
+      el("a", { href, target: "_blank", rel: "noopener" }, `PDF p. ${p.page}`),
+      el("span", { class: "cat" }, `[${p.id}]`)),
+    el("blockquote", {}, `“${p.verbatim_text}”`),
+    (p.exceptions || []).length
+      ? el("div", { class: "duty" }, "Exceptions: ", el("ul", {}, p.exceptions.map((x) => el("li", {}, x))))
+      : null,
+    el("div", { class: "duty" }, `Duty on: ${p.duty_holder} · ${k.kind || "not specified"}${k.timeframe && !k.timeframe.startsWith("not specified") ? `, ${k.timeframe}` : ""}`),
+    k.penalty && !k.penalty.startsWith("not specified") ? el("div", { class: "duty" }, `Penalty: ${k.penalty}`) : null,
   );
 }
 

@@ -115,6 +115,7 @@ video { width: 100%; max-height: 60vh; border-radius: 8px; background: #000; dis
 .badge.red { background: rgba(255,107,107,.15); color: var(--red); border: 1px solid rgba(255,107,107,.4); }
 .badge.amber { background: rgba(255,181,71,.13); color: var(--amber); border: 1px solid rgba(255,181,71,.4); }
 .badge.green { background: rgba(79,209,139,.12); color: var(--green); border: 1px solid rgba(79,209,139,.4); }
+.badge.check { background: rgba(160,170,185,.12); color: #c3cad6; border: 1px solid rgba(160,170,185,.45); }
 .badge.draft { background: transparent; color: var(--amber); border: 1px dashed rgba(255,181,71,.6); font-weight: 600; }
 .badge.creator { background: rgba(255,107,107,.08); color: #ffb3b3; border: 1px solid rgba(255,107,107,.3); font-weight: 600; }
 .badge.drift-increased { background: rgba(255,107,107,.15); color: var(--red); border: 1px solid rgba(255,107,107,.4); }
@@ -170,3 +171,7 @@ dialog input { width: 100%; font: inherit; padding: 10px; border-radius: 8px; bo
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
 }
+.laws { margin: 4px 0 8px; font-size: 0.88rem; }
+.laws ul, .cite .duty ul { margin: 4px 0 0; padding-left: 18px; }
+.muted { color: var(--muted); }
+.laws .k { color: var(--muted); margin: 0; }

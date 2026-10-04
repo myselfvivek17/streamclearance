@@ -73,6 +73,16 @@ def law_pdf(code: str):
                         filename=c.pdf_path.name, content_disposition_type="inline")
 
 
+@app.get("/api/laws/{code}/{law_id}/pdf")
+def provision_law_pdf(code: str, law_id: str):
+    """One law of a country's registry (a country can have several)."""
+    law = next((x for x in provisions.laws_for(code.upper()) if x.id == law_id), None)
+    if law is None or not law.pdf_path.exists():
+        raise HTTPException(404, "law not found")
+    return FileResponse(law.pdf_path, media_type="application/pdf",
+                        filename=law.pdf_path.name, content_disposition_type="inline")
+
+
 UPLOAD_CHUNK = 1024 * 1024
 
 
