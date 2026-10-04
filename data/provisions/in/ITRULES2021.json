@@ -1,0 +1,1041 @@
+[
+ {
+  "id": "IN/ITRULES2021/r3(1)(b)(i)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 6,
+  "section": "Rule 3(1)(b)(i)",
+  "verbatim_text": "(i) belongs to another person and to which the user does not have any right;",
+  "summary": "Intermediaries must make reasonable efforts, both themselves and by getting their users to comply, not to host or share content that belongs to someone else and that the uploader has no right to use, such as reposted videos or music.",
+  "targets": [
+   "ip.copyright"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(1)(b)(ii)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 6,
+  "section": "Rule 3(1)(b)(ii)",
+  "verbatim_text": "(ii) is obscene, pornographic, paedophilic, invasive of another’s privacy including bodily privacy, insulting or harassing on the basis of gender, racially or ethnically objectionable,",
+  "summary": "Users must not upload, and intermediaries must make reasonable efforts against, content that is obscene, pornographic, paedophilic, invades someone's privacy (including bodily privacy), insults or harasses people because of their gender, or is racially or ethnically objectionable.",
+  "targets": [
+   "sexual.obscene",
+   "child.csam",
+   "sexual.non_consensual_imagery",
+   "privacy.covert_recording",
+   "privacy.doxxing",
+   "hate.discrimination"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(1)(b)(ii)-gambling",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 6,
+  "section": "Rule 3(1)(b)(ii)",
+  "verbatim_text": "relating or encouraging money laundering or gambling,",
+  "summary": "Users must not upload, and intermediaries must make reasonable efforts against, content that relates to or encourages gambling or money laundering. The same clause also covers an online game that causes user harm.",
+  "targets": [
+   "gambling.promotion",
+   "gambling.betting_tips",
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(1)(b)(ii)-enmity",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 6,
+  "section": "Rule 3(1)(b)(ii)",
+  "verbatim_text": "or promoting enmity between different groups on the grounds of religion or caste with the intent to incite violence;",
+  "summary": "Users must not upload, and intermediaries must make reasonable efforts against, content that promotes enmity between religious or caste groups with the intent to incite violence.",
+  "targets": [
+   "hate.group_hostility",
+   "violence.incitement"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(1)(b)(iii)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 6,
+  "section": "Rule 3(1)(b)(iii)",
+  "verbatim_text": "(iii) is harmful to child;",
+  "summary": "Users must not upload, and intermediaries must make reasonable efforts against, content that is harmful to a child (anyone under 18), meaning any effect that is detrimental to the child.",
+  "targets": [
+   "child.harmful_to_minors",
+   "child.self_harm_inducement"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(1)(b)(iv)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 6,
+  "section": "Rule 3(1)(b)(iv)",
+  "verbatim_text": "(iv) infringes any patent, trademark, copyright or other proprietary rights;",
+  "summary": "Users must not upload, and intermediaries must make reasonable efforts against, content that infringes copyright, trademarks, patents or other proprietary rights, for example unlicensed music or logos.",
+  "targets": [
+   "ip.copyright",
+   "ip.trademark"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(1)(b)(v)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 6,
+  "section": "Rule 3(1)(b)(v)",
+  "verbatim_text": "(v) deceives or misleads the addressee about the origin of the message or knowingly and intentionally communicates any misinformation or information which is patently false and untrue or misleading in nature",
+  "summary": "Users must not upload, and intermediaries must make reasonable efforts against, content that misleads viewers about where it came from or knowingly spreads misinformation or patently false or misleading information. Under rule 2(1A), this includes synthetically generated (AI) content.",
+  "targets": [
+   "misinfo.public_order",
+   "misinfo.election",
+   "health.misinformation",
+   "misinfo.synthetic_media"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(1)(b)(vi)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 6,
+  "section": "Rule 3(1)(b)(vi)",
+  "verbatim_text": "(vi) impersonates another person;",
+  "summary": "Users must not upload, and intermediaries must make reasonable efforts against, content that impersonates another person, including through synthetically generated media.",
+  "targets": [
+   "impersonation.identity",
+   "misinfo.synthetic_media"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(1)(b)(vii)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 6,
+  "section": "Rule 3(1)(b)(vii)",
+  "verbatim_text": "(vii) threatens the unity, integrity, defence, security or sovereignty of India, friendly relations with foreign States, or public order, or causes incitement to the commission of any cognisable offence, or prevents investigation of any offence, or is insulting other nation;",
+  "summary": "Users must not upload, and intermediaries must make reasonable efforts against, content that threatens India's unity, sovereignty, security or public order, harms friendly relations with foreign states, incites a cognisable offence, obstructs an investigation, or insults another nation.",
+  "targets": [
+   "national_security.sovereignty",
+   "national_security.state_threat",
+   "hate.public_tranquillity",
+   "violence.incitement"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(1)(b)(ix)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 6,
+  "section": "Rule 3(1)(b)(ix)",
+  "verbatim_text": "(ix) is in the nature of an online game that is not verified as a permissible online game;",
+  "summary": "Users must not upload, and intermediaries must make reasonable efforts against, content that is itself an online game not verified as a permissible online game, such as an unverified real-money game.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(1)(b)(x)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 6,
+  "section": "Rule 3(1)(b)(x)",
+  "verbatim_text": "(x) is in the nature of advertisement or surrogate advertisement or promotion of an online game that is not a permissible online game, or of any online gaming intermediary offering such an online game;",
+  "summary": "Content that advertises, surrogate-advertises or promotes an unverified online game, or a gaming platform offering one, must not be uploaded. This includes creators doing paid promotions.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(1)(cb)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 8,
+  "section": "Rule 3(1)(cb)",
+  "verbatim_text": "(cb) where an intermediary becomes aware, either on its own accord or upon receipt of actual knowledge or on the basis of any grievance, complaint or information received under these rules, of any violation of sub -rule (3), in relation to the creation, generati on, modification, alteration, hosting, displaying, uploading, publishing, transmitting, storing, updating, sharing or otherwise dissemination of information as synthetically generated information covered under sub -clause (ii) of clause (a), it shall t ake expeditious and appropriate action",
+  "summary": "When an intermediary learns, on its own or through actual knowledge, a grievance or a complaint, that synthetically generated content breaches rule 3(3), it must act quickly. Actions include removing or disabling the content and suspending the user's account.",
+  "targets": [
+   "misinfo.synthetic_media"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "expeditious",
+   "penalty": "Actions under rule 3(1)(ca)(ii): immediate disabling of access to or removal of the information; suspension or termination of the violating user's account; identification of the user and disclosure of their identity to a victim complainant; and reporting of offences that must be reported by law"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(1)(d)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 9,
+  "section": "Rule 3(1)(d)",
+  "verbatim_text": "information, remove or disable access to such information within 1[three hours] of the receipt of such actual knowledge , and such actual knowledge shall arise only in the following manner, namely:— (i) by an order of a court of competent jurisdiction; or (ii) a reasoned intimation, in writing,—",
+  "summary": "An intermediary must remove or disable access to unlawful information within three hours of a court order or a reasoned written government notice. Such information includes content against the sovereignty, security or public order of India, or against decency, morality or reputation.",
+  "targets": [
+   "national_security.sovereignty",
+   "national_security.state_threat",
+   "hate.public_tranquillity",
+   "violence.incitement",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "defamation.false_statement"
+  ],
+  "exceptions": [
+   "Actual knowledge arises only from a court order or a reasoned written intimation from an authorised officer (not below Joint Secretary/Director, or DIG for police), which must specify the legal basis, the nature of the unlawful act and the specific URL."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within three hours of receipt of actual knowledge (court order or government intimation)",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(2)(a)(i)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 11,
+  "section": "Rule 3(2)(a)(i)",
+  "verbatim_text": "(i) acknowledge the complaint within twenty-four hours and resolve such complaint within a period of 4[seven days] from the date of its receipt: Provided that the complaint in the nature of request for removal of information or communication link relating to clause (b) of sub -rule (1) of rule 3, except sub -clauses (i), (iv) and 5[(xi)], shall be acted upon as expeditiously as possible and shall be resolved within 6[thirty-six hours] of such reporting;",
+  "summary": "The intermediary's Grievance Officer must acknowledge user complaints within 24 hours and resolve them within seven days. Requests to remove content prohibited under Rule 3(1)(b), such as obscene, child-harmful, false, impersonating, sovereignty-threatening or non-permitted online gaming content, must be resolved within 36 hours.",
+  "targets": [
+   "sexual.obscene",
+   "sexual.nudity",
+   "child.harmful_to_minors",
+   "privacy.doxxing",
+   "hate.discrimination",
+   "hate.group_hostility",
+   "misinfo.public_order",
+   "impersonation.identity",
+   "national_security.sovereignty",
+   "gambling.unlawful_game",
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "The 36-hour removal timeline does not apply to complaints under sub-clauses (i), (iv) and (xi) of Rule 3(1)(b).",
+   "The intermediary may develop appropriate safeguards to avoid misuse by users."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "acknowledge within 24 hours; resolve within 7 days; removal requests under Rule 3(1)(b) resolved within 36 hours",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(2)(b)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 11,
+  "section": "Rule 3(2)(b)",
+  "verbatim_text": "The intermediary shall, within 8[two hours] from the receipt of a complaint made by an individual or any person on his behalf under this sub-rule, in relation to any content which is prima facie in the nature of any material which exposes the private area of such individual, shows such individual in full or partial nudity or shows or depicts such individual in any sexual act or conduct, or is in the",
+  "summary": "Within two hours of a complaint by the person shown, or someone acting for them, an intermediary must remove content that exposes their private area, shows them nude or in a sexual act, or impersonates them, including artificially morphed images.",
+  "targets": [
+   "sexual.non_consensual_imagery",
+   "sexual.nudity",
+   "impersonation.identity",
+   "misinfo.synthetic_media"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within two hours of receipt of the complaint",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(3)(a)(i)(I)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 12,
+  "section": "Rule 3(3)(a)(i)(I)",
+  "verbatim_text": "and inc ludes any such synthetically generated information that,— (I) contains child sexual exploitative and abuse material, non -consensual intimate imagery content, or is obscene, pornographic, paedophilic, invasive of another person’s privacy, including bodily privacy, vulgar, indecent or sexually explicit;",
+  "summary": "Intermediaries offering AI or synthetic-content tools must use technical measures to stop users creating or sharing synthetic content that is child sexual abuse material, non-consensual intimate imagery, or obscene, pornographic, privacy-invasive, vulgar, indecent or sexually explicit.",
+  "targets": [
+   "misinfo.synthetic_media",
+   "child.csam",
+   "sexual.non_consensual_imagery",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "privacy.covert_recording"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(3)(a)(i)(III)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 12,
+  "section": "Rule 3(3)(a)(i)(III)",
+  "verbatim_text": "(III) relates to the preparation, development or procurement of explosive material, arms or ammunition;",
+  "summary": "Intermediaries offering synthetic-content tools must not allow users to create or share synthetic content relating to preparing, developing or procuring explosives, arms or ammunition.",
+  "targets": [
+   "misinfo.synthetic_media",
+   "terrorism.instruction",
+   "weapons.sale"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(3)(a)(i)(IV)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 12,
+  "section": "Rule 3(3)(a)(i)(IV)",
+  "verbatim_text": "(IV) falsely depicts or portrays a natural person or real -world event by misrepresenting, in a manner that is likely to deceive, such person’s identity, voice, conduct, action, statement, or such event as having occurred, with or without the involvement of natural person;",
+  "summary": "Intermediaries offering synthetic-content tools must not allow deceptive deepfakes that falsely show a real person's identity, voice, conduct or statements, or falsely show a real-world event as having happened.",
+  "targets": [
+   "misinfo.synthetic_media",
+   "impersonation.identity"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(3)(a)(ii)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 12,
+  "section": "Rule 3(3)(a)(ii)",
+  "verbatim_text": "(ii) every such information not covered under sub -clause (i) of clause (a) is prominently labelled in a manner that ensures prominent visibility in the visual display that is easily noticeable and adequately perceivable, or, in the case of audio content, throug h a prominently prefixed audio disclosure, that can be used to immediately identify that such information is synthetically generated information",
+  "summary": "Intermediaries offering synthetic-content tools must ensure all other AI or synthetically generated content carries a prominent visible label, or a prefixed audio disclosure for audio. Where technically feasible, it must also carry permanent metadata or a unique identifier tracing it to the tool used.",
+  "targets": [
+   "misinfo.synthetic_media"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "labelling",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/ITRULES2021/r3(3)(b)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 12,
+  "section": "Rule 3(3)(b)",
+  "verbatim_text": "(b) the intermediary shall not enable the modification, suppression or removal of the label, permanent metadata, including the unique identifier, displayed or embedded in accordance with sub- clause (ii) of clause (a).",
+  "summary": "Intermediaries must not let anyone modify, suppress or remove the label, metadata or unique identifier on synthetically generated content.",
+  "targets": [
+   "misinfo.synthetic_media"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "labelling",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/ITRULES2021/r4(1A)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 14,
+  "section": "Rule 4(1A)",
+  "verbatim_text": "(a) require users to declare whether such information is synthetically generated information; (b) deploy appropriate technical measures, including automated tools or other suitable mechanisms, to verify the accuracy of such declaration, having regard to the nature, format, and source of such information; and (c) where such declaration or technical verification confirms that the information is synthetically generated, ensure that the same is clearly and prominently displayed with an appropriate label or notice, indicating that the content is synthetically generated:",
+  "summary": "Before any upload, significant social media intermediaries must require users to declare whether content is synthetically generated, verify that declaration with technical tools, and clearly label confirmed synthetic content. No synthetic content may be published without a declaration or label.",
+  "targets": [
+   "misinfo.synthetic_media"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "labelling",
+   "timeframe": "prior to display, uploading or publication",
+   "penalty": "If the intermediary knowingly permitted, promoted or failed to act on synthetic content in contravention of the rules, it is deemed to have failed to exercise due diligence (Rule 4(1A) proviso, page 15)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/ITRULES2021/r4(2)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 15,
+  "section": "Rule 4(2)",
+  "verbatim_text": "(2) A significant social media intermediary providing services primarily in the nature of messaging shall enable the identification of the first originator of the information on its computer resource as may be required by a judicial order passed by a court of competent jurisdiction or an order passed under section 69 by the Competent Authority",
+  "summary": "A significant social media messaging service must identify the first originator of information when ordered by a court or under section 69. Such orders are limited to offences carrying at least five years' prison relating to sovereignty, State security, foreign relations or public order, incitement to such offences, or rape, sexually explicit material or child sexual abuse material.",
+  "targets": [
+   "national_security.sovereignty",
+   "national_security.state_threat",
+   "hate.public_tranquillity",
+   "violence.incitement",
+   "sexual.obscene",
+   "child.csam"
+  ],
+  "exceptions": [
+   "No order where less intrusive means are effective in identifying the originator.",
+   "The intermediary is not required to disclose the contents of any electronic message or information about other users."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "originator_identification",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/ITRULES2021/r4(3)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 15,
+  "section": "Rule 4(3)",
+  "verbatim_text": "shall make that information clearly identifiable to its users as being advertised, marketed, sponsored, owned, or exclusively controlled, as the case may be, or shall make it identifiable as such in an appropriate manner.",
+  "summary": "A significant social media intermediary must clearly mark content it promotes for direct financial benefit, or content it owns or exclusively controls, as advertised, sponsored, owned or exclusively controlled.",
+  "targets": [
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "labelling",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/ITRULES2021/r4(4)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 16,
+  "section": "Rule 4(4)",
+  "verbatim_text": "(4) A significant social media intermediary shall 1[deploy appropriate technical measures, including automated tools or other suitable mechanisms ] to proactively identify information that depicts any act or simulation in any form depicting rape, child sexual abuse or conduct, whether explicit or implicit, or any information which is exactly identical in content to information that has previously been removed or access to which has been disabled",
+  "summary": "Significant social media intermediaries must use automated tools to proactively detect content depicting rape or child sexual abuse, real or simulated, and exact re-uploads of content already removed under Rule 3(1)(d). Users trying to access such content must be shown a notice.",
+  "targets": [
+   "child.csam",
+   "sexual.obscene",
+   "sexual.non_consensual_imagery"
+  ],
+  "exceptions": [
+   "Measures must be proportionate, having regard to free speech and the privacy of users.",
+   "Human oversight and periodic review of automated tools are required, covering accuracy, fairness, bias and privacy."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "proactive_detection",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/ITRULES2021/r7",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 22,
+  "section": "Rule 7",
+  "verbatim_text": "Where an intermediary fails to observe these rules, the provisions of sub-section (1) of section 79 of the Act shall not be applicable to such intermediary and the intermediary shall be liable for punishment under any law for the time being in force including the provisions of the Act and",
+  "summary": "If a platform fails to follow these Rules, including the duties on prohibited user content, it loses safe-harbour immunity and can be punished under the IT Act, the Bharatiya Nyaya Sanhita and other laws.",
+  "targets": [
+   "sexual.obscene",
+   "child.csam",
+   "child.harmful_to_minors",
+   "privacy.doxxing",
+   "privacy.covert_recording",
+   "sexual.non_consensual_imagery",
+   "ip.copyright",
+   "ip.trademark",
+   "misinfo.public_order",
+   "misinfo.synthetic_media",
+   "impersonation.identity",
+   "national_security.sovereignty",
+   "national_security.state_threat",
+   "gambling.unlawful_game",
+   "gambling.promotion"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "loss_of_safe_harbour_and_liability",
+   "timeframe": "not specified on this page",
+   "penalty": "Section 79(1) of the IT Act (safe-harbour exemption) ceases to apply; the platform is liable for punishment under any law in force, including the IT Act and the Bharatiya Nyaya Sanhita, 2023"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/ITRULES2021/AppII(A)(b)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 30,
+  "section": "Appendix, Code of Ethics, Part II (A) General Principles, clause (b)",
+  "verbatim_text": "after duly considering the implications of any content as falling under the following categories, and shall exercis e due caution and discretion in relation to the same, namely:— (i) content which affects the sovereignty and integrity of India; (ii) content which threatens, endangers or jeopardises the security of the State; (iii) content which is detrimental to India’s friendly relations with foreign countries; (iv) content which is likely to incite violence or disturb the maintenance of public order.",
+  "summary": "Publishers of online curated content must use due caution before publishing content that affects India's sovereignty or integrity, endangers state security, harms India's friendly relations with foreign countries, or is likely to incite violence or disturb public order.",
+  "targets": [
+   "national_security.sovereignty",
+   "national_security.state_threat",
+   "violence.incitement",
+   "hate.public_tranquillity"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/AppII(A)(c)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 30,
+  "section": "Appendix, Code of Ethics, Part II (A) General Principles, clause (c)",
+  "verbatim_text": "(c) A publisher shall take into consideration India’s multi-racial and multi-religious context and exercise due caution and discretion when featuring the activities, beliefs, practices, or views of any racial or religious group.",
+  "summary": "Publishers of online curated content must use due caution when showing the activities, beliefs, practices or views of any racial or religious group, given India's multi-racial and multi-religious context.",
+  "targets": [
+   "religion.insult",
+   "hate.group_hostility"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/r15(2)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 27,
+  "section": "Rule 15(2)",
+  "verbatim_text": "(2) The Authorised Officer shall, on approval of the decision by the Secretary, Ministry of Information and Broadcasting, direct the publisher, any agency of the Government or any intermediary, as the case may be to delete or modify or block the relevant conte nt and information generated, transmitted, received, stored or hosted in their computer resource for public access within the time limit specified in the direction:",
+  "summary": "Once the Secretary of the Ministry of Information and Broadcasting approves, an intermediary or publisher can be directed to delete, modify or block content. This covers content recommended for action to prevent incitement to a cognisable offence relating to public order, and the recipient must comply within the time limit set in the direction.",
+  "targets": [
+   "violence.incitement",
+   "hate.public_tranquillity"
+  ],
+  "exceptions": [
+   "A direction may be issued only for a specific piece of content or an enumerated list of content and shall not require any entity to cease its operations (Rule 15(3))."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown_or_block",
+   "timeframe": "within the time limit specified in the direction",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/ITRULES2021/AppII(D)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 31,
+  "section": "Appendix, Code of Ethics, Part II (D) Restriction of access to certain curated content by a child",
+  "verbatim_text": "Every publisher of online curated content providing access to online curated content which has an “A” rating shall take all efforts to restrict access to such content by a child through the implementation of appropriate access control measures.",
+  "summary": "Online curated content platforms must use access controls to stop children from reaching adult (\"A\"-rated) content. Reliable age verification is also required for such content.",
+  "targets": [
+   "child.harmful_to_minors",
+   "sexual.nudity",
+   "sexual.obscene"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "restrict_access",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/ITRULES2021/Appx/(b)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 33,
+  "section": "Appendix (Classification Guidelines), General guideline (b) – Psychotropic substances, liquor, smoking and tobacco",
+  "verbatim_text": "(b) Psychotropic substances, liquor, smoking and tobacco: Films or serials, etc. that as a whole portray misuse of psychotropic substances, liquor, smoking and tobacco would qualify for a higher category of classification.",
+  "summary": "Online curated content (films, serials, etc.) that as a whole portrays misuse of psychotropic substances, liquor, smoking or tobacco must get a higher, more restrictive age classification.",
+  "targets": [
+   "drugs.promotion"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "age_restriction",
+   "timeframe": "not specified on this page",
+   "penalty": "higher category of classification"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/Appx/(c)(2)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 33,
+  "section": "Appendix (Classification Guidelines), General guideline (c)(2) – Imitable behaviour",
+  "verbatim_text": "(2) Portrayal of potentially dangerous behaviour that are likely to incite the commission of any offence (including suicide, and infliction of self-harm) and that children and young people may potentially copy, shall receive a higher classification.",
+  "summary": "Online curated content showing dangerous behaviour that children and young people might copy, including suicide or self-harm, must get a higher, more restrictive age classification.",
+  "targets": [
+   "self_harm.promotion",
+   "child.self_harm_inducement"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "age_restriction",
+   "timeframe": "not specified on this page",
+   "penalty": "higher classification"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/Appx/(c)(3)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 33,
+  "section": "Appendix (Classification Guidelines), General guideline (c)(3) – Imitable behaviour",
+  "verbatim_text": "(3) Films or serials with song and dance scenes comprising lyrics and gestures that have sexual innuendos would receive a higher classification.",
+  "summary": "Online curated content with song and dance scenes whose lyrics or gestures carry sexual innuendo must get a higher, more restrictive age classification.",
+  "targets": [
+   "sexual.indecent_profane"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "age_restriction",
+   "timeframe": "not specified on this page",
+   "penalty": "higher classification"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/Appx/(e)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 33,
+  "section": "Appendix (Classification Guidelines), General guideline (e) – Nudity",
+  "verbatim_text": "(e) Nudity: (1) No content that is prohibited by law at the time being in force can be published or transmitted. (2) Nudity with a sexual context will receive a higher classification of “A”.",
+  "summary": "Online curated content may not include nudity that is prohibited by law, and nudity in a sexual context is restricted to an adults-only (\"A\") rating.",
+  "targets": [
+   "sexual.nudity"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "age_restriction",
+   "timeframe": "not specified on this page",
+   "penalty": "classification of “A” (adults only); unlawful content may not be published"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/ITRULES2021/Appx/(f)",
+  "country": "IN",
+  "law_id": "ITRULES2021",
+  "law_title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)",
+  "law_status": "in_force",
+  "source_pdf": "india_it_rules_2021_feb2026.pdf",
+  "page": 33,
+  "section": "Appendix (Classification Guidelines), General guideline (f) – Sex",
+  "verbatim_text": "(f) Sex: No content that is prohibited by law at the time being in force can be published or transmitted. The classification of content in various ratings from U/A 16+ to “A” shall depend upon the portrayal of non-explicit (implicit) to explicit depiction of sexual behaviour.",
+  "summary": "Online curated content may not include sexual content that is prohibited by law, and depictions of sexual behaviour are restricted to U/A 16+ up to adults-only (\"A\") ratings, depending on how explicit they are.",
+  "targets": [
+   "sexual.obscene",
+   "sexual.nudity"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "age_restriction",
+   "timeframe": "not specified on this page",
+   "penalty": "rating from U/A 16+ to “A”; unlawful content may not be published"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ }
+]

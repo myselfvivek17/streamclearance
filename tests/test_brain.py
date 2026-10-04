@@ -21,11 +21,15 @@ def test_mock_brain_my_multi_law(real_provisions):
     assert rep.brain == "adk" and rep.dropped_findings >= 1  # the planted invented id
     cure = [f for f in rep.findings if f.leaf == "health.cure_claim"]
     assert cure and all(pid.split("/")[1] in ("MAS1956", "MOHADV") for f in cure for pid in f.rule_card_ids)
-    # no MY gambling or religion law is loaded: those moments are "not covered", never cited
-    assert not [f for f in rep.findings if f.leaf in ("gambling.promotion", "religion.insult")]
-    assert {"gambling.promotion", "religion.insult"} <= {u.leaf for u in rep.uncovered}
+    # MY casino promo -> the 1953 gambling Acts, never a drug or medicine provision
+    casino = [f for f in rep.findings if f.leaf == "gambling.promotion"]
+    assert casino and all(pid.split("/")[1] in ("CGHA1953", "BETTING1953")
+                          for f in casino for pid in f.rule_card_ids)
+    # no MY religion law is loaded: that moment is "not covered", never cited
+    assert not [f for f in rep.findings if f.leaf == "religion.insult"]
+    assert "religion.insult" in {u.leaf for u in rep.uncovered}
     assert not any("drugs" in t for p in rep.cited_provisions for t in p.targets)
-    assert {law.id for law in rep.laws} >= {"OSA2025", "MAS1956"}
+    assert {law.id for law in rep.laws} >= {"OSA2025", "MAS1956", "CGHA1953", "BETTING1953"}
     assert {p.id for p in rep.cited_provisions} == {pid for f in rep.findings for pid in f.rule_card_ids}
     assert rep.badge == "red"
 
@@ -75,10 +79,37 @@ def test_workflow_runs_parallel_countries(real_provisions, tiny_video):
     inv, results = asyncio.run(brain.run(path, 60.0, ["MY", "IN"], mock=True, on_done=on_done))
     assert inv.segments and sorted(done) == [("IN", None), ("MY", None)]
     assert results["MY"].brain == "adk" and results["MY"].findings
-    assert results["IN"].brain == "legacy" and results["IN"].notes  # no IN provisions yet
+    assert results["IN"].brain == "adk" and results["IN"].findings
 
 
 def test_badge_check_when_only_uncovered():
     rep = CountryReport(country="MY", law="x", overall_risk="green",
                         uncovered=[{"start_s": 0, "end_s": 1, "category": "other"}])
     assert rep.badge == "check"
+
+
+def test_mock_brain_in_casino_proga_and_diabetes_dmr(real_provisions):
+    rep = asyncio.run(brain.assess_country(_inv(), "IN", mock=True))
+    by_leaf = {f.leaf: f for f in rep.findings}
+    assert {pid.split("/")[1] for pid in by_leaf["gambling.promotion"].rule_card_ids} == {"PROGA2025"}
+    assert {pid.split("/")[1] for pid in by_leaf["health.cure_claim"].rule_card_ids} == {"DMR1954"}
+    assert not any("drugs" in t for p in rep.cited_provisions for t in p.targets)
+    assert {law.id for law in rep.laws} >= {"ITRULES2021", "PROGA2025", "DMR1954"}
+
+
+def test_platform_obligations_attached_not_cited(real_provisions):
+    from app.schemas import Inventory, Segment
+
+    inv = Inventory(duration_s=20, segments=[
+        Segment(start_s=0, end_s=10, transcript="Buy ganja from my link", leaves=["drugs.promotion"]),
+        Segment(start_s=10, end_s=20, transcript="Use my casino code", leaves=["gambling.promotion"])])
+    rep = asyncio.run(brain.assess_country(inv, "MY", mock=True))
+    drugs = next(f for f in rep.findings if f.leaf == "drugs.promotion")
+    duties = {p.id: p for p in rep.platform_obligations}
+    assert duties and all(p.kind == "obligation" and p.duty_holder == "platform" for p in duties.values())
+    assert drugs.obligation_ids and set(drugs.obligation_ids) <= set(duties)
+    assert all(p.law_id == "OSA2025" for p in duties.values())
+    # obligations are never "covered by" citations, and a casino promo gets no OSA duty
+    assert not set(duties) & {pid for f in rep.findings for pid in f.rule_card_ids}
+    casino = next(f for f in rep.findings if f.leaf == "gambling.promotion")
+    assert casino.obligation_ids == []

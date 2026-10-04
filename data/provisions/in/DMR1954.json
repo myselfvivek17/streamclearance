@@ -1,0 +1,136 @@
+[
+ {
+  "id": "IN/DMR1954/s3",
+  "country": "IN",
+  "law_id": "DMR1954",
+  "law_title": "Drugs and Magic Remedies (Objectionable Advertisements) Act, 1954",
+  "law_status": "in_force",
+  "source_pdf": "india_drugs_magic_remedies_act_1954.pdf",
+  "page": 6,
+  "section": "Section 3",
+  "verbatim_text": "Subject to the provisions of this Act,noperson shall take anypartin thepublicationof anyadvertisementreferringto anydrugin terms which suggest or arecalculated tolead to the use of thatdrugfor,— in women;or (b sexualpleasure;or C) thecorrectionofmenstrual disorderinwomen;or (p)]g the diagnosis,cure,mitigation,treatment or prevention of any disease, disorderorconditionspecifiedintheSchedule,oranyotherdisease, disorder or condition (by whatsoever name called)whichmaybe specified in therulesmadeunder thisAct:",
+  "summary": "No one may take part in publishing an advertisement that suggests a drug be used for miscarriage or preventing conception in women, for keeping up or improving sexual capacity or pleasure, for correcting menstrual disorders, or to diagnose, cure, mitigate, treat or prevent any disease or condition listed in the Schedule or in the rules.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "s14: does not apply to a treatise or book dealing with the s3 matters from a bona fide scientific or social standpoint",
+   "s14: does not apply to an advertisement relating to a drug sent confidentially, in the prescribed manner, only to a registered medical practitioner",
+   "s14: does not apply to an advertisement relating to a drug printed or published with the previous sanction of the Government",
+   "s15: the Central Government may by notification exempt specified drugs or classes of drug advertisements from ss3-6 (e.g. Government-approved contraceptives; information-only leaflets and journal ads aimed at registered medical practitioners, if the claims are not false or misleading)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Under s7, a first conviction can bring imprisonment of up to six months, or a fine, or both. A later conviction can bring imprisonment of up to one year, or a fine, or both."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/DMR1954/s4",
+  "country": "IN",
+  "law_id": "DMR1954",
+  "law_title": "Drugs and Magic Remedies (Objectionable Advertisements) Act, 1954",
+  "law_status": "in_force",
+  "source_pdf": "india_drugs_magic_remedies_act_1954.pdf",
+  "page": 8,
+  "section": "Section 4",
+  "verbatim_text": "4.Prohibition of misleading advertisements relating to drugs.Subject to advertisementrelatingto a drugif the advertisementcontainsanymatterwhich, a) directly or directlygives a falseimpressionregarding the true character of the drug；or @ makesafalseclaimforthedrug;or （c)is otherwisefalse ormisleadingin anymaterial particular",
+  "summary": "No one may take part in publishing a drug advertisement that directly or indirectly gives a false impression of the drug's true character, makes a false claim for the drug, or is otherwise false or misleading in any material way.",
+  "targets": [
+   "fraud.deceptive_advertising",
+   "health.medicine_advertising",
+   "health.cure_claim"
+  ],
+  "exceptions": [
+   "s14: does not apply to an advertisement relating to a drug sent confidentially, in the prescribed manner, only to a registered medical practitioner",
+   "s14: does not apply to an advertisement relating to a drug printed or published with the previous sanction of the Government",
+   "s15: the Central Government may by notification exempt specified drugs or classes of drug advertisements from ss3-6 (e.g. Government-approved contraceptives; information-only leaflets and journal ads aimed at registered medical practitioners, if the claims are not false or misleading)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Under s7, a first conviction can bring imprisonment of up to six months, or a fine, or both. A later conviction can bring imprisonment of up to one year, or a fine, or both."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/DMR1954/s5",
+  "country": "IN",
+  "law_id": "DMR1954",
+  "law_title": "Drugs and Magic Remedies (Objectionable Advertisements) Act, 1954",
+  "law_status": "in_force",
+  "source_pdf": "india_drugs_magic_remedies_act_1954.pdf",
+  "page": 9,
+  "section": "Section 5",
+  "verbatim_text": "professionofadministeringmagicremediesshall takeanypartinthepublication claimstobeefficaciousfor anyof thepurposesspecified inSection3.",
+  "summary": "A person who practises, or claims to practise, administering magic remedies (talismans, mantras, kavachas or other charms) may not take part in publishing an advertisement claiming that such a remedy works for any purpose listed in Section 3, such as Schedule diseases, sexual capacity, menstrual disorders, miscarriage or preventing conception.",
+  "targets": [
+   "health.cure_claim",
+   "health.misinformation"
+  ],
+  "exceptions": [
+   "s14: does not apply to a treatise or book dealing with the s3 matters from a bona fide scientific or social standpoint",
+   "s15: the Central Government may by notification exempt specified drugs or classes of drug advertisements from ss3-6 (e.g. Government-approved contraceptives; information-only leaflets and journal ads aimed at registered medical practitioners, if the claims are not false or misleading)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Under s7, a first conviction can bring imprisonment of up to six months, or a fine, or both. A later conviction can bring imprisonment of up to one year, or a fine, or both."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/DMR1954/Sch",
+  "country": "IN",
+  "law_id": "DMR1954",
+  "law_title": "Drugs and Magic Remedies (Objectionable Advertisements) Act, 1954",
+  "law_status": "in_force",
+  "source_pdf": "india_drugs_magic_remedies_act_1954.pdf",
+  "page": 16,
+  "section": "The Schedule (see Sections 3(d) and 14)",
+  "verbatim_text": "THE SCHEDULE [SeeSections3(d)and14] Sl. Nameofthedisease,disorderorcondition No. 1. Appendicitis 2. Arteriosclerosis 3. Blindness 4. Blood poisoning 5. Bright'sdisease 6. Cancer 7. Cataract 8. Deafness 9. Diabetes 10. Diseases anddisordersofthebrain 11. Diseasesanddisordersoftheopticalsystem 12. Diseases and disordersof theuterus 13. Disordersofmenstrualflow 14. Disordersofthenervoussystem 15. Disordersoftheprostaticgland 16. Dropsy 17. Epilepsy 18. Female diseases (ingeneral) 19. Fevers (in general) 20. Fits",
+  "summary": "Under section 3(d), no one may advertise a drug for diagnosing, curing, mitigating, treating or preventing any of the 54 listed diseases or conditions, including cancer, diabetes, heart disease, high or low blood pressure, epilepsy, obesity, sexual impotence, height (stature), sterility in women, tuberculosis and venereal diseases.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "s14: does not apply to a treatise or book dealing with the s3 matters from a bona fide scientific or social standpoint",
+   "s14: does not apply to an advertisement relating to a drug sent confidentially, in the prescribed manner, only to a registered medical practitioner",
+   "s14: does not apply to an advertisement relating to a drug printed or published with the previous sanction of the Government",
+   "s15: the Central Government may by notification exempt specified drugs or classes of drug advertisements from ss3-6 (e.g. Government-approved contraceptives; information-only leaflets and journal ads aimed at registered medical practitioners, if the claims are not false or misleading)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Under s7, a first conviction can bring imprisonment of up to six months, or a fine, or both. A later conviction can bring imprisonment of up to one year, or a fine, or both."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ }
+]

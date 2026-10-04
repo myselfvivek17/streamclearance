@@ -236,6 +236,12 @@
    "category": "misinformation_public_order"
   },
   {
+   "id": "misinfo.synthetic_media",
+   "label": "Unlabelled synthetic media",
+   "description": "AI-generated or synthetically altered audio, video or images (deepfakes) presented as real or without a label.",
+   "category": "misinformation_public_order"
+  },
+  {
    "id": "national_security.state_threat",
    "label": "National security",
    "description": "Content threatening national security, defence or state secrets.",

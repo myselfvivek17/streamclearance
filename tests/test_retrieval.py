@@ -69,3 +69,25 @@ def test_cards_derive_from_provisions(real_provisions):
     assert all(len(c.quote) <= 300 and c.country == "MY" for c in cards)
     rep = pipeline.stage_b(pipeline.mock_inventory(60), "MY", cards, rules_status=status, mock=True)
     assert all(cid in ids for f in rep.findings for cid in f.rule_card_ids)
+
+
+def test_real_store_casino_and_diabetes_per_country(real_provisions):
+    my_casino = retrieval.lookup("MY", ["gambling.promotion"])
+    assert my_casino and {p.law_id for p in my_casino} <= {"CGHA1953", "BETTING1953"}
+    in_casino = retrieval.lookup("IN", ["gambling.promotion"])
+    assert {p.law_id for p in in_casino} >= {"PROGA2025"}
+    assert any(p.id in ("IN/PROGA2025/s6", "IN/PROGA2025/s9(2)") for p in in_casino)
+    in_cure = retrieval.lookup("IN", ["health.cure_claim"])
+    assert in_cure and in_cure[0].law_id == "DMR1954"
+    assert "diabetes" in " ".join(p.verbatim_text.lower() for p in in_cure)
+    for cc in ("MY", "IN"):  # no drug or medicine provision for gambling, and vice versa
+        assert not any(t.startswith(("drugs", "health")) for p in retrieval.lookup(cc, ["gambling.promotion"])
+                       for t in p.targets)
+        assert all(p.kind == "content" for p in retrieval.lookup(cc, ["gambling.promotion", "health.cure_claim"]))
+
+
+def test_obligations_ranked_specific_first(real_provisions):
+    duties = retrieval.obligations("MY", ["fraud.financial"])
+    assert duties and all(p.kind == "obligation" for p in duties)
+    assert len(duties[0].targets) <= len(duties[-1].targets)
+    assert retrieval.obligations("MY", ["health.cure_claim"]) == []

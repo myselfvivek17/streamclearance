@@ -1,0 +1,183 @@
+[
+ {
+  "id": "IN/PROGA2025/s2(1)(g)",
+  "country": "IN",
+  "law_id": "PROGA2025",
+  "law_title": "Promotion and Regulation of Online Gaming Act, 2025 (No. 32 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "india_online_gaming_act_2025.pdf",
+  "page": 3,
+  "section": "Section 2(1)(g)",
+  "verbatim_text": "(g) “online money game” means an online game, irrespective of whether such game is based on skill, chance, or both, played by a user by paying fees, depositing money or other stakes in expectation of winning which entails monetary and other enrichment in return of money or other stakes; but shall not include any e-sports;",
+  "summary": "Defines the content the Act bans: any online game, whether based on skill, chance or both, where users pay fees or deposit money or other stakes (including virtual coins, tokens or credits bought with money, s2(1)(j)) hoping to win money or other gains.",
+  "targets": [
+   "gambling.unlawful_game",
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "E-sports are excluded (s2(1)(c)). An e-sport is an organised competitive game recognised under the National Sports Governance Act, 2025 and registered with the Authority. Its outcome depends solely on skill. It may charge registration or participation fees and pay performance-based prize money, but it does not involve bets, wagers or stakes by anyone. The Government recognises and promotes e-sports (s3).",
+   "Online social games are not online money games (s2(1)(i)). They involve no staking of money or other stakes and no expectation of monetary gain. They may charge a subscription or one-time access fee as long as it is not a stake or wager, and they are offered solely for entertainment, recreation or skill development. The Government recognises and promotes them (s4)."
+  ],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "not specified",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/PROGA2025/s5",
+  "country": "IN",
+  "law_id": "PROGA2025",
+  "law_title": "Promotion and Regulation of Online Gaming Act, 2025 (No. 32 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "india_online_gaming_act_2025.pdf",
+  "page": 5,
+  "section": "Section 5",
+  "verbatim_text": "5. No person shall offer, aid, abet, induce or otherwise indulge or engage in the offering of online money game and online money gaming service.",
+  "summary": "No one may offer an online money game or online money gaming service, or aid, abet, induce or otherwise take part in offering one (for example, running or facilitating real-money gaming through a video or channel).",
+  "targets": [
+   "gambling.unlawful_game",
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "E-sports (no bets or stakes, outcome by skill, registered) are not online money games and are promoted under s3.",
+   "Online social games (no stakes, any access or subscription fee is not a wager, offered solely for entertainment, recreation or skill development) are not online money games and are promoted under s4."
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified",
+   "penalty": "Under s9(1): imprisonment up to 3 years, or a fine up to 1 crore rupees, or both. Under s9(4), a repeat offence carries 3 to 5 years' imprisonment and a fine of 1 crore to 2 crore rupees. Under s10, the offence is cognizable and non-bailable."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/PROGA2025/s6",
+  "country": "IN",
+  "law_id": "PROGA2025",
+  "law_title": "Promotion and Regulation of Online Gaming Act, 2025 (No. 32 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "india_online_gaming_act_2025.pdf",
+  "page": 5,
+  "section": "Section 6",
+  "verbatim_text": "6. No person shall make, cause to be made, aid, abet, induce, or otherwise be involved in the making or causing to be made any advertisement, in any media including electronic means of communication, which directly or indirectly promotes or induces any person to play any online money game or indulge in any activity promoting online money gaming.",
+  "summary": "No one may make, commission or be involved in an advertisement in any media, including online video, that directly or indirectly promotes online money games or induces people to play them. This covers influencer and creator promotions.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "Promoting e-sports (registered, skill-based, no bets or stakes) is not covered, because e-sports are excluded from online money games and the Government promotes them (s3).",
+   "Promoting online social games (no stakes, offered solely for entertainment, recreation or skill development) is not covered, because they are not online money games (s4)."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified",
+   "penalty": "Under s9(2): imprisonment up to 2 years, or a fine up to 50 lakh rupees, or both. Under s9(5), a repeat offence carries 2 to 3 years' imprisonment and a fine of 50 lakh to 1 crore rupees."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/PROGA2025/s14",
+  "country": "IN",
+  "law_id": "PROGA2025",
+  "law_title": "Promotion and Regulation of Online Gaming Act, 2025 (No. 32 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "india_online_gaming_act_2025.pdf",
+  "page": 7,
+  "section": "Section 14",
+  "verbatim_text": "14. In case of failure to comply with the provisions of section 5, section 6 and section 7, notwithstanding anything contained in this Act or in section 69A of the Information Technology Act, 2000, any information generated, transmitted, received or hosted in any computer resource in relation to online money gaming service shall be liable to be blocked for access by the public in such man ner as provided in that Act.",
+  "summary": "If sections 5, 6 or 7 are breached, any hosted or transmitted content relating to an online money gaming service, including its advertisements, can be blocked from public access under the blocking procedure of section 69A of the IT Act. Platforms hosting the content must carry out the blocking.",
+  "targets": [
+   "gambling.unlawful_game",
+   "gambling.promotion"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "IN/PROGA2025/s9(1)",
+  "country": "IN",
+  "law_id": "PROGA2025",
+  "law_title": "Promotion and Regulation of Online Gaming Act, 2025 (No. 32 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "india_online_gaming_act_2025.pdf",
+  "page": 6,
+  "section": "Section 9(1)",
+  "verbatim_text": "(1) Any person who offers online money gaming service in contravention of section 5 shall be punished with imprisonment for a term which may extend to three years or with fine which may extend to one crore rupees or with both.",
+  "summary": "Anyone in India who offers an online money gaming service, or helps or induces people to offer one, commits an offence that can be punished with prison, a fine or both.",
+  "targets": [
+   "gambling.unlawful_game",
+   "gambling.promotion"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "First offence: imprisonment up to 3 years, or fine up to Rs 1 crore, or both. Repeat conviction (s9(4)): imprisonment of not less than 3 years and up to 5 years, plus a fine of not less than Rs 1 crore and up to Rs 2 crore. Under s10, offences under s5 are cognizable and non-bailable."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/PROGA2025/s9(2)",
+  "country": "IN",
+  "law_id": "PROGA2025",
+  "law_title": "Promotion and Regulation of Online Gaming Act, 2025 (No. 32 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "india_online_gaming_act_2025.pdf",
+  "page": 6,
+  "section": "Section 9(2)",
+  "verbatim_text": "(2) Any person who makes or causes to make advertisement in any media, in contravention of section 6, shall be punished with imprisonment for a term which may extend to two years or with fine which may extend to fifty lakh rupees or with both.",
+  "summary": "Anyone, including a creator doing a paid or unpaid promotion, who makes or causes an advertisement in any media that directly or indirectly promotes or induces people to play online money games commits an offence.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "First offence: imprisonment up to 2 years, or fine up to Rs 50 lakh, or both. Repeat conviction (s9(5)): imprisonment of not less than 2 years and up to 3 years, plus a fine of not less than Rs 50 lakh and up to Rs 1 crore."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ }
+]

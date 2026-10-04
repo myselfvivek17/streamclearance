@@ -22,6 +22,9 @@ from app.schemas import Provision, ProvisionKind
 MAX_RESULTS = 10
 _STATUS_RANK = {"in_force": 0, "amended": 1, "guideline": 2, "bill": 3}
 _REVIEW_RANK = {"reviewed": 0, "draft": 1}
+# a rule binding the person who posts (creator/advertiser) is more on point than a
+# general list that also binds platforms ("both"), or a platform-only rule
+_DUTY_RANK = {"creator": 0, "advertiser": 0, "both": 1, "platform": 2}
 
 
 def rank_key(p: Provision) -> tuple[int, int]:
@@ -69,7 +72,9 @@ def lookup(country: str, leaves: list[str], *, cap: int = MAX_RESULTS,
     Exact leaf matches first, then provisions that target the leaf's parent
     (e.g. a law on all of "gambling"); a bare parent in `leaves` matches every
     provision under it. Within each tier: reviewed > draft, in_force > guideline
-    > bill. At most `cap` results, no duplicates.
+    > bill, then the most specific (fewest targets), then rules binding the
+    creator/advertiser before those also or only binding platforms. At most `cap`
+    results, no duplicates.
     """
     idx = _get_index()
     exact: list[Provision] = []
@@ -86,7 +91,7 @@ def lookup(country: str, leaves: list[str], *, cap: int = MAX_RESULTS,
     out: list[Provision] = []
     seen: set[str] = set()
     for tier in (exact, parent):
-        for p in sorted(tier, key=rank_key):
+        for p in sorted(tier, key=lambda p: (*rank_key(p), len(p.targets), _DUTY_RANK[p.duty_holder])):
             if p.kind == kind and p.id not in seen:
                 seen.add(p.id)
                 out.append(p)
