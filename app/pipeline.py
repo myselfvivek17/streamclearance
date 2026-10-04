@@ -452,7 +452,7 @@ async def run_translation(
     for (cc, lang), res in zip(tasks, results):
         if isinstance(res, BaseException):
             log.error("translation check failed for %s/%s: %r", cc, lang, res)
-            errors.append(f"translation {cc}/{lang}: {_public_error(res)}")
+            errors.append(f"translation {cc}/{lang}: {public_error(res)}")
             continue
         reports[cc].translation.extend(res)
     return errors
@@ -485,7 +485,7 @@ async def run_countries(
             except Exception as e:  # noqa: BLE001 - reported per country
                 log.exception("stage B failed for %s", cc)
                 if on_done:
-                    await on_done(cc, None, _public_error(e))
+                    await on_done(cc, None, public_error(e))
                 return e
             if on_done:
                 await on_done(cc, report, None)
@@ -495,7 +495,7 @@ async def run_countries(
     return dict(zip(countries, results))
 
 
-def _public_error(e: Exception) -> str:
+def public_error(e: Exception) -> str:
     """Error text safe to show users (never includes request details or keys)."""
     if isinstance(e, gemini.GeminiUnavailable):
         return str(e)

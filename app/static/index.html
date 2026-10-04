@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>StreamClearance</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <div id="mock-banner" class="banner" hidden>
+    <strong>MOCK MODE</strong> &mdash; no Gemini key is configured, so results below are canned examples, not a real analysis.
+  </div>
+
+  <header class="top">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">&#9654;</span>
+      <div>
+        <h1>StreamClearance</h1>
+        <p class="tag">Per-country takedown risk for short videos, cited to the law.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="col-video">
+      <div class="card" id="upload-card">
+        <h2><span class="step">1</span> Upload a video</h2>
+        <label id="dropzone" class="dropzone" tabindex="0">
+          <input id="file-input" type="file" accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm" hidden>
+          <span class="dz-main">Drop a video here or <u>choose a file</u></span>
+          <span class="dz-sub" id="dz-limits">MP4, MOV or WebM &middot; up to 200 MB &middot; 10 min</span>
+        </label>
+        <div id="upload-progress" class="progress" hidden><div class="bar"></div></div>
+        <p id="upload-msg" class="msg" role="status"></p>
+      </div>
+
+      <div class="card player-card" id="player-card" hidden>
+        <video id="player" controls playsinline preload="metadata"></video>
+        <p class="meta" id="video-meta"></p>
+      </div>
+    </section>
+
+    <section class="col-report">
+      <div class="card" id="countries-card">
+        <h2><span class="step">2</span> Pick target countries</h2>
+        <div id="country-list" class="country-list"></div>
+        <button id="analyze-btn" class="btn primary" disabled>Analyze</button>
+        <p id="analyze-msg" class="msg" role="status"></p>
+      </div>
+
+      <div class="card" id="progress-card" hidden>
+        <h2><span class="step">3</span> Progress</h2>
+        <ol id="stages" class="stages"></ol>
+      </div>
+
+      <div id="report" hidden>
+        <div class="report-head">
+          <h2>Report</h2>
+          <button id="download-btn" class="btn">Download JSON</button>
+        </div>
+        <div id="summary" class="summary"></div>
+        <p id="report-errors" class="msg error" hidden></p>
+        <div id="country-reports"></div>
+        <p class="disclaimer" id="disclaimer"></p>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="access-dialog">
+    <form method="dialog" id="access-form">
+      <h2>Access code</h2>
+      <p>This demo is protected. Enter the access code you were given.</p>
+      <input id="access-input" type="password" autocomplete="current-password" required>
+      <div class="dialog-actions"><button class="btn primary" value="ok">Continue</button></div>
+    </form>
+  </dialog>
+
+  <script src="/app.js"></script>
+</body>
+</html>

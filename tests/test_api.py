@@ -1,0 +1,119 @@
+import re
+import time
+
+import pytest
+from fastapi.testclient import TestClient
+
+from app import config
+from app.main import app
+from app.schemas import Report
+
+
+def _upload(client, path, **headers):
+    with open(path, "rb") as fh:
+        return client.post("/api/upload", files={"file": ("clip.mp4", fh, "video/mp4")},
+                           headers=headers)
+
+
+def _wait(client, job_id, timeout=20, **kw):
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        job = client.get(f"/api/jobs/{job_id}", **kw).json()
+        if job["status"] in ("done", "error"):
+            return job
+        time.sleep(0.05)
+    raise AssertionError("job did not finish")
+
+
+def test_countries_and_pdf():
+    with TestClient(app) as client:
+        cs = client.get("/api/countries").json()
+        assert [c["code"] for c in cs] == list(config.COUNTRIES)
+        sg = next(c for c in cs if c["code"] == "SG")
+        assert "Bill as introduced" in sg["label"]
+        assert all(c["rules_status"] == "draft/unreviewed" for c in cs)
+        pdf = client.get(cs[0]["pdf_url"])
+        assert pdf.status_code == 200 and pdf.content[:4] == b"%PDF"
+        assert pdf.headers["content-type"] == "application/pdf"
+        assert pdf.headers["content-disposition"].startswith("inline")
+        assert client.get("/api/laws/XX/pdf").status_code == 404
+        assert client.get("/api/status").json()["mock"] is True
+
+
+def test_job_lifecycle_end_to_end(tiny_video):
+    path, real = tiny_video
+    with TestClient(app) as client:
+        video_id = _upload(client, path).json()["video_id"]
+        r = client.post("/api/analyze", json={"video_id": video_id, "countries": ["pk", "AU", "SG", "PK"]})
+        assert r.status_code == 200, r.text
+        job = _wait(client, r.json()["job_id"])
+        assert job["status"] == "done", job
+        assert job["mock"] is True and job["countries"] == ["PK", "AU", "SG"]
+        keys = [s["key"] for s in job["stages"]]
+        assert keys == ["uploaded", "inventory", "country:PK", "country:AU", "country:SG",
+                        "translation", "done"]
+        assert all(s["status"] == "done" for s in job["stages"])
+
+        report = Report.model_validate(job["report"])
+        assert report.mock and report.video_id == video_id and not report.errors
+        if real:
+            assert report.duration_s == pytest.approx(2.0, abs=0.3)
+        assert [c.country for c in report.countries] == ["PK", "AU", "SG"]
+        for c in report.countries:
+            assert all(f.end_s <= report.duration_s for f in c.findings)
+            assert all(cid.startswith(c.country) for f in c.findings for cid in f.rule_card_ids)
+            assert c.rules_status == "draft/unreviewed" and "Advisory only" in c.disclaimer
+        drifts = [d.drift for c in report.countries for d in c.translation]
+        assert drifts.count("increased") == 1
+        assert not next(c for c in report.countries if c.country == "AU").translation
+
+
+def test_analyze_validation(tiny_video):
+    with TestClient(app) as client:
+        video_id = _upload(client, tiny_video[0]).json()["video_id"]
+        assert client.post("/api/analyze", json={"video_id": video_id, "countries": []}).status_code == 422
+        assert client.post("/api/analyze", json={"video_id": video_id, "countries": ["US"]}).status_code == 400
+        assert client.post("/api/analyze", json={"video_id": "f" * 32, "countries": ["IN"]}).status_code == 404
+        assert client.get("/api/jobs/" + "a" * 32).status_code == 404
+        assert client.get("/api/jobs/../../etc").status_code == 404
+
+
+def test_job_error_is_reported(tiny_video, monkeypatch):
+    from app import pipeline
+
+    def boom(*a, **kw):
+        raise RuntimeError("inventory exploded")
+
+    monkeypatch.setattr(pipeline, "stage_a", boom)
+    with TestClient(app) as client:
+        video_id = _upload(client, tiny_video[0]).json()["video_id"]
+        job_id = client.post("/api/analyze", json={"video_id": video_id, "countries": ["IN"]}).json()["job_id"]
+        job = _wait(client, job_id)
+        assert job["status"] == "error" and "inventory exploded" in job["error"]
+        assert next(s for s in job["stages"] if s["key"] == "inventory")["status"] == "error"
+
+
+def test_access_code_enforced(tiny_video, monkeypatch):
+    monkeypatch.setenv("SC_ACCESS_CODE", "letmein")
+    with TestClient(app) as client:
+        for path in ["/api/countries", "/api/status", "/api/jobs/" + "a" * 32,
+                     "/api/videos/" + "a" * 32, "/api/laws/IN/pdf"]:
+            assert client.get(path).status_code == 401, path
+        assert client.get("/api/countries", headers={"X-Access-Code": "wrong"}).status_code == 401
+        assert _upload(client, tiny_video[0]).status_code == 401
+        assert client.get("/api/countries", headers={"X-Access-Code": "letmein"}).status_code == 200
+        client.cookies.set("sc_access", "letmein")
+        assert client.get("/api/countries").status_code == 200
+        assert _upload(client, tiny_video[0]).status_code == 200
+        # static UI stays reachable so the user can enter the code
+        client.cookies.clear()
+        assert client.get("/").status_code == 200
+
+
+def test_static_ui_served():
+    with TestClient(app) as client:
+        html = client.get("/").text
+        assert "StreamClearance" in html and "/app.js" in html
+        js = client.get("/app.js").text
+        # model text is only ever inserted as text, never parsed as HTML
+        assert not re.search(r"(inner|outer)HTML\s*=|insertAdjacentHTML|document\.write", js)
