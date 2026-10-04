@@ -216,9 +216,17 @@ def mock_generate_factory(pages: dict[int, str]) -> Generate:
             section="(mock)", applies_to="platform",
             platform_duty="(mock) remove on notice", penalty="(mock) not specified",
         )
-        return [
-            dict(common, page=page, category="other",
-                 conduct="(mock) real quote from page", quote=quote),
+        # one real-quote card per category the mock inventory uses, so mock findings
+        # can cite a card of the matching category (validate_findings requires it)
+        mock_cats = ["other", "religious_offence", "misinformation_public_order",
+                     "illegal_goods_or_gambling"]
+        real = []
+        for i, cat in enumerate(mock_cats):
+            start = mid + i * 20
+            q = " ".join(words[start: start + 20])[:QUOTE_MAX] or quote
+            real.append(dict(common, page=page, category=cat,
+                             conduct=f"(mock) real quote from page [{cat}]", quote=q))
+        return real + [
             dict(common, page=page, category="hate_or_incitement",
                  conduct="(mock) invented quote, must be rejected",
                  quote="Creators shall be imprisoned for any video that offends anyone."),

@@ -103,6 +103,11 @@ class DriftCheck(_Timed):
     explanation: str
 
 
+class Uncovered(_Timed):
+    """A sensitive moment (per stage A) that no provision of this country's law covers."""
+    category: Category
+
+
 class CountryReport(BaseModel):
     country: CountryCode
     law: str
@@ -113,6 +118,7 @@ class CountryReport(BaseModel):
     risk_framing: str = ""
     cited_cards: list[RuleCard] = []
     dropped_findings: int = 0
+    uncovered: list[Uncovered] = []
     translation: list[DriftCheck] = []
     disclaimer: str = DISCLAIMER
 

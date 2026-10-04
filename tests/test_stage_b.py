@@ -50,7 +50,9 @@ def test_real_stage_b_drops_invented_and_foreign_ids(monkeypatch):
         seen["prompt"] = prompt
         return [
             dict(base, start_s=1, end_s=3, rule_card_ids=["PK-001"], risk="amber"),
-            dict(base, start_s=4, end_s=6, rule_card_ids=["PK-002"], risk="red"),
+            dict(base, start_s=4, end_s=6, rule_card_ids=["PK-002"], risk="red",
+                 category="violence_or_gore"),
+            dict(base, start_s=4, end_s=6, rule_card_ids=["PK-002"], risk="red"),  # category mismatch
             dict(base, start_s=1, end_s=3, rule_card_ids=["PK-777"], risk="red"),   # invented
             dict(base, start_s=1, end_s=3, rule_card_ids=["IN-001"], risk="red"),   # other country
             dict(base, start_s=50, end_s=70, rule_card_ids=["PK-001"], risk="red"),  # past end
@@ -63,7 +65,7 @@ def test_real_stage_b_drops_invented_and_foreign_ids(monkeypatch):
     rep = pipeline.stage_b(pipeline.mock_inventory(20), "PK", cards, mock=False)
     assert "PK-001" in seen["prompt"] and "fasting" in seen["prompt"]
     assert [f.rule_card_ids for f in rep.findings] == [["PK-001"], ["PK-002"]]
-    assert rep.overall_risk == "red" and rep.dropped_findings == 6
+    assert rep.overall_risk == "red" and rep.dropped_findings == 7
     assert [f.creator_liability for f in rep.findings] == [False, True]
     assert "applies to the person who posts" in rep.risk_framing
 

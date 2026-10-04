@@ -278,6 +278,14 @@ function renderCountry(c) {
     el("p", { class: "cr-law" }, c.law, c.label ? el("span", { class: "note" }, ` · ${c.label}`) : null),
     el("p", { class: "framing" }, c.risk_framing),
     findings,
+    (c.uncovered || []).length
+      ? el("div", { class: "uncovered" },
+          el("p", { class: "k" }, "Not covered by this law (check other local laws):"),
+          el("ul", {}, c.uncovered.map((u) => el("li", {},
+            el("button", { class: "chip", type: "button", onclick: () => seek(u.start_s),
+              title: "Jump to this moment" }, `▶ ${fmtTime(u.start_s)}–${fmtTime(u.end_s)}`),
+            ` ${CATEGORY_LABEL(u.category)}`))))
+      : null,
     c.dropped_findings
       ? el("p", { class: "empty" }, `${c.dropped_findings} model suggestion(s) were dropped by the citation validator.`)
       : null,

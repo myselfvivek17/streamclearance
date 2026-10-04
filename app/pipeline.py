@@ -26,7 +26,7 @@ from pydantic import BaseModel, ValidationError
 from app import config, gemini
 from app.schemas import (
     RISK_ORDER, Category, CountryReport, Drift, DriftCheck, Finding, Inventory, Risk, RuleCard,
-    RulesStatus, Segment,
+    RulesStatus, Segment, Uncovered,
 )
 from app.validate import validate_findings
 
@@ -182,7 +182,14 @@ rule cards and report which moments risk being taken down or geo-blocked there.
 
 Rules:
 - Cite ONLY rule card ids from the list you are given (field "id"). Never invent ids, \
-sections or laws. If no card fits a moment, do not flag it.
+sections or laws.
+- A card fits only if its `conduct` text actually describes this kind of content. Sharing \
+a broad category is NOT enough (e.g. a card about dangerous drugs does not cover a casino \
+promotion; a card about hostility between groups does not cover a false health claim). \
+If no card fits a moment, do NOT flag it: the report lists it separately as "not covered \
+by this law". Never stretch a card to make something fit.
+- The finding's `category` must equal the `category` of at least one cited card. Cards \
+with category "other" (general procedures) may be cited in addition, never alone.
 - A finding covers one moment (start_s/end_s inside the video, taken from the \
 inventory) and one category; rule_card_ids lists every card it relies on.
 - risk: "red" = content clearly falls in a category the cited card targets (likely \
@@ -230,6 +237,7 @@ def stage_b(
         for f in sorted(findings, key=lambda f: (f.start_s, -RISK_ORDER[f.risk]))
     ]
     cited = sorted({cid for f in findings for cid in f.rule_card_ids})
+    uncovered = _uncovered(inventory, findings)
     return CountryReport(
         country=country,
         law=law.law,
@@ -240,7 +248,26 @@ def stage_b(
         risk_framing=_risk_framing(findings),
         cited_cards=[by_id[cid] for cid in cited],
         dropped_findings=len(raw) - len(findings),
+        uncovered=uncovered,
     )
+
+
+def _uncovered(inventory: Inventory, findings: list[Finding]) -> list[Uncovered]:
+    """Moments stage A tagged as sensitive that no finding covers in this country.
+
+    Shown as "not covered by this law" so the report never implies a moment is
+    safe just because this country's statute has no matching provision.
+    """
+    out: list[Uncovered] = []
+    for seg in inventory.segments:
+        for cat in seg.categories:
+            if cat == Category.other:
+                continue
+            hit = any(f.category == cat and f.start_s < seg.end_s and seg.start_s < f.end_s
+                      for f in findings)
+            if not hit:
+                out.append(Uncovered(start_s=seg.start_s, end_s=seg.end_s, category=cat))
+    return out
 
 
 def _risk_framing(findings: list[Finding]) -> str:
@@ -292,7 +319,9 @@ def _mock_findings(inventory: Inventory, country: str, cards: list[RuleCard]) ->
             risk = _MOCK_RISK.get(cat, {}).get(country, "amber")
             if risk == "green":
                 continue
-            card = next((c for c in cards if c.category == cat), cards[0])
+            card = next((c for c in cards if c.category == cat), None)
+            if card is None:
+                continue
             out.append(dict(
                 start_s=seg.start_s, end_s=seg.end_s, category=cat.value,
                 rule_card_ids=[card.id], risk=risk,
