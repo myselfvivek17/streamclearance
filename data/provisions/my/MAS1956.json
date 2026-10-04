@@ -1,0 +1,156 @@
+[
+ {
+  "id": "MY/MAS1956/s3(1)",
+  "country": "MY",
+  "law_id": "MAS1956",
+  "law_title": "Medicines (Advertisement and Sale) Act 1956 (Act 290)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_medicines_advertisement_sale_act_1956.pdf",
+  "page": 3,
+  "section": "Section 3(1)",
+  "verbatim_text": "no person shall take any part in the publication of any advertisement referring to any article, or articles of any description, in terms which are calculated to lead to the use of that article or articles of that description as a medicine, an appliance or a remedy for the purpose of— (a) prevention or treatment of the diseases and conditions of human beings as specified in the Schedule; (b) practising contraception among human beings; (c) improving the condition or functioning of the human kidney or heart, or improving the sexual function or sexual performance of human beings",
+  "summary": "Anyone who takes part in publishing an advertisement must not promote a product, appliance or remedy for contraception, for kidney or heart function, for sexual function or performance, or for preventing, treating or diagnosing the diseases listed in the Act's Schedule.",
+  "targets": [
+   "health.medicine_advertising",
+   "health.cure_claim"
+  ],
+  "exceptions": [
+   "Does not apply to advertisements published by the Federal or a State Government, a local or public authority, the governing body of a public hospital, or a person the Minister has authorised (s3(1) proviso)",
+   "Defence if the advertisement was published only as far as reasonably necessary to reach members of local or public authorities, public hospital governing bodies, registered medical practitioners, dentists, nurses, midwives, pharmacists, licensed poison sellers, or people training for these professions (s3(2))",
+   "Defence if the accused did not know and had no reason to believe they were taking part in the publication (s5(3)(a))",
+   "Defence if the advertisement appeared only in a technical publication meant mainly for registered medical, dental, nursing or pharmacy professionals or their trainees (s5(3)(b))"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Under s5(1) (page 5), on summary conviction: first conviction, a fine of up to RM3,000, up to 1 year in prison, or both; subsequent conviction, a fine of up to RM5,000, up to 2 years in prison, or both"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MAS1956/s4",
+  "country": "MY",
+  "law_id": "MAS1956",
+  "law_title": "Medicines (Advertisement and Sale) Act 1956 (Act 290)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_medicines_advertisement_sale_act_1956.pdf",
+  "page": 4,
+  "section": "Section 4",
+  "verbatim_text": "Subject to this Act, no person shall take any part in the publication of any advertisement referring to any article, or articles of any description, in terms which calculated to lead to the use of that article or articles of that description for procuring the miscarriage of women.",
+  "summary": "Anyone who takes part in publishing an advertisement must not promote any product for causing a miscarriage (abortion).",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Defence if the accused did not know and had no reason to believe they were taking part in the publication (s5(3)(a))",
+   "Defence if the advertisement appeared only in a technical publication meant mainly for registered medical, dental, nursing or pharmacy professionals or their trainees (s5(3)(b))"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Under s5(1) (page 5), on summary conviction: first conviction, a fine of up to RM3,000, up to 1 year in prison, or both; subsequent conviction, a fine of up to RM5,000, up to 2 years in prison, or both"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MAS1956/s4A",
+  "country": "MY",
+  "law_id": "MAS1956",
+  "law_title": "Medicines (Advertisement and Sale) Act 1956 (Act 290)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_medicines_advertisement_sale_act_1956.pdf",
+  "page": 4,
+  "section": "Section 4A",
+  "verbatim_text": "no person shall take part in the publication of any advertisment— (a) which refers to any skill or service relating to the treatment, prevention or diagnosis of any ailment, disease, injury, infirmity or condition affecting the human body; and (b) which is capable of inducing, or which contains an invitation, whether express or implied, to, any person to seek advice of the advertiser or any person referred to in the advertisement in connection with such skill or service:",
+  "summary": "Anyone who takes part in publishing an advertisement must not promote a skill or service for treating, preventing or diagnosing a health condition if the ad invites or encourages people to consult the advertiser or someone named in it.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Does not apply to advertisements published with the Minister's approval by a professional body for the medical or an allied profession that is established or registered under written law",
+   "Does not apply to advertisements published with the Medicine Advertisements Board's approval by a private hospital, or by a private clinic, private radiological clinic or private medical laboratory run by a registered medical practitioner with a valid annual practising certificate",
+   "Defence if the accused did not know and had no reason to believe they were taking part in the publication (s5(4))"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Under s5(1) (page 5), on summary conviction: first conviction, a fine of up to RM3,000, up to 1 year in prison, or both; subsequent conviction, a fine of up to RM5,000, up to 2 years in prison, or both"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MAS1956/s4B(1)",
+  "country": "MY",
+  "law_id": "MAS1956",
+  "law_title": "Medicines (Advertisement and Sale) Act 1956 (Act 290)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_medicines_advertisement_sale_act_1956.pdf",
+  "page": 5,
+  "section": "Section 4B(1)",
+  "verbatim_text": "(1) No person shall take any part in the publication of any advertisement referring to any article, or articles of any description, in terms which are calculated to lead to the use of that article of that description as a medicine, an appliance or a remedy for the purpose of treatment or prevention of diseases or conditions of human beings other than the diseases and conditions specified in subsection 3(1), unless such advertisement has been approved by the Medi cine Advertisements Board.",
+  "summary": "Anyone who takes part in publishing an advertisement must not promote a product, appliance or remedy for treating or preventing any other human disease or condition unless the Medicine Advertisements Board has approved the advertisement.",
+  "targets": [
+   "health.medicine_advertising",
+   "health.cure_claim"
+  ],
+  "exceptions": [
+   "Allowed if the Medicine Advertisements Board has approved the advertisement",
+   "Defence if the accused did not know and had no reason to believe they were taking part in the publication (s5(3)(a))",
+   "Defence if the advertisement appeared only in a technical publication meant mainly for registered medical, dental, nursing or pharmacy professionals or their trainees (s5(3)(b))"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Under s5(1) (same page), on summary conviction: first conviction, a fine of up to RM3,000, up to 1 year in prison, or both; subsequent conviction, a fine of up to RM5,000, up to 2 years in prison, or both"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ },
+ {
+  "id": "MY/MAS1956/Sch",
+  "country": "MY",
+  "law_id": "MAS1956",
+  "law_title": "Medicines (Advertisement and Sale) Act 1956 (Act 290)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_medicines_advertisement_sale_act_1956.pdf",
+  "page": 11,
+  "section": "Schedule [Section 3]",
+  "verbatim_text": "SCHEDULE [Section 3] 1. Diseases or defects of the kidney. 2. Diseases or defects of the heart. 3. Diabetes 4. Epilepsy or fits. 5. Paralysis. 6. Tuberculosis. 7. Asthma. 8. Leprosy. 9. Cancer. 10. Deafness. 11. Drug addiction. 12. Hernia or rupture. 13. Diseases of the eye. 14. Hypertension. 15. Mental disorder. 16. Infertility. 17. Frigidity 18. Impairment of sexual function or impotency. 19. Venereal disease. 20. Nervous debility, or other complaint or infirmity, arising from or relating to sexual intercourse.",
+  "summary": "Lists the diseases and conditions covered by Section 3. Advertisements, including a creator's paid promotions, that offer medicines, remedies or treatments to prevent or cure any of them, such as diabetes, cancer, hypertension, asthma, infertility or impotence, may break the Act.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  }
+ }
+]

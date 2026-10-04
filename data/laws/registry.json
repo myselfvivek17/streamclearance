@@ -1,0 +1,18 @@
+[
+ {"id": "OSA2025", "country": "MY", "title": "Online Safety Act 2025 (Act 866)", "status": "in_force",
+  "pdf": "malaysia_online_safety_act_2025.pdf", "text": "malaysia_online_safety_act_2025.json", "label": null},
+ {"id": "MAS1956", "country": "MY", "title": "Medicines (Advertisement and Sale) Act 1956 (Act 290)", "status": "in_force",
+  "pdf": "malaysia_medicines_advertisement_sale_act_1956.pdf", "text": "malaysia_medicines_advertisement_sale_act_1956.json", "label": null},
+ {"id": "MOHADV", "country": "MY", "title": "MOH Guideline: Advertising of Medicines and Medicinal Products to General Public", "status": "guideline",
+  "pdf": "malaysia_moh_medicine_advertising_guideline.pdf", "text": "malaysia_moh_medicine_advertising_guideline.json",
+  "label": "Ministry of Health guideline, not an Act: shows how the Medicines Act is applied"},
+ {"id": "ITRULES2021", "country": "IN", "title": "Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 (as updated 10.02.2026)", "status": "in_force",
+  "pdf": "india_it_rules_2021_feb2026.pdf", "text": "india_it_rules_2021_feb2026.json", "label": null},
+ {"id": "OSA2021", "country": "AU", "title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)", "status": "in_force",
+  "pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf", "text": "australia_online_safety_act_2021_comp2024-12-11.json", "label": null},
+ {"id": "OSRA2025", "country": "SG", "title": "Online Safety (Relief and Accountability) Bill 2025", "status": "bill",
+  "pdf": "singapore_online_safety_bill_2025.pdf", "text": "singapore_online_safety_bill_2025.json",
+  "label": "Bill as introduced 2025 — verify enacted Act"},
+ {"id": "PECA2025", "country": "PK", "title": "Prevention of Electronic Crimes (Amendment) Act, 2025", "status": "in_force",
+  "pdf": "pakistan_peca_amendment_2025.pdf", "text": "pakistan_peca_amendment_2025.json", "label": null}
+]

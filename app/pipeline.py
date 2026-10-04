@@ -21,9 +21,9 @@ import threading
 from collections.abc import Awaitable, Callable
 from pathlib import Path
 
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 
-from app import config, gemini
+from app import config, gemini, taxonomy
 from app.schemas import (
     RISK_ORDER, Category, CountryReport, Drift, DriftCheck, Finding, Inventory, Risk, RuleCard,
     RulesStatus, Segment, Uncovered,
@@ -37,10 +37,22 @@ MOCK_UNKNOWN_DURATION_S = 60.0
 
 # ================================================================ stage A
 
+class SegmentDraft(BaseModel):
+    """One segment as the model returns it; legacy categories are derived from leaves."""
+    start_s: float = Field(ge=0)
+    end_s: float = Field(ge=0)
+    transcript: str = ""
+    language: str = ""
+    claims: list[str] = []
+    visuals: str = ""
+    on_screen_text: str = ""
+    leaves: list[str] = []
+
+
 class StageADraft(BaseModel):
     """What Gemini returns for stage A; duration comes from ffprobe, not the model."""
     languages: list[str] = []
-    segments: list[Segment] = []
+    segments: list[SegmentDraft] = []
 
 
 STAGE_A_SYSTEM = f"""You build a factual, timestamped inventory of a short video for a \
@@ -54,10 +66,13 @@ Split the video into consecutive segments of roughly 3-15 seconds at natural bre
 - claims: factual or health/financial claims made, one per item
 - visuals: what is shown (people, actions, symbols, products, logos, flags, weapons, etc.)
 - on_screen_text: captions, overlays or signs, verbatim
-- categories: zero or more of the fixed list below that the segment might plausibly touch. \
-Leave empty for clearly neutral segments. Use "other" only when nothing else fits.
+- leaves: zero or more ids from the content taxonomy below that the segment might \
+plausibly touch, most specific first (e.g. a casino promo code is "gambling.promotion", \
+not "drugs.promotion"; "this drink cures diabetes" is "health.cure_claim"). Use the ids \
+exactly as written. Leave empty for clearly neutral segments.
 
-Categories: {", ".join(c.value for c in Category)}"""
+Content taxonomy:
+{taxonomy.prompt_list()}"""
 
 
 def stage_a(video_path: Path, duration_s: float | None = None, *, mock: bool | None = None) -> Inventory:
@@ -76,7 +91,15 @@ def stage_a(video_path: Path, duration_s: float | None = None, *, mock: bool | N
         system_instruction=STAGE_A_SYSTEM,
     )
     draft = StageADraft.model_validate(raw)
-    segments = sorted(draft.segments, key=lambda s: s.start_s)
+    segments = []
+    for d in sorted(draft.segments, key=lambda s: s.start_s):
+        unknown = [x for x in d.leaves if not taxonomy.is_leaf(str(x).strip().lower())]
+        if unknown:
+            log.warning("stage A: ignoring unknown taxonomy ids %s", unknown)
+        try:
+            segments.append(Segment.model_validate(d.model_dump()))
+        except ValidationError as e:
+            log.warning("stage A: dropping malformed segment: %s", e.errors()[0]["msg"])
     if duration_s is None:
         duration_s = max((s.end_s for s in segments), default=0.0)
     kept = []
@@ -94,24 +117,24 @@ def stage_a(video_path: Path, duration_s: float | None = None, *, mock: bool | N
 _MOCK_SEGMENTS = [
     dict(transcript="Hey everyone, welcome back! Today I'm unboxing the new festival snack box.",
          visuals="Creator at a kitchen table holding a colourful snack box.",
-         on_screen_text="FESTIVAL SNACK BOX UNBOXING", claims=[], categories=[]),
+         on_screen_text="FESTIVAL SNACK BOX UNBOXING", claims=[], leaves=[]),
     dict(transcript="Honestly, fasting this month is pointless. Just eat the snacks, God won't mind.",
          visuals="Creator laughing, waving a pastry in front of a religious festival poster.",
          on_screen_text="", claims=["Religious fasting is pointless"],
-         categories=[Category.religious_offence]),
+         leaves=["religion.insult"]),
     dict(transcript="And these snacks cure diabetes. Doctors don't want you to know this.",
          visuals="Close-up of a snack label; creator points at it.",
          on_screen_text="CURES DIABETES?!", claims=["The snacks cure diabetes"],
-         categories=[Category.misinformation_public_order]),
+         leaves=["health.cure_claim"]),
     dict(transcript="Use my code at LuckySpin Casino for a hundred free bets tonight.",
          visuals="Phone screen showing an online casino slot game.",
          on_screen_text="LUCKYSPIN.BET  CODE: SNACK100", claims=["100 free bets with code"],
-         categories=[Category.illegal_goods_or_gambling]),
+         leaves=["gambling.promotion"]),
     dict(transcript="This deal is a killer, it's basically a crime not to grab it.",
          visuals="Creator holding the box up to the camera, smiling.",
-         on_screen_text="LINK IN BIO", claims=[], categories=[]),
+         on_screen_text="LINK IN BIO", claims=[], leaves=[]),
     dict(transcript="Like and subscribe, see you next week!",
-         visuals="End card with channel logo.", on_screen_text="SUBSCRIBE", claims=[], categories=[]),
+         visuals="End card with channel logo.", on_screen_text="SUBSCRIBE", claims=[], leaves=[]),
 ]
 
 

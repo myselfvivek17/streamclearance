@@ -7,3 +7,4 @@ uploads/
 data/rules/*.dryrun.json
 jobs/
 .pytest_cache/
+data/provisions/**/*.dryrun.json
