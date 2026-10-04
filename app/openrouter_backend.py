@@ -81,8 +81,11 @@ class BadJSON(ValueError):
 
 # ---------------------------------------------------------------- config
 
+FREE_ROUTER = "openrouter/free"  # OpenRouter's $0 router: picks a random free model; text+image only
+
+
 def _require_free(model: str) -> str:
-    if not model.endswith(":free"):
+    if model != FREE_ROUTER and not model.endswith(":free"):
         raise PaidModelRefused(f"refusing non-free OpenRouter model {model!r} (ids must end in ':free')")
     return model
 
@@ -344,6 +347,14 @@ def generate_json_with_video(video_path: Path, mime_type: str, prompt: str, resp
             speech = ("\n\nSpeech transcript from a separate speech-to-text pass (use it for "
                       "the transcript fields, matching timestamps):\n" + (transcript or "(no speech)"))
         text = prompt + speech
+
+        if models()[0] == FREE_ROUTER:
+            # the free router accepts no video: go straight to frames
+            out = _frames_fallback(video_path, tmpdir, text, system_instruction, response_schema,
+                                   temperature)
+            if isinstance(out, dict):
+                out = {**out, "speech_transcribed": transcript is not None}
+            return out
 
         b64 = base64.b64encode(small.read_bytes()).decode()
         parts = [{"type": "video_url", "video_url": {"url": f"data:{mime};base64,{b64}"}},
