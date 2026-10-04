@@ -18,7 +18,7 @@ from collections.abc import Awaitable, Callable
 from pathlib import Path
 from typing import Any
 
-from app import config, pipeline, provisions, taxonomy
+from app import config, pipeline, provisions, retrieval, taxonomy
 from app.brain import agents, verifier
 from app.brain.agents import MomentAssessment
 from app.schemas import (
@@ -26,6 +26,8 @@ from app.schemas import (
 )
 
 log = logging.getLogger(__name__)
+
+MAX_OBLIGATIONS = 8  # per country report, most relevant first
 
 StageHook = Callable[[str, str, str], Awaitable[None]]  # (stage key, status, detail)
 
@@ -45,19 +47,27 @@ def build_report(country: str, inventory: Inventory, kept: list[MomentAssessment
                  critic_changes: int, notes: list[str]) -> CountryReport:
     by_id = provisions.by_id(country)
     findings: list[Finding] = []
-    for a in kept:
+    duties: dict[str, Provision] = {}
+    for a in sorted(kept, key=lambda a: -RISK_ORDER[a.risk]):
         if a.risk == "green":
             continue
         cited = [by_id[pid] for pid in a.covered_by]
+        obligations = retrieval.obligations(country, [a.leaf])
+        for p in obligations:
+            duties.setdefault(p.id, p)
         findings.append(Finding(
             start_s=a.start_s, end_s=a.end_s, category=taxonomy.category_of(a.leaf),
             rule_card_ids=a.covered_by, risk=a.risk, suggested_fix=a.suggested_fix,
             rationale=a.rationale, leaf=a.leaf,
             creator_liability=any(p.duty_holder in ("creator", "advertiser", "both") for p in cited),
             exception_applies=a.exception_applies, exception_reason=a.exception_reason,
-            critic_note=a.critic_note,
+            critic_note=a.critic_note, obligation_ids=[p.id for p in obligations],
         ))
     findings.sort(key=lambda f: (f.start_s, -RISK_ORDER[f.risk]))
+    platform_duties = list(duties.values())[:MAX_OBLIGATIONS]
+    shown = {p.id for p in platform_duties}
+    for f in findings:
+        f.obligation_ids = [pid for pid in f.obligation_ids if pid in shown]
 
     assessed = {(a.start_s, a.leaf) for a in kept}  # covered (incl. green) moments
     why = {(a.start_s, a.leaf): a.rationale for a in v.not_covered}
@@ -88,6 +98,7 @@ def build_report(country: str, inventory: Inventory, kept: list[MomentAssessment
         brain="adk",
         laws=laws,
         cited_provisions=cited,
+        platform_obligations=platform_duties,
         critic_changes=critic_changes,
         notes=notes,
     )

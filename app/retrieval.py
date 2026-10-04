@@ -17,7 +17,7 @@ import threading
 from collections import Counter
 
 from app import config, provisions, taxonomy
-from app.schemas import Provision
+from app.schemas import Provision, ProvisionKind
 
 MAX_RESULTS = 10
 _STATUS_RANK = {"in_force": 0, "amended": 1, "guideline": 2, "bill": 3}
@@ -52,14 +52,19 @@ def _get_index() -> dict[tuple[str, str], list[Provision]]:
         return _index
 
 
+def _content_only(provs: list[Provision]) -> list[Provision]:
+    return [p for p in provs if p.kind == "content"]
+
+
 def reset() -> None:
     global _index, _bm25
     with _lock:
         _index, _bm25 = None, {}
 
 
-def lookup(country: str, leaves: list[str], *, cap: int = MAX_RESULTS) -> list[Provision]:
-    """Provisions of `country` targeting any of `leaves`.
+def lookup(country: str, leaves: list[str], *, cap: int = MAX_RESULTS,
+           kind: ProvisionKind = "content") -> list[Provision]:
+    """Provisions of `country` (of `kind`) targeting any of `leaves`.
 
     Exact leaf matches first, then provisions that target the leaf's parent
     (e.g. a law on all of "gambling"); a bare parent in `leaves` matches every
@@ -82,10 +87,26 @@ def lookup(country: str, leaves: list[str], *, cap: int = MAX_RESULTS) -> list[P
     seen: set[str] = set()
     for tier in (exact, parent):
         for p in sorted(tier, key=rank_key):
-            if p.id not in seen:
+            if p.kind == kind and p.id not in seen:
                 seen.add(p.id)
                 out.append(p)
     return out[:cap]
+
+
+def obligations(country: str, leaves: list[str], *, cap: int = 6) -> list[Provision]:
+    """Platform-obligation provisions (duties, takedown, penalties) for the leaves found.
+
+    Ranked: reviewed/in-force first, then the most specific duties (fewest targets,
+    e.g. priority-content takedown before general duties), then those stating a
+    penalty or timeframe; at most `cap`.
+    """
+    def stated(p: Provision) -> int:
+        c = p.consequence
+        return 0 if any(not v.startswith("not specified") for v in (c.penalty, c.timeframe)) else 1
+
+    hits = lookup(country, leaves, cap=10_000, kind="obligation")
+    hits.sort(key=lambda p: (*rank_key(p), len(p.targets), stated(p)))
+    return hits[:cap]
 
 
 # ---------------------------------------------------------------- path B: search
@@ -150,7 +171,7 @@ _bm25: dict[str, BM25] = {}
 def _get_bm25(country: str) -> BM25:
     with _lock:
         if country not in _bm25:
-            _bm25[country] = BM25(provisions.provisions_for(country))
+            _bm25[country] = BM25(_content_only(provisions.provisions_for(country)))
         return _bm25[country]
 
 
@@ -164,7 +185,7 @@ def _file_search(country: str, query: str, k: int) -> list[Provision] | None:
 
 
 def search(country: str, query: str, k: int = 5) -> list[Provision]:
-    """Free-text search within one country's provisions."""
+    """Free-text search within one country's content provisions."""
     k = max(1, min(k, MAX_RESULTS))
     if config.provider() == "gemini":
         hits = _file_search(country, query, k)

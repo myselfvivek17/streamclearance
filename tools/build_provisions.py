@@ -1,6 +1,7 @@
 """Draft provisions for one law from its extracted text.
 
     python -m tools.build_provisions --law MY/OSA2025 --engine claude|gemini|mock [--out-dir DIR]
+        [--pages 17-39,57-60] [--focus "extra drafting instruction"] [--append]
 
 Like tools/build_rules.py, but the unit is a provision (app.schemas.Provision)
 tagged with taxonomy leaves (data/taxonomy.json), and a country can have many
@@ -11,6 +12,12 @@ Post-validation, per drafted provision:
 - the page must exist and the quote must be on it (else dropped as invented);
 - unknown taxonomy targets are removed; no valid target left -> dropped;
 - duplicates (same page + quote) are dropped.
+
+--pages limits drafting to some pages; --focus adds an instruction for this run
+(e.g. "draft the platform duties"); --append keeps the law's existing provisions
+and adds the new ones (same id or same page + quote = duplicate, dropped). The
+existing content provisions are shown to the model so platform obligations can
+target the same content.
 
 --engine mock is deterministic and offline (one real quote and one invented
 quote per chunk); unless --out-dir is given it writes <law_id>.dryrun.json so
@@ -30,7 +37,7 @@ from pydantic import BaseModel, ValidationError
 
 from app import config, gemini, taxonomy
 from app.provisions import Law, get_law
-from app.schemas import Consequence, DutyHolder, Provision, Review
+from app.schemas import Consequence, DutyHolder, Provision, ProvisionKind, Review
 from tools.build_rules import (
     chunk_pages, claude_json_array, load_pages, normalise, quote_on_page, shorten_quote, tidy,
 )
@@ -51,6 +58,7 @@ class ProvisionDraft(BaseModel):
     exceptions: list[str] = []
     duty_holder: DutyHolder
     consequence: Consequence
+    kind: ProvisionKind = "content"
 
 
 SYSTEM = f"""You turn legal text into structured "provisions" for a tool that warns \
@@ -59,9 +67,10 @@ penalised in a country.
 
 A provision = one legal rule that says some KIND OF CONTENT is prohibited, harmful, \
 restricted or must be removed (or an exception to such a rule). Only draft provisions \
-that a video moment could fall under. Skip definitions, procedure, fees, committees and \
+that a video moment could fall under, or platform obligations (see "kind" below). Skip definitions, procedure, fees, committees and \
 administration, unless the text itself lists the prohibited content (e.g. a schedule of \
-diseases, or a list of harmful content) - those ARE provisions. If a rule only refers to content categories defined elsewhere (e.g. "priority harmful content" defined in a schedule you cannot see), do not guess its targets: skip it, the schedule itself will be drafted when its pages come.
+diseases, or a list of harmful content) - those ARE provisions. If a rule only refers to content categories defined elsewhere (e.g. "priority harmful content" defined in a schedule you cannot see), do not guess its targets: skip it, the schedule itself will be drafted when its pages come \
+(unless the schedule's provisions are listed below as known).
 
 Fields:
 - ref: short path-like reference for the id, e.g. "s3", "s4(1)", "Sch1/para9", "4.4".
@@ -86,20 +95,27 @@ a paid promotion), or "both".
 (e.g. "within 24 hours of notice") and penalty as stated; write "not specified on this \
 page" when the text does not say. Never invent penalties or timeframes.
 
+- kind: "content" for a rule saying some kind of content is prohibited/harmful/restricted (a video moment can be "covered by" it). "obligation" for what a PLATFORM must do about such content: duties of service providers/intermediaries, removal or blocking on notice or order and its timeframe, user reporting/grievance handling, child protections, duties to follow regulator directions, and the penalties for platforms that fail. Draft obligations only when asked to in the run's focus or when the text clearly sets such a duty; their duty_holder is "platform" and their targets are the content they apply to (if a duty applies to all "harmful content" defined in a schedule, use the targets of that schedule's content provisions, given below when known).
+
 Fewer, accurate provisions beat many vague ones. One provision per distinct rule.
 
 Taxonomy:
 {taxonomy.prompt_list()}"""
 
 
-def build_prompt(law: Law, pages: dict[int, str], chunk: list[int]) -> str:
+def build_prompt(law: Law, pages: dict[int, str], chunk: list[int], *, focus: str = "",
+                 known: list[Provision] | None = None) -> str:
     body = "\n\n".join(f"=== PAGE {n} ===\n{tidy(pages[n])}" for n in chunk)
     kind = {"guideline": "GUIDELINE issued by a ministry (not an Act; it explains how an Act is applied)",
             "bill": "BILL (not yet law)", "amended": "Act (as amended)",
             "in_force": "Act in force"}[law.status]
     label = f"\nCaveat: {law.label}" if law.label else ""
+    extra = f"\nFocus for this run: {focus}" if focus else ""
+    if known:
+        extra += "\nKnown content provisions of this law (section -> targets):\n" + "\n".join(
+            f"- {p.section} -> {', '.join(p.targets)}" for p in known if p.kind == "content")
     return (
-        f"Country: {law.country}\nDocument: {law.title}\nStatus: {kind}{label}\n"
+        f"Country: {law.country}\nDocument: {law.title}\nStatus: {kind}{label}{extra}\n"
         f"Pages {chunk[0]}-{chunk[-1]} follow. Return a JSON array of provisions "
         f"(empty array if none of these pages contain one).\n\n{body}"
     )
@@ -155,16 +171,30 @@ def _slug(ref: str) -> str:
     return s[:40] or "p"
 
 
-def build_provisions(law: Law, generate: Generate) -> tuple[list[Provision], list[dict]]:
-    pages = load_pages(law)
-    kept: list[Provision] = []
-    rejected: list[dict] = []
-    seen: set[tuple[int, str]] = set()
-    ids: set[str] = set()
+def parse_pages(spec: str) -> set[int]:
+    """"17-39,57" -> {17, ..., 39, 57}"""
+    out: set[int] = set()
+    for part in filter(None, (x.strip() for x in spec.split(","))):
+        a, _, b = part.partition("-")
+        out.update(range(int(a), int(b or a) + 1))
+    return out
 
-    for chunk in chunk_pages(pages):
+
+def build_provisions(law: Law, generate: Generate, *, only_pages: set[int] | None = None,
+                     focus: str = "", existing: list[Provision] | None = None,
+                     ) -> tuple[list[Provision], list[dict]]:
+    """Draft and verify. With `existing`, returns existing + new (new ids never clash)."""
+    pages = load_pages(law)
+    existing = existing or []
+    kept: list[Provision] = list(existing)
+    rejected: list[dict] = []
+    seen: set[tuple[int, str]] = {(p.page, normalise(p.verbatim_text)) for p in existing}
+    ids: set[str] = {p.id for p in existing}
+    todo = {n: t for n, t in pages.items() if only_pages is None or n in only_pages}
+
+    for chunk in chunk_pages(todo):
         log.info("%s: pages %d-%d", law.key, chunk[0], chunk[-1])
-        prompt = build_prompt(law, pages, chunk)
+        prompt = build_prompt(law, pages, chunk, focus=focus, known=existing)
         raws = generate(prompt)
         if not raws:  # models sometimes return nothing: one retry
             log.warning("%s: pages %d-%d returned nothing, retrying once", law.key, chunk[0], chunk[-1])
@@ -207,7 +237,7 @@ def build_provisions(law: Law, generate: Generate) -> tuple[list[Provision], lis
                 law_status=law.status, source_pdf=law.pdf, page=draft.page, section=draft.section,
                 verbatim_text=draft.verbatim_text, summary=draft.summary, targets=targets,
                 exceptions=draft.exceptions, duty_holder=draft.duty_holder,
-                consequence=draft.consequence, review=Review(status="draft"),
+                consequence=draft.consequence, review=Review(status="draft"), kind=draft.kind,
             ))
     return kept, rejected
 
@@ -224,6 +254,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--engine", choices=["claude", "gemini", "mock"], default="mock",
                     help="who drafts (claude = local Claude Code CLI, build time only)")
     ap.add_argument("--out-dir", type=Path, default=None)
+    ap.add_argument("--pages", default="", help='only these pages, e.g. "17-39,57-60"')
+    ap.add_argument("--focus", default="", help="extra drafting instruction for this run")
+    ap.add_argument("--append", action="store_true",
+                    help="keep the law's existing provisions and add the new ones")
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
@@ -233,8 +267,14 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     generate = {"claude": claude_generate, "gemini": gemini_generate}.get(args.engine) \
         or mock_generate_factory(load_pages(law))
+    existing: list[Provision] = []
+    if args.append and law.provisions_path.exists():
+        existing = [Provision.model_validate(p)
+                    for p in json.loads(law.provisions_path.read_text(encoding="utf-8"))]
     try:
-        provs, rejected = build_provisions(law, generate)
+        provs, rejected = build_provisions(
+            law, generate, only_pages=parse_pages(args.pages) if args.pages else None,
+            focus=args.focus, existing=existing)
     except gemini.GeminiUnavailable as e:
         log.error("%s (or use --engine mock)", e)
         return 2
@@ -250,7 +290,9 @@ def main(argv: list[str] | None = None) -> int:
     for r in rejected:
         key = r["reason"].split(" ")[0] if not r["reason"].startswith("quote") else "quote not on page"
         reasons[key] = reasons.get(key, 0) + 1
-    print(f"{law.key}: {len(provs)} provisions kept, {len(rejected)} dropped {reasons} -> {out}")
+    new = len(provs) - len(existing)
+    print(f"{law.key}: {new} provisions kept, {len(rejected)} dropped {reasons}"
+          + (f" (+{len(existing)} existing)" if existing else "") + f" -> {out}")
     return 0
 
 

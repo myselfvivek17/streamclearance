@@ -4,7 +4,9 @@ Per assessment that claims coverage:
 - timestamps must lie inside the video;
 - the leaf must be a taxonomy leaf that stage A gave to an overlapping moment;
 - every cited provision id must exist and belong to this country;
-- the moment's leaf must be covered by the provision's targets (leaf or parent).
+- the moment's leaf must be covered by the provision's targets (leaf or parent);
+- the provision must be a content provision (platform obligations are attached
+  by the report, never cited as "covered by").
 Citations failing the last two are removed; an assessment left with none is
 dropped and counted. Assessments with no citation are "not covered".
 """
@@ -58,7 +60,8 @@ def verify(assessments: list[MomentAssessment], country: str, inventory: Invento
             out.not_covered.append(a)
             continue
         good = [pid for pid in a.covered_by
-                if pid in known and any(taxonomy.covers(t, leaf) for t in known[pid].targets)]
+                if pid in known and known[pid].kind == "content"
+                and any(taxonomy.covers(t, leaf) for t in known[pid].targets)]
         bad = [pid for pid in a.covered_by if pid not in good]
         if not good:
             drop(a, f"citations {bad} unknown, foreign or not targeting {leaf}")

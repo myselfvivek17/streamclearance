@@ -24,7 +24,8 @@
    "status": "draft",
    "reviewer": null,
    "date": null
-  }
+  },
+  "kind": "content"
  },
  {
   "id": "MY/OSA2025/Sch1/para2",
@@ -53,7 +54,8 @@
    "status": "draft",
    "reviewer": null,
    "date": null
-  }
+  },
+  "kind": "content"
  },
  {
   "id": "MY/OSA2025/Sch1/para3",
@@ -82,7 +84,8 @@
    "status": "draft",
    "reviewer": null,
    "date": null
-  }
+  },
+  "kind": "content"
  },
  {
   "id": "MY/OSA2025/Sch1/para4",
@@ -111,7 +114,8 @@
    "status": "draft",
    "reviewer": null,
    "date": null
-  }
+  },
+  "kind": "content"
  },
  {
   "id": "MY/OSA2025/Sch1/para5",
@@ -138,7 +142,8 @@
    "status": "draft",
    "reviewer": null,
    "date": null
-  }
+  },
+  "kind": "content"
  },
  {
   "id": "MY/OSA2025/Sch1/para6",
@@ -166,7 +171,8 @@
    "status": "draft",
    "reviewer": null,
    "date": null
-  }
+  },
+  "kind": "content"
  },
  {
   "id": "MY/OSA2025/Sch1/para7",
@@ -193,7 +199,8 @@
    "status": "draft",
    "reviewer": null,
    "date": null
-  }
+  },
+  "kind": "content"
  },
  {
   "id": "MY/OSA2025/Sch1/para8",
@@ -221,7 +228,8 @@
    "status": "draft",
    "reviewer": null,
    "date": null
-  }
+  },
+  "kind": "content"
  },
  {
   "id": "MY/OSA2025/Sch1/para9",
@@ -251,6 +259,618 @@
    "status": "draft",
    "reviewer": null,
    "date": null
-  }
+  },
+  "kind": "content"
+ },
+ {
+  "id": "MY/OSA2025/s13(1)",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 17,
+  "section": "Section 13(1)",
+  "verbatim_text": "(1) A licensed applications service provider and licensed content applications service provider shall implement the measures as specified in the code to mitigate the risk of users being exposed to harmful content.",
+  "summary": "Licensed platforms must apply the measures in the code to reduce the risk that users are exposed to harmful content.",
+  "targets": [
+   "child.csam",
+   "fraud.financial",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "harassment.threats",
+   "violence.incitement",
+   "terrorism.support",
+   "child.self_harm_inducement",
+   "hate.group_hostility",
+   "hate.public_tranquillity",
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [
+   "The provider may use alternative measures if it proves to the Commission that they will better mitigate the risk of exposure to harmful content (s13(2))",
+   "The measures shall not unreasonably or disproportionately limit a user's expression (s13(3))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "compliance duty",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s14(1)",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 18,
+  "section": "Section 14(1)",
+  "verbatim_text": "(1) A licensed applications service provider and licensed content applications service provider shall issue guidelines to users which shall include— (a) a description of measures implemented by the licensed applications service provider and licensed content applications service provider under section 13; and (b) terms of use as a guide to users when using the service of the licensed applications service provider and licensed content applications service provider.",
+  "summary": "Licensed platforms must give users guidelines that describe their measures against harmful content and set out terms of use. The guidelines must be clear, easy to find and kept up to date.",
+  "targets": [
+   "child.csam",
+   "fraud.financial",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "harassment.threats",
+   "violence.incitement",
+   "terrorism.support",
+   "child.self_harm_inducement",
+   "hate.group_hostility",
+   "hate.public_tranquillity",
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "compliance duty",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s16",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 18,
+  "section": "Section 16",
+  "verbatim_text": "A licensed applications service provider and licensed content applications service provider shall make available on their services a mechanism that enable users to make a report to the licensed applications service provider or licensed content applications service provider regarding any content that the users believe is a harmful content available on the service of the licensed applications service provider or licensed content applications service provider.",
+  "summary": "Licensed platforms must give users a way to report content they believe is harmful content.",
+  "targets": [
+   "child.csam",
+   "fraud.financial",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "harassment.threats",
+   "violence.incitement",
+   "terrorism.support",
+   "child.self_harm_inducement",
+   "hate.group_hostility",
+   "hate.public_tranquillity",
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "compliance duty",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s17(1)",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 19,
+  "section": "Section 17(1)",
+  "verbatim_text": "(1) A licensed applications service provider and licensed content applications service provider shall make available on their services a mechanism for user assistance which is easily accessible to all types of users and responsive at all times.",
+  "summary": "Licensed platforms must provide a user-assistance channel that is easy to access and always responsive. Users can use it to raise online-safety concerns, get information and make inquiries.",
+  "targets": [
+   "child.csam",
+   "fraud.financial",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "harassment.threats",
+   "violence.incitement",
+   "terrorism.support",
+   "child.self_harm_inducement",
+   "hate.group_hostility",
+   "hate.public_tranquillity",
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "compliance duty",
+   "timeframe": "responsive at all times; information within the period as may be prescribed",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s18(3)",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 20,
+  "section": "Section 18(3)",
+  "verbatim_text": "(3) The measures implemented under this section shall include measures to ensure safe design and operation of the service that is, in the opinion of the licensed applications service provider or licensed content applications service provider, likely to be accessed by child users— (a) to prevent access of a user identified to be a child to a content suspected to be a harmful content; (b) to limit the ability of a user identified to be an adult from communicating with a user identified to be a child;",
+  "summary": "Licensed platforms likely to be used by children must apply the code's child-safety measures. These include stopping children from accessing suspected harmful content, limiting contact from adults, limiting features that extend use, hiding children's personal information from adults and controlling recommendations for children.",
+  "targets": [
+   "child.csam",
+   "child.self_harm_inducement",
+   "child.harmful_to_minors",
+   "fraud.financial",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "harassment.threats",
+   "violence.incitement",
+   "terrorism.support",
+   "hate.group_hostility",
+   "hate.public_tranquillity",
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [
+   "The provider may use alternative measures if it proves to the Commission that they will better ensure safe use of its service by child users (s18(2))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "compliance duty",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s19",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 20,
+  "section": "Section 19",
+  "verbatim_text": "A licensed applications service provider and licensed content applications service provider shall establish a mechanism for making priority harmful content available on their services inaccessible to all users.",
+  "summary": "Licensed platforms must have a mechanism to make priority harmful content inaccessible to all users.",
+  "targets": [
+   "child.csam",
+   "fraud.financial"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s21(2)",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 21,
+  "section": "Section 21(2)",
+  "verbatim_text": "(2) Upon receipt of the report made under subsection (1), the licensed applications service provider or licensed content applications service provider shall within the period as may be prescribed— (a) acknowledge receipt of the report; (b) notify in writing the status of the report to the user who made the report; and (c) assess the report.",
+  "summary": "When a user reports content as harmful, the licensed platform must acknowledge the report, tell the user its status in writing and assess it, all within the prescribed period.",
+  "targets": [
+   "child.csam",
+   "fraud.financial",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "harassment.threats",
+   "violence.incitement",
+   "terrorism.support",
+   "child.self_harm_inducement",
+   "hate.group_hostility",
+   "hate.public_tranquillity",
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [
+   "The provider shall dismiss reports that are frivolous, vexatious, not made in good faith, trivial, or duplicates of another report, and must notify the reporter of the dismissal (s21(3)-(4))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "report handling",
+   "timeframe": "within the period as may be prescribed",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s22",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 23,
+  "section": "Section 22(1)",
+  "verbatim_text": "(1) Where the report made by a user under subsection 21(1) is not dismissed under subsection 21(3) or (6) and the licensed applications service provider or licensed content applications service provider is of the opinion that the content being the subject matter of the report is a priority harmful content, the licensed applications service provider or licensed content applications service provider shall immediately make the content inaccessible on its service to all users for a period as may be prescribed.",
+  "summary": "If a licensed platform thinks reported content is priority harmful content, it must make it inaccessible to all users immediately. If it then confirms the content is priority harmful content, it must make it permanently inaccessible. The reporter and the uploader must be told in writing.",
+  "targets": [
+   "child.csam",
+   "fraud.financial"
+  ],
+  "exceptions": [
+   "If the provider determines the content is not priority harmful content, it may make the content accessible again within the prescribed period (s22(3)(b))",
+   "An aggrieved user may ask the provider to review the action (s22(5))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "immediately for a prescribed period; permanently inaccessible within the prescribed period once confirmed (s22(3)(a))",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s23",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 24,
+  "section": "Section 23(1)",
+  "verbatim_text": "(1) Where the report made by a user under subsection 21(1) is not dismissed under subsection 21(3) or (6) and the licensed applications service provider or licensed content applications service provider is of the opinion that the content being the subject matter of the report is a harmful content, the licensed applications service provider or licensed content applications service provider may make the content inaccessible on its service to all users within and for a period as may be prescribed.",
+  "summary": "If a licensed platform thinks reported content is harmful content, it may make it inaccessible to all users for a prescribed period. Before that period ends, it must decide on reasonable grounds whether the content really is harmful.",
+  "targets": [
+   "child.csam",
+   "fraud.financial",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "harassment.threats",
+   "violence.incitement",
+   "terrorism.support",
+   "child.self_harm_inducement",
+   "hate.group_hostility",
+   "hate.public_tranquillity",
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within and for a period as may be prescribed",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s23(3)",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 25,
+  "section": "Section 23(3)(a)",
+  "verbatim_text": "(3) Where the licensed applications service provider or licensed content applications service provider determines under subsection (2) that the content made inaccessible on its service under subsection (1)— (a) is a harmful content, the licensed applications service provider or licensed content applications service provider shall, within the period as may be prescribed, make the harmful content be permanently inaccessible on its service to all users;",
+  "summary": "After a user reports content and the platform finds that it is harmful content, the licensed platform must make it permanently inaccessible to all users within the prescribed period.",
+  "targets": [
+   "child.csam",
+   "fraud.financial",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "harassment.threats",
+   "violence.incitement",
+   "terrorism.support",
+   "child.self_harm_inducement",
+   "hate.group_hostility",
+   "hate.public_tranquillity",
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [
+   "If the platform finds the content is not harmful content, it must make the content accessible again to all users within the prescribed period (s23(3)(b))."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within the period as may be prescribed",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s23(8)",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 26,
+  "section": "Section 23(8)-(9)",
+  "verbatim_text": "the Commission may, in the interest of the public, issue a written instruction to the licensed applications service provider or licensed content applications service provider requiring the licensed applications service provider or licensed content applications service provider to make the content permanently inaccessible on its service within the period as specified in the written instruction.",
+  "summary": "If a platform has found reported content to be harmful but has not made it inaccessible, the Commission can instruct the platform in writing to make it permanently inaccessible, and failing to comply is an offence.",
+  "targets": [
+   "child.csam",
+   "fraud.financial",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "harassment.threats",
+   "violence.incitement",
+   "terrorism.support",
+   "child.self_harm_inducement",
+   "hate.group_hostility",
+   "hate.public_tranquillity",
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown; fine for non-compliance",
+   "timeframe": "within the period as specified in the written instruction",
+   "penalty": "Under s23(9), fine not exceeding RM1,000,000 and a further fine not exceeding RM100,000 for every day or part of a day the offence continues after conviction"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s25(1)(a)",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 28,
+  "section": "Section 25(1)(a)",
+  "verbatim_text": "(a) where the harmful content is available on the service of a licensed applications service provider or licensed content applications service provider, issue a written instruction to the licensed applications service provider or licensed content applications service provider requiring the licensed applications service provider or licensed content applications service provider to make the content permanently inaccessible on its service to all users within the period as may be specified in the written instruction;",
+  "summary": "When the Commission decides that content reported to it is harmful content, including priority harmful content, it instructs the licensed platform in writing to make the content permanently inaccessible to all users.",
+  "targets": [
+   "child.csam",
+   "fraud.financial",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "harassment.threats",
+   "violence.incitement",
+   "terrorism.support",
+   "child.self_harm_inducement",
+   "hate.group_hostility",
+   "hate.public_tranquillity",
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [
+   "Reports the Commission finds frivolous, vexatious, not made in good faith, trivial or duplicates are dismissed (s24(3))."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown; fine for non-compliance",
+   "timeframe": "within the period as may be specified in the written instruction",
+   "penalty": "Under s25(4) (page 29), fine not exceeding RM1,000,000 and a further fine not exceeding RM100,000 for every day or part of a day the offence continues after conviction"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s25(1)(b)",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 28,
+  "section": "Section 25(1)(b)",
+  "verbatim_text": "(b) where the harmful content is available online other than on the service of a licensed applications service provider or licensed content applications service provider, issue a written instruction to the relevant licensed network service provider requiring the licensed network service provider to restrict the relevant parts of its network service within the period as may be specified in the written instruction so as to make the content permanently inaccessible to all users.",
+  "summary": "If harmful content is hosted online outside licensed platforms, the Commission can instruct a licensed network service provider to block it so that it is permanently inaccessible in Malaysia.",
+  "targets": [
+   "child.csam",
+   "fraud.financial",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "harassment.threats",
+   "violence.incitement",
+   "terrorism.support",
+   "child.self_harm_inducement",
+   "hate.group_hostility",
+   "hate.public_tranquillity",
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block; fine for non-compliance",
+   "timeframe": "within the period as may be specified in the written instruction",
+   "penalty": "Under s25(4) (page 29), fine not exceeding RM1,000,000 and a further fine not exceeding RM100,000 for every day or part of a day the offence continues after conviction"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s26(1)",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 29,
+  "section": "Section 26(1)",
+  "verbatim_text": "A licensed applications service provider or licensed content applications service provider may, regardless of whether a report has been made by a user under section 21 or 24, on its own motion make any content inaccessible on its service in the manner as it may determine if the licensed applications service provider or licensed content applications service provider has reasonable grounds to believe that the content is a priority harmful content.",
+  "summary": "Licensed platforms may, on their own initiative and without any user report, make content inaccessible if they reasonably believe it is priority harmful content, and must notify the user who posted it.",
+  "targets": [
+   "child.csam",
+   "fraud.financial"
+  ],
+  "exceptions": [
+   "The user who posted the content may ask the platform to review the action within the prescribed period (s26(3))."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s30(9)",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 32,
+  "section": "Section 30(5) and (9)",
+  "verbatim_text": "(9) Any licensed applications service provider, licensed content applications service provider or licensed network service provider which fails to comply with the directions issued by the Commission under this section commits an offence and shall, on conviction, be liable to a fine not exceeding one million ringgit and shall be liable to a further fine not exceeding one hundred thousand ringgit for every day or part of a day during which the offence continues after conviction.",
+  "summary": "Licensed platforms and network providers must comply with the Commission's written directions on complying with the Act, including how they handle harmful content, and failing to comply is an offence.",
+  "targets": [
+   "child.csam",
+   "fraud.financial",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "harassment.threats",
+   "violence.incitement",
+   "terrorism.support",
+   "child.self_harm_inducement",
+   "hate.group_hostility",
+   "hate.public_tranquillity",
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "directions effective from registration or later date specified by the Commission",
+   "penalty": "fine not exceeding RM1,000,000 and a further fine not exceeding RM100,000 for every day or part of a day the offence continues after conviction"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "MY/OSA2025/s39(2)",
+  "country": "MY",
+  "law_id": "OSA2025",
+  "law_title": "Online Safety Act 2025 (Act 866)",
+  "law_status": "in_force",
+  "source_pdf": "malaysia_online_safety_act_2025.pdf",
+  "page": 39,
+  "section": "Section 39(2)",
+  "verbatim_text": "Any licensed applications service provider or licensed content applications service provider which fails to comply with any of its duties under Part III shall be liable to pay to the Commission a financial penalty an amount of which not exceeding ten million ringgit.",
+  "summary": "Licensed platforms (applications and content applications service providers) that fail any of their Part III online-safety duties on harmful content can be fined by the Commission up to RM10 million.",
+  "targets": [
+   "child.csam",
+   "fraud.financial",
+   "sexual.obscene",
+   "sexual.indecent_profane",
+   "harassment.threats",
+   "violence.incitement",
+   "terrorism.support",
+   "child.self_harm_inducement",
+   "hate.group_hostility",
+   "hate.public_tranquillity",
+   "drugs.promotion",
+   "drugs.sale"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "payable within the period specified in the notice of non-compliance (s37(3))",
+   "penalty": "financial penalty not exceeding RM10,000,000, recoverable as a civil debt due to the Commission"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
  }
 ]

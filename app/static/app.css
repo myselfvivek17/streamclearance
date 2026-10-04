@@ -172,6 +172,8 @@ dialog input { width: 100%; font: inherit; padding: 10px; border-radius: 8px; bo
   position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
 }
 .laws { margin: 4px 0 8px; font-size: 0.88rem; }
+.obligations { margin: 8px 0; font-size: 0.88rem; }
+.obligations summary { cursor: pointer; color: var(--muted); }
 .laws ul, .cite .duty ul { margin: 4px 0 0; padding-left: 18px; }
 .muted { color: var(--muted); }
 .laws .k { color: var(--muted); margin: 0; }

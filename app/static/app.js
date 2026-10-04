@@ -285,6 +285,7 @@ function renderCountry(c) {
     brain ? renderLaws(c) : el("p", { class: "cr-law" }, c.law, c.label ? el("span", { class: "note" }, ` · ${c.label}`) : null),
     el("p", { class: "framing" }, c.risk_framing),
     findings,
+    (c.platform_obligations || []).length ? renderObligations(c) : null,
     (c.uncovered || []).length
       ? el("div", { class: "uncovered" },
           el("p", { class: "k" }, brain
@@ -315,6 +316,12 @@ function renderLaws(c) {
       l.label ? el("span", { class: "note" }, ` · ${l.label}`) : null))));
 }
 
+function renderObligations(c) {
+  return el("details", { class: "obligations" },
+    el("summary", {}, `Platform obligations (${c.platform_obligations.length}): what a platform must do about the content found`),
+    c.platform_obligations.map(renderProvision));
+}
+
 function renderFinding(c, f, cards, provs) {
   const drift = c.translation.filter((d) => overlaps(d, f));
   return el("li", { class: `finding ${f.risk}` },
@@ -333,6 +340,11 @@ function renderFinding(c, f, cards, provs) {
     f.critic_note ? el("div", { class: "f-row" }, el("span", { class: "k" }, "Critic"), f.critic_note) : null,
     el("div", { class: "f-row" }, el("span", { class: "k" }, "Suggested fix"), f.suggested_fix),
     f.rule_card_ids.map((id) => provs[id] ? renderProvision(provs[id]) : renderCite(c.country, cards[id], id)),
+    (f.obligation_ids || []).length
+      ? el("div", { class: "f-row" }, el("span", { class: "k" }, "Platform must"),
+          (c.platform_obligations || []).filter((p) => f.obligation_ids.includes(p.id))
+            .map((p) => `${p.section}: ${p.summary}`).join(" · "))
+      : null,
     drift.map(renderDrift),
   );
 }

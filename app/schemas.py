@@ -13,6 +13,9 @@ RulesStatus = Literal["reviewed", "draft/unreviewed"]
 Drift = Literal["none", "reduced", "increased"]
 LawStatus = Literal["in_force", "bill", "amended", "guideline"]
 DutyHolder = Literal["platform", "creator", "advertiser", "both"]
+# content = says some kind of content is prohibited/harmful (a moment can be "covered by" it);
+# obligation = what a platform must do about such content (duties, takedown, penalties).
+ProvisionKind = Literal["content", "obligation"]
 Badge = Literal["red", "amber", "green", "check"]
 
 DISCLAIMER = (
@@ -85,6 +88,7 @@ class Provision(BaseModel):
     duty_holder: DutyHolder
     consequence: Consequence = Consequence()
     review: Review = Review()
+    kind: ProvisionKind = "content"
 
 
 class LawInfo(BaseModel):
@@ -151,6 +155,7 @@ class Finding(_Timed):
     exception_applies: bool = False
     exception_reason: str = ""
     critic_note: str = ""
+    obligation_ids: list[str] = []  # platform-obligation provisions for this leaf
 
 
 class DriftCheck(_Timed):
@@ -187,6 +192,7 @@ class CountryReport(BaseModel):
     brain: Literal["adk", "legacy"] = "legacy"
     laws: list[LawInfo] = []
     cited_provisions: list[Provision] = []
+    platform_obligations: list[Provision] = []  # retrieved for the leaves found, not dumped
     critic_changes: int = 0
     notes: list[str] = []
 
