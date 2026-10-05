@@ -81,6 +81,31 @@ def upload_bucket() -> str:
     return os.getenv("SC_UPLOAD_BUCKET") or f"{gcp_project()}-sc-uploads"
 
 
+# Law search (retrieval path B): Vertex AI RAG Engine, one corpus per country
+# named <SC_SEARCH_STORE>-<cc>; tools/index_laws.py syncs it and records the
+# uploaded documents in data/search_index.json.
+SEARCH_STORE = os.getenv("SC_SEARCH_STORE", "streamclearance-laws")
+SEARCH_INDEX_PATH = DATA_DIR / "search_index.json"
+
+
+def search_location() -> str:
+    """RAG Engine region (preview in asia-southeast1, close to Cloud Run)."""
+    return os.getenv("SC_SEARCH_LOCATION", "asia-southeast1")
+
+
+def law_search() -> str:
+    """"rag" (Vertex AI RAG Engine) or "bm25" (local keyword search).
+
+    SC_LAW_SEARCH overrides; by default rag on the Vertex backend, else bm25.
+    """
+    forced = os.getenv("SC_LAW_SEARCH", "").strip().lower()
+    if forced not in ("", "rag", "bm25"):
+        raise ValueError("SC_LAW_SEARCH must be rag or bm25")
+    if forced:
+        return forced
+    return "rag" if provider() == "gemini" and gemini_backend() == "vertex" else "bm25"
+
+
 # Cost guard: hard cap on model calls (direct + ADK) per analysis job.
 MAX_CALLS_PER_JOB = int(os.getenv("SC_MAX_CALLS_PER_JOB", "40"))
 
