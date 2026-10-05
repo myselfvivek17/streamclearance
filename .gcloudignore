@@ -1,0 +1,2 @@
+# What `gcloud builds submit` uploads: same exclusions as the image.
+#!include:.dockerignore

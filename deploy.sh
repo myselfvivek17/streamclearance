@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Build with Cloud Build into Artifact Registry and deploy to Cloud Run.
+# Needs gcloud authenticated with a project set. The access code is generated
+# once into .secrets/access_code.txt (gitignored) and never printed.
+set -euo pipefail
+cd "$(dirname "$0")"
+
+GCLOUD="${GCLOUD:-$HOME/google-cloud-sdk/bin/gcloud}"
+PROJECT="${GCP_PROJECT:-booming-entity-510706-e9}"
+REGION="${GCP_REGION:-asia-southeast1}"
+SERVICE=streamclearance
+REPO=streamclearance
+SA="hercules-deployer@${PROJECT}.iam.gserviceaccount.com"
+IMAGE="${REGION}-docker.pkg.dev/${PROJECT}/${REPO}/${SERVICE}:$(git rev-parse --short HEAD)$(git diff --quiet HEAD -- . || echo -dirty)"
+
+CODE_FILE=.secrets/access_code.txt
+if [[ ! -s "$CODE_FILE" ]]; then
+  mkdir -p .secrets && chmod 700 .secrets
+  (umask 077; LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 10 >"$CODE_FILE")
+  echo "generated a new access code in $CODE_FILE"
+fi
+ACCESS_CODE="$(cat "$CODE_FILE")"
+
+if ! "$GCLOUD" artifacts repositories describe "$REPO" --location "$REGION" --project "$PROJECT" >/dev/null 2>&1; then
+  "$GCLOUD" artifacts repositories create "$REPO" --repository-format docker \
+    --location "$REGION" --project "$PROJECT" --description "StreamClearance images"
+fi
+
+"$GCLOUD" builds submit --project "$PROJECT" --region "$REGION" --tag "$IMAGE" .
+
+"$GCLOUD" run deploy "$SERVICE" --project "$PROJECT" --region "$REGION" --image "$IMAGE" \
+  --service-account "$SA" \
+  --set-env-vars "GOOGLE_CLOUD_PROJECT=${PROJECT},GOOGLE_CLOUD_LOCATION=global,GOOGLE_GENAI_USE_VERTEXAI=TRUE,SC_ACCESS_CODE=${ACCESS_CODE}" \
+  --memory 2Gi --cpu 2 --no-cpu-throttling --timeout 900 \
+  --min-instances 0 --max-instances 1 --concurrency 20 \
+  --allow-unauthenticated --quiet
+
+"$GCLOUD" run services describe "$SERVICE" --project "$PROJECT" --region "$REGION" --format 'value(status.url)'
