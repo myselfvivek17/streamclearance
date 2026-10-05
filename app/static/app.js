@@ -380,7 +380,8 @@ async function screenUpload(stale) {
             el("div", {}, el("dt", {}, "Size"), el("dd", {}, mb(v.size_bytes))),
             el("div", {}, el("dt", {}, "Format"), el("dd", {}, ext))),
           el("div", {}, el("button", { class: "link-btn small", type: "button", onclick: () => {
-            S.video = null; store.set(LS.video, null); setLocal(null); showDrop(); renderStepper(parseRoute());
+            api(`/api/videos/${encodeURIComponent(v.video_id)}`, { method: "DELETE" }).catch(() => { /* the sweeper deletes it anyway */ });
+            S.video = null; store.set(LS.video, null); store.set(LS.meta, null); setLocal(null); showDrop(); renderStepper(parseRoute());
           } }, "Replace video")))),
       el("div", { class: "footer-bar" },
         el("span", { class: "small muted" }, "Next, choose the countries you want to publish in."),
@@ -492,7 +493,10 @@ async function fetchJob(jobId) {
   try {
     S.job = await api(`/api/jobs/${encodeURIComponent(jobId)}`);
   } catch (e) {
-    if (e.status === 404) throw new Error("That analysis was not found. It may have been deleted; start a new one.");
+    if (e.status === 404) {
+      if (store.get(LS.job) === jobId) store.set(LS.job, null);
+      throw new Error(/expired|deleted/.test(e.message) ? `${e.message}. Start a new check.` : "That analysis was not found. It may have been deleted; start a new one.");
+    }
     throw e;
   }
   if (S.job.mock) $("mock-banner").hidden = false;
@@ -870,7 +874,23 @@ async function screenResults(jobId, stale) {
           "StreamClearance flags likely risks. Confirm with a qualified lawyer before relying on it."))),
     el("div", { class: "footer-bar" },
       el("button", { class: "btn", type: "button", onclick: () => go("#upload") }, icon("upload"), "Check another video"),
-      el("button", { class: "btn", type: "button", onclick: () => download(job) }, icon("download"), "Download report (JSON)"))));
+      el("button", { class: "btn", type: "button", onclick: () => download(job) }, icon("download"), "Download report (JSON)"),
+      el("button", { class: "btn btn-danger", type: "button", onclick: () => deleteReport(job) }, icon("x"), "Delete this report now"))));
+}
+
+async function deleteReport(job) {
+  if (!window.confirm("Delete this report now? It is removed from the server straight away and can’t be recovered.")) return;
+  try {
+    await api(`/api/jobs/${encodeURIComponent(job.job_id)}`, { method: "DELETE" });
+  } catch (e) {
+    if (e.status !== 404) { toast(`Could not delete the report: ${e.message}`, true); return; }
+  }
+  if (store.get(LS.job) === job.job_id) store.set(LS.job, null);
+  if (savedMeta(job.video_id)) store.set(LS.meta, null);
+  if (S.local && S.local.id === job.video_id) setLocal(null);
+  S.job = null; S.reportVideo = null;
+  go("#upload");
+  toast("Report deleted");
 }
 
 function download(job) {

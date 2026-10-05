@@ -139,3 +139,84 @@ def test_gcs_copy_deleted(tiny_video, monkeypatch):
     retention.purge_video(video_id)
     assert _files_for(video_id) == []
     assert calls == [("list", f"videos/{video_id}/"), ("delete", f"videos%2F{video_id}%2Fabc.mp4")]
+
+
+# ---------------------------------------------------------------- report retention + delete now
+
+def _age(job_id, days):
+    store = get_storage()
+    job = store.load_job(job_id)
+    job["created_at"] -= days * 86400
+    store.save_job(job_id, job)
+
+
+def test_expired_report_deleted_on_read(tiny_video, monkeypatch):
+    monkeypatch.setenv("SC_REPORT_TTL_DAYS", "7")
+    with TestClient(app) as client:
+        job = _analyse(client, _upload(client, tiny_video[0])["video_id"])
+        job_id = job["job_id"]
+        _age(job_id, 6.9)
+        assert client.get(f"/api/jobs/{job_id}").status_code == 200
+        _age(job_id, 0.2)
+        r = client.get(f"/api/jobs/{job_id}")
+        assert r.status_code == 404 and r.json()["detail"] == "This report expired and was deleted"
+        assert get_storage().load_job(job_id) is None
+        assert client.get(f"/api/jobs/{job_id}").json()["detail"] == "This report expired and was deleted"
+
+
+def test_sweeper_expires_reports(tiny_video, monkeypatch):
+    from app import main
+
+    with TestClient(app) as client:
+        old = _analyse(client, _upload(client, tiny_video[0])["video_id"])["job_id"]
+        new = _analyse(client, _upload(client, tiny_video[0])["video_id"])["job_id"]
+    _age(old, 8)
+    main.sweep()
+    store = get_storage()
+    assert store.load_job(old) is None and store.gone_reason(old) == "expired"
+    assert store.load_job(new) is not None
+    # the content-free marker itself goes after another TTL
+    marker = store.jobs / "gone" / old
+    assert marker.read_text() == "expired"
+    t = time.time() - 8 * 86400
+    os.utime(marker, (t, t))
+    main.sweep()
+    assert not marker.exists()
+
+
+def test_delete_report_now(tiny_video):
+    with TestClient(app) as client:
+        job_id = _analyse(client, _upload(client, tiny_video[0])["video_id"])["job_id"]
+        r = client.delete(f"/api/jobs/{job_id}")
+        assert r.status_code == 200 and r.json() == {"deleted": job_id}
+        r = client.get(f"/api/jobs/{job_id}")
+        assert r.status_code == 404 and r.json()["detail"] == "This report was deleted"
+        assert not (get_storage().jobs / f"{job_id}.json").exists()
+        assert client.delete(f"/api/jobs/{job_id}").status_code == 404
+        assert client.delete("/api/jobs/" + "b" * 32).status_code == 404
+
+
+def test_delete_running_job(tiny_video, monkeypatch):
+    monkeypatch.setenv("SC_MOCK_DELAY", "5")
+    with TestClient(app) as client:
+        video_id = _upload(client, tiny_video[0])["video_id"]
+        job_id = client.post("/api/analyze", json={"video_id": video_id, "countries": ["MY"]}).json()["job_id"]
+        assert client.delete(f"/api/jobs/{job_id}").status_code == 200
+        assert _files_for(video_id) == []
+        time.sleep(0.2)
+        assert get_storage().load_job(job_id) is None  # not written back by the cancelled task
+        assert client.get(f"/api/jobs/{job_id}").status_code == 404
+
+
+def test_delete_needs_access_code(tiny_video, monkeypatch):
+    with TestClient(app) as client:
+        job_id = _analyse(client, _upload(client, tiny_video[0])["video_id"])["job_id"]
+        video_id = _upload(client, tiny_video[0])["video_id"]
+        monkeypatch.setenv("SC_ACCESS_CODE", "letmein")
+        assert client.delete(f"/api/jobs/{job_id}").status_code == 401
+        assert client.delete(f"/api/videos/{video_id}").status_code == 401
+        assert get_storage().load_job(job_id) is not None
+        h = {"X-Access-Code": "letmein"}
+        assert client.delete(f"/api/videos/{video_id}", headers=h).status_code == 200
+        assert _files_for(video_id) == []
+        assert client.delete(f"/api/jobs/{job_id}", headers=h).status_code == 200

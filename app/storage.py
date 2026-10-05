@@ -108,6 +108,38 @@ class LocalStorage:
             return None
         return self._read_json(self.jobs / f"{job_id}.json")
 
+    def job_ids(self) -> list[str]:
+        if not self.jobs.exists():
+            return []
+        return [p.stem for p in self.jobs.glob("*.json") if valid_id(p.stem)]
+
+    def delete_job(self, job_id: str, reason: str) -> None:
+        """Delete the job record and leave an empty-of-content marker (jobs/gone/<id>
+        holding only the reason), so later reads can say why it is gone."""
+        if not valid_id(job_id):
+            return
+        (self.jobs / f"{job_id}.json").unlink(missing_ok=True)
+        gone = self.jobs / "gone"
+        gone.mkdir(parents=True, exist_ok=True)
+        (gone / job_id).write_text(reason, encoding="utf-8")
+
+    def gone_reason(self, job_id: str) -> str | None:
+        """"expired" or "deleted" if this job was deleted, else None."""
+        if not valid_id(job_id):
+            return None
+        p = self.jobs / "gone" / job_id
+        return p.read_text(encoding="utf-8") if p.exists() else None
+
+    def sweep_gone(self, older_than: float) -> int:
+        """Forget deletion markers last written before `older_than` (epoch seconds)."""
+        gone = self.jobs / "gone"
+        if not gone.exists():
+            return 0
+        old = [p for p in gone.iterdir() if p.stat().st_mtime < older_than]
+        for p in old:
+            p.unlink(missing_ok=True)
+        return len(old)
+
     # ------------------------------------------------------------ helpers
 
     @staticmethod

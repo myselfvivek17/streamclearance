@@ -26,9 +26,11 @@ SWEEP_EVERY_S = 30 * 60
 
 
 def sweep() -> None:
-    """Delete videos nobody analysed within SC_UNUSED_VIDEO_TTL_MIN."""
-    n = retention.sweep_unused_videos(jobs.active_video_ids())
-    log.info("sweep: %d unused videos deleted", n)
+    """Delete videos nobody analysed within SC_UNUSED_VIDEO_TTL_MIN and reports
+    older than SC_REPORT_TTL_DAYS."""
+    videos = retention.sweep_unused_videos(jobs.active_video_ids())
+    reports = retention.expire_reports(jobs.active_job_ids())
+    log.info("sweep: %d unused videos, %d expired reports deleted", videos, reports)
 
 
 async def _sweeper() -> None:
@@ -220,12 +222,42 @@ async def analyze(req: AnalyzeRequest):
     return {"job_id": job["job_id"]}
 
 
+EXPIRED = "This report expired and was deleted"
+GONE = {"expired": EXPIRED, "deleted": "This report was deleted"}
+
+
 @app.get("/api/jobs/{job_id}")
 def get_job(job_id: str):
-    job = get_storage().load_job(job_id)
+    store = get_storage()
+    job = store.load_job(job_id)
+    if job is not None and job_id not in jobs.active_job_ids() and retention.report_expired(job):
+        retention.delete_report(job_id, "expired")  # lazily, between sweeps
+        job = None
     if job is None:
-        raise HTTPException(404, "job not found")
+        raise HTTPException(404, GONE.get(store.gone_reason(job_id) or "", "job not found"))
     return job
+
+
+@app.delete("/api/jobs/{job_id}")
+async def delete_job(job_id: str):
+    """Delete a report now, with its video and everything stored for it."""
+    store = get_storage()
+    if store.load_job(job_id) is None:
+        raise HTTPException(404, GONE.get(store.gone_reason(job_id) or "", "job not found"))
+    await jobs.delete_job(job_id)
+    return {"deleted": job_id}
+
+
+@app.delete("/api/videos/{video_id}")
+def delete_video(video_id: str):
+    """Delete an uploaded video that has not been analysed (e.g. "Replace video")."""
+    store = get_storage()
+    if store.load_video_meta(video_id) is None and store.video_path(video_id) is None:
+        raise HTTPException(404, "video not found")
+    if video_id in jobs.active_video_ids():
+        raise HTTPException(409, "this video is being analysed; delete the report instead")
+    retention.purge_video(video_id)
+    return {"deleted": video_id}
 
 
 app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")

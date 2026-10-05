@@ -10,6 +10,7 @@ the report keeps only what the UI needs, so it works without the video.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import logging
 import time
 import uuid
@@ -27,6 +28,10 @@ _active: dict[str, tuple[asyncio.Task, str]] = {}
 
 def active_video_ids() -> set[str]:
     return {video_id for _, video_id in _active.values()}
+
+
+def active_job_ids() -> set[str]:
+    return set(_active)
 
 
 def _stage(key: str, label: str, status: str = "pending", detail: str = "") -> dict[str, str]:
@@ -72,8 +77,21 @@ def expires_at(job: dict[str, Any]) -> float:
 
 
 def _save(job: dict[str, Any]) -> None:
+    store = get_storage()
+    if store.gone_reason(job["job_id"]):
+        return  # deleted while running: never write it back
     job["updated_at"] = time.time()
-    get_storage().save_job(job["job_id"], job)
+    store.save_job(job["job_id"], job)
+
+
+async def delete_job(job_id: str) -> None:
+    """Stop the job if it is running, then delete it and everything stored for it."""
+    if job_id in _active:
+        task, _ = _active[job_id]
+        task.cancel()
+        with contextlib.suppress(asyncio.CancelledError, asyncio.TimeoutError, Exception):
+            await asyncio.wait_for(asyncio.shield(task), timeout=10)
+    await asyncio.to_thread(retention.delete_report, job_id, "deleted")
 
 
 def _set(job: dict[str, Any], key: str, status: str, detail: str = "") -> None:

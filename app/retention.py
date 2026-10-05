@@ -5,6 +5,10 @@
   its analysis job ends, whether it finished, failed or was cancelled.
 - A video that is uploaded but never analysed is deleted after
   SC_UNUSED_VIDEO_TTL_MIN minutes.
+- A report (the job record) is deleted SC_REPORT_TTL_DAYS days after the job
+  was created, by the sweeper and lazily when it is read, or at once on
+  DELETE /api/jobs/{id}. A content-free marker (id + reason) is kept for as
+  long again, so the UI can say "expired" rather than "not found".
 """
 from __future__ import annotations
 
@@ -58,4 +62,37 @@ def sweep_unused_videos(active: set[str], now: float | None = None) -> int:
         if video_id not in active and mtime < cutoff:
             purge_video(video_id)
             n += 1
+    return n
+
+
+def report_expired(job: dict, now: float | None = None) -> bool:
+    now = time.time() if now is None else now
+    return now >= job["created_at"] + config.report_ttl_days() * 86400
+
+
+def delete_report(job_id: str, reason: str) -> None:
+    """Delete a job record, its video (if still there) and every stored file for it."""
+    store = get_storage()
+    job = store.load_job(job_id)
+    if job is not None:
+        purge_video(job["video_id"])
+    store.delete_job(job_id, reason)
+    log.info("job %s deleted (%s)", job_id, reason)
+
+
+def expire_reports(active: set[str], now: float | None = None) -> int:
+    """Delete reports past SC_REPORT_TTL_DAYS (skipping running jobs)."""
+    now = time.time() if now is None else now
+    store = get_storage()
+    n = 0
+    for job_id in store.job_ids():
+        try:
+            job = store.load_job(job_id)
+        except ValueError:  # unreadable record: leave it for a person to look at
+            log.warning("job %s: unreadable record", job_id)
+            continue
+        if job is not None and job_id not in active and report_expired(job, now):
+            delete_report(job_id, "expired")
+            n += 1
+    store.sweep_gone(now - config.report_ttl_days() * 86400)
     return n
