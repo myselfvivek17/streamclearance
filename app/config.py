@@ -150,8 +150,9 @@ def ffprobe_path() -> str | None:
     found = shutil.which("ffprobe")
     if found:
         return found
-    bundled = sorted(Path.home().glob(".local/tools/ffmpeg-*/bin/ffprobe"))
-    return str(bundled[-1]) if bundled else None
+    bin_dir = os.getenv("SC_FFMPEG_DIR")
+    candidate = Path(bin_dir) / "ffprobe" if bin_dir else None
+    return str(candidate) if candidate and candidate.exists() else None
 
 
 @dataclass(frozen=True)

@@ -1,3 +1,4 @@
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -11,8 +12,9 @@ def _ffmpeg() -> str | None:
     found = shutil.which("ffmpeg")
     if found:
         return found
-    bundled = sorted(Path.home().glob(".local/tools/ffmpeg-*/bin/ffmpeg"))
-    return str(bundled[-1]) if bundled else None
+    bin_dir = os.getenv("SC_FFMPEG_DIR")
+    candidate = Path(bin_dir) / "ffmpeg" if bin_dir else None
+    return str(candidate) if candidate and candidate.exists() else None
 
 
 FFMPEG = _ffmpeg()
