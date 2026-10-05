@@ -83,7 +83,14 @@ async def run_agent(agent, message: str) -> str:
 
 
 def _parse_list(text: str, model: type[BaseModel]) -> list:
-    raw = gemini.extract_json(text)
+    # Prefer the first value holding objects: prose before the answer may quote
+    # a bracketed list of ids, which is not the answer.
+    values = list(gemini.iter_json(text))
+    raw = next((v for v in values if isinstance(v, dict)
+                or (isinstance(v, list) and any(isinstance(x, dict) for x in v))),
+               values[0] if values else None)
+    if raw is None:
+        raise ValueError("no JSON found in model output")
     if isinstance(raw, dict):
         lists = [v for v in raw.values() if isinstance(v, list)]
         raw = lists[0] if len(lists) == 1 else [raw]

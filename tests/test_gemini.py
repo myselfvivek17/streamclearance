@@ -86,3 +86,12 @@ def test_extract_json():
     assert gemini.extract_json('Sure:\n```json\n[{"a": 1}]\n```') == [{"a": 1}]
     with pytest.raises(ValueError):
         gemini.extract_json("nothing here")
+
+
+def test_parse_list_skips_prose_id_lists():
+    from app.brain.agents import MomentAssessment, _parse_list
+
+    text = ('Relevant provisions ["IN/DMR1954/s3", "IN/DMR1954/Sch", "IN/DMR1954/s4"].\n'
+            '```json\n[{"start_s": 1, "end_s": 2, "leaf": "health.cure_claim"}]\n```')
+    out = _parse_list(text, MomentAssessment)
+    assert [a.leaf for a in out] == ["health.cure_claim"]

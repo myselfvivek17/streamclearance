@@ -47,6 +47,7 @@ class SegmentDraft(BaseModel):
     visuals: str = ""
     on_screen_text: str = ""
     leaves: list[str] = []
+    idioms: list[str] = []
 
 
 class StageADraft(BaseModel):
@@ -70,6 +71,9 @@ Split the video into consecutive segments of roughly 3-15 seconds at natural bre
 plausibly touch, most specific first (e.g. a casino promo code is "gambling.promotion", \
 not "drugs.promotion"; "this drink cures diabetes" is "health.cure_claim"). Use the ids \
 exactly as written. Leave empty for clearly neutral segments.
+- idioms: figures of speech or slang in the speech that could read as literal violence, \
+crime, insult or threat if translated word for word (e.g. "this offer is a bomb", \
+"it's a killer deal"), quoted verbatim; [] if none.
 
 Content taxonomy:
 {taxonomy.prompt_list()}"""
@@ -132,7 +136,8 @@ _MOCK_SEGMENTS = [
          leaves=["gambling.promotion"]),
     dict(transcript="This deal is a killer, it's basically a crime not to grab it.",
          visuals="Creator holding the box up to the camera, smiling.",
-         on_screen_text="LINK IN BIO", claims=[], leaves=[]),
+         on_screen_text="LINK IN BIO", claims=[], leaves=[],
+         idioms=["This deal is a killer", "basically a crime not to grab it"]),
     dict(transcript="Like and subscribe, see you next week!",
          visuals="End card with channel logo.", on_screen_text="SUBSCRIBE", claims=[], leaves=[]),
 ]
@@ -387,7 +392,8 @@ Return one output per input index."""
 
 JUDGE_SYSTEM = """You review dubbed lines for a content-compliance tool. For each item \
 you get the original line, its translation and an independent back-translation, plus \
-the risk categories already flagged for that moment.
+the risk categories already flagged for that moment and any idioms in the line \
+(figures of speech that may have been rendered literally).
 
 drift = "increased" if the translated version is likely to read as MORE offensive, \
 inflammatory, defamatory or otherwise riskier to that country's audience than the \
@@ -401,10 +407,12 @@ def _overlaps(f: Finding, s: Segment) -> bool:
 
 
 def flagged_segments(inventory: Inventory, report: CountryReport) -> list[Segment]:
-    """Segments with speech that overlap at least one finding, capped."""
-    out = [s for s in inventory.segments
-           if s.transcript.strip() and any(_overlaps(f, s) for f in report.findings)]
-    return out[: config.MAX_DRIFT_SEGMENTS]
+    """Segments with speech that overlap a finding or carry an idiom that could turn
+    literal in translation, capped (flagged ones first)."""
+    speech = [s for s in inventory.segments if s.transcript.strip()]
+    flagged = [s for s in speech if any(_overlaps(f, s) for f in report.findings)]
+    idioms = [s for s in speech if s.idioms and s not in flagged]
+    return (flagged + idioms)[: config.MAX_DRIFT_SEGMENTS]
 
 
 def _categories_at(report: CountryReport, seg: Segment) -> list[str]:
@@ -435,7 +443,8 @@ def translation_check(
         list[_Text], model=config.SC_MODEL_FAST, system_instruction=TRANSLATE_SYSTEM), _Text)
     judge_items = [
         {"index": i, "original": segs[i].transcript, "translation": translated[i].text,
-         "back_translation": back[i].text, "flagged_categories": _categories_at(report, segs[i])}
+         "back_translation": back[i].text, "flagged_categories": _categories_at(report, segs[i]),
+         "idioms": segs[i].idioms}
         for i in sorted(translated) if i in back
     ]
     if not judge_items:

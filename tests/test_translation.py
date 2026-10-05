@@ -29,11 +29,13 @@ def test_mock_drift_one_increased_and_english_skipped():
     CountryReport.model_validate(reps["IN"].model_dump())
 
 
-def test_only_flagged_segments_with_speech(monkeypatch):
+def test_only_flagged_or_idiom_segments_with_speech(monkeypatch):
     inv, reps = _reports(["IN"])
     segs = pipeline.flagged_segments(inv, reps["IN"])
     flagged_starts = {f.start_s for f in reps["IN"].findings}
-    assert segs and all(s.start_s in flagged_starts and s.transcript for s in segs)
+    assert segs and all((s.start_s in flagged_starts or s.idioms) and s.transcript for s in segs)
+    assert any(s.idioms and s.start_s not in flagged_starts for s in segs)  # "a killer deal"
+    assert segs[0].start_s in flagged_starts  # flagged lines first
     monkeypatch.setattr(config, "MAX_DRIFT_SEGMENTS", 1)
     assert len(pipeline.flagged_segments(inv, reps["IN"])) == 1
 

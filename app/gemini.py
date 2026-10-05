@@ -131,16 +131,29 @@ def _generate(client, model: str, contents: Any, cfg: Any, *, what: str):
     return resp
 
 
-def extract_json(text: str) -> Any:
-    """First JSON object or array in a model reply (tolerates code fences and prose)."""
+def iter_json(text: str):
+    """Every top-level JSON object or array in a model reply, in order (tolerates
+    code fences and prose)."""
     text = re.sub(r"```(?:json)?", "", text)
     decoder = json.JSONDecoder()
-    for i, ch in enumerate(text):
-        if ch in "[{":
+    i = 0
+    while i < len(text):
+        if text[i] in "[{":
             try:
-                return decoder.raw_decode(text, i)[0]
+                value, end = decoder.raw_decode(text, i)
             except json.JSONDecodeError:
+                i += 1
                 continue
+            yield value
+            i = end
+        else:
+            i += 1
+
+
+def extract_json(text: str) -> Any:
+    """First JSON object or array in a model reply."""
+    for value in iter_json(text):
+        return value
     raise ValueError("no JSON found in model output")
 
 

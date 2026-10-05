@@ -120,6 +120,7 @@ class Segment(_Timed):
     visuals: str = ""
     on_screen_text: str = ""
     leaves: list[str] = []  # taxonomy leaves (app/taxonomy.py)
+    idioms: list[str] = []  # figures of speech that may turn literal in translation
     categories: list[Category] = []  # legacy; derived from leaves when leaves are given
 
     @model_validator(mode="after")
