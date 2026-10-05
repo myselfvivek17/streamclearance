@@ -26,7 +26,9 @@ if ! "$GCLOUD" artifacts repositories describe "$REPO" --location "$REGION" --pr
     --location "$REGION" --project "$PROJECT" --description "StreamClearance images"
 fi
 
-"$GCLOUD" builds submit --project "$PROJECT" --region "$REGION" --tag "$IMAGE" .
+# Logs go to our own bucket: the default one needs project Viewer to stream.
+"$GCLOUD" builds submit --project "$PROJECT" --region "$REGION" --tag "$IMAGE" \
+  --gcs-log-dir "gs://${PROJECT}_cloudbuild/logs" .
 
 "$GCLOUD" run deploy "$SERVICE" --project "$PROJECT" --region "$REGION" --image "$IMAGE" \
   --service-account "$SA" \
