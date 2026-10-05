@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import shutil
 import tempfile
 from collections.abc import AsyncIterator
 from pathlib import Path
@@ -63,11 +64,31 @@ class LocalStorage:
                 return p
         return None
 
-    def delete_video(self, video_id: str) -> None:
-        if (p := self.video_path(video_id)) is not None:
-            p.unlink(missing_ok=True)
-        if valid_id(video_id):
-            (self.uploads / f"{video_id}.meta.json").unlink(missing_ok=True)
+    def delete_video(self, video_id: str) -> int:
+        """Delete the video, its meta and anything else stored under its id
+        (uploads/<id>*). Returns the number of files removed."""
+        if not valid_id(video_id) or not self.uploads.exists():
+            return 0
+        n = 0
+        for p in self.uploads.glob(f"{video_id}*"):
+            if p.is_dir():
+                shutil.rmtree(p, ignore_errors=True)
+            else:
+                p.unlink(missing_ok=True)
+            n += 1
+        return n
+
+    def video_ids(self) -> dict[str, float]:
+        """Every stored video id (video or meta present) -> oldest file mtime."""
+        out: dict[str, float] = {}
+        if not self.uploads.exists():
+            return out
+        for p in self.uploads.iterdir():
+            vid = p.name[:32]
+            if valid_id(vid):
+                mtime = p.stat().st_mtime
+                out[vid] = min(out.get(vid, mtime), mtime)
+        return out
 
     def save_video_meta(self, video_id: str, meta: dict[str, Any]) -> None:
         self._write_json(self.uploads / f"{video_id}.meta.json", meta)

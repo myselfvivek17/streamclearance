@@ -273,6 +273,7 @@ def _video_via_files_api(client, video_path: Path, mime_type: str, prompt: str, 
 
 GCS_UPLOAD_URL = "https://storage.googleapis.com/upload/storage/v1/b/{bucket}/o"
 GCS_OBJECT_URL = "https://storage.googleapis.com/storage/v1/b/{bucket}/o/{name}"
+GCS_LIST_URL = "https://storage.googleapis.com/storage/v1/b/{bucket}/o"
 
 
 def _gcs_session():
@@ -283,13 +284,41 @@ def _gcs_session():
     return AuthorizedSession(creds)
 
 
+def gcs_prefix(video_id: str) -> str:
+    return f"videos/{video_id}/"
+
+
+def delete_gcs_objects(video_id: str) -> int:
+    """Delete every upload-bucket object stored for this video. Returns how many."""
+    from urllib.parse import quote
+
+    bucket = config.upload_bucket()
+    session = _gcs_session()
+    r = session.get(GCS_LIST_URL.format(bucket=bucket),
+                    params={"prefix": gcs_prefix(video_id), "fields": "items(name)"}, timeout=60)
+    if r.status_code == 404:
+        return 0
+    if r.status_code >= 300:
+        raise RuntimeError(f"GCS list failed: HTTP {r.status_code}")
+    n = 0
+    for item in r.json().get("items", []):
+        d = session.delete(GCS_OBJECT_URL.format(bucket=bucket, name=quote(item["name"], safe="")),
+                           timeout=60)
+        if d.status_code < 300 or d.status_code == 404:
+            n += 1
+        else:
+            raise RuntimeError(f"GCS delete failed: HTTP {d.status_code}")
+    return n
+
+
 def _video_via_gcs(client, video_path: Path, mime_type: str, prompt: str, cfg, model: str) -> Any:
     from urllib.parse import quote
 
     from google.genai import types
 
     bucket = config.upload_bucket()
-    name = f"videos/{uuid.uuid4().hex}{video_path.suffix.lower()}"
+    # Under the video id, so app/retention.py can find and delete it when the job ends.
+    name = f"{gcs_prefix(video_path.stem)}{uuid.uuid4().hex}{video_path.suffix.lower()}"
     session = _gcs_session()
     log.info("gcs upload %s -> gs://%s/%s (%d bytes)", video_path.name, bucket, name,
              video_path.stat().st_size)

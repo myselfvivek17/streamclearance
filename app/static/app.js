@@ -3,12 +3,14 @@
 "use strict";
 
 const $ = (id) => document.getElementById(id);
-const LS = { theme: "sc.theme", video: "sc.video", job: "sc.lastJob", countries: "sc.countries" };
+const LS = { theme: "sc.theme", video: "sc.video", meta: "sc.videoMeta", job: "sc.lastJob", countries: "sc.countries" };
 const POLL_MS = 2000;
 
 const S = {
   status: null, countries: [], taxonomy: { leaves: {}, categories: {} },
-  video: null, // upload metadata of the current video
+  video: null, // upload metadata of the video still on the server (not yet analysed)
+  local: null, // { id, url }: object URL of the file the user picked; the server deletes its copy after the check
+  reportVideo: null, // upload metadata (from this browser) of the job being shown
   job: null, // last job fetched
   pollTimer: null, tickTimer: null, advanceTimer: null,
   seq: 0, // bumps on every route change so stale async renders are dropped
@@ -137,17 +139,34 @@ function loadBasics() {
   return basics;
 }
 
+// File name, size and duration of the last upload stay in this browser, so a
+// report can still name its video after the server deleted it.
+function savedMeta(videoId) {
+  try {
+    const m = JSON.parse(store.get(LS.meta) || "null");
+    return m && m.video_id === videoId ? m : null;
+  } catch { return null; }
+}
+
 async function loadVideo(videoId) {
   if (S.video && S.video.video_id === videoId) return S.video;
   try {
-    return (S.video = await api(`/api/videos/${encodeURIComponent(videoId)}/meta`));
+    S.video = await api(`/api/videos/${encodeURIComponent(videoId)}/meta`);
+    store.set(LS.meta, JSON.stringify(S.video));
+    return S.video;
   } catch (e) {
     if (e.status === 404) return null;
     throw e;
   }
 }
 
-const videoName = () => (S.video && S.video.filename) || "Your video";
+function setLocal(videoId, file) {
+  if (S.local) URL.revokeObjectURL(S.local.url);
+  S.local = file ? { id: videoId, url: URL.createObjectURL(file) } : null;
+}
+const localUrl = (videoId) => (S.local && S.local.id === videoId ? S.local.url : null);
+
+const videoName = () => (S.reportVideo && S.reportVideo.filename) || "Your video";
 
 // ------------------------------------------------------------------ shell: theme, stepper, routing
 
@@ -334,6 +353,8 @@ async function screenUpload(stale) {
       }
       S.video = res;
       store.set(LS.video, res.video_id);
+      store.set(LS.meta, JSON.stringify(res));
+      setLocal(res.video_id, f);
       showFile();
       renderStepper(parseRoute());
     };
@@ -348,7 +369,7 @@ async function screenUpload(stale) {
     body.replaceChildren(
       el("div", { class: "card file-card" },
         el("div", { class: "thumb" },
-          el("video", { src: `/api/videos/${encodeURIComponent(v.video_id)}#t=0.5`, preload: "metadata", muted: true, playsinline: true,
+          el("video", { src: `${localUrl(v.video_id) || `/api/videos/${encodeURIComponent(v.video_id)}`}#t=0.5`, preload: "metadata", muted: true, playsinline: true,
             "aria-hidden": "true", style: "position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" }),
           el("span", { class: "thumb-dur" }, dur)),
         el("div", { class: "stack grow", style: "gap: 14px; justify-content: center; min-width: 220px" },
@@ -359,7 +380,7 @@ async function screenUpload(stale) {
             el("div", {}, el("dt", {}, "Size"), el("dd", {}, mb(v.size_bytes))),
             el("div", {}, el("dt", {}, "Format"), el("dd", {}, ext))),
           el("div", {}, el("button", { class: "link-btn small", type: "button", onclick: () => {
-            S.video = null; store.set(LS.video, null); showDrop(); renderStepper(parseRoute());
+            S.video = null; store.set(LS.video, null); setLocal(null); showDrop(); renderStepper(parseRoute());
           } }, "Replace video")))),
       el("div", { class: "footer-bar" },
         el("span", { class: "small muted" }, "Next, choose the countries you want to publish in."),
@@ -410,6 +431,8 @@ async function screenCountries(stale) {
       });
       store.set(LS.job, job_id);
       S.job = null;
+      // The server deletes the video when this check ends, so it can't be analysed again.
+      S.video = null; store.set(LS.video, null);
       go(`#analysis/${job_id}`);
     } catch (e) {
       if (e.status === 404) { S.video = null; store.set(LS.video, null); }
@@ -493,7 +516,7 @@ function buildStages(job) {
   const by = Object.fromEntries(job.stages.map((s) => [s.key, s]));
   const st = (k) => (by[k] ? by[k].status : "pending");
   const rows = [];
-  const v = S.video;
+  const v = S.reportVideo;
   rows.push({ label: "Video uploaded", status: "done",
     detail: v ? [v.filename, mb(v.size_bytes), v.duration_s != null ? fmt(v.duration_s) : null].filter(Boolean).join(" · ") : "" });
 
@@ -533,7 +556,7 @@ function buildStages(job) {
 
 async function screenAnalysis(jobId, stale) {
   const job = await fetchJob(jobId);
-  await loadVideo(job.video_id);
+  S.reportVideo = savedMeta(job.video_id);
   if (stale()) return;
   store.set(LS.job, jobId);
 
@@ -570,11 +593,11 @@ async function screenAnalysis(jobId, stale) {
         el("button", { class: "btn btn-primary btn-sm", type: "button", onclick: () => go(`#results/${jobId}`) }, "View results"));
       clearInterval(S.tickTimer);
       S.advanceTimer = setTimeout(() => { if (!stale()) go(`#results/${jobId}`); }, 1200);
-    } else if (j.status === "error") {
+    } else if (j.status === "error" || j.status === "cancelled") {
       foot.replaceChildren(icon("x"), el("span", { class: "grow" }, "The analysis stopped."));
-      err.replaceChildren(alertBox(`Analysis failed: ${j.error || "unknown error"}`),
+      err.replaceChildren(alertBox(`Analysis failed: ${j.error || "unknown error"} Your video was deleted from the server; upload it again to retry.`),
         el("div", { class: "footer-bar" },
-          el("button", { class: "btn", type: "button", onclick: () => go("#countries") }, icon("left"), "Try again")));
+          el("button", { class: "btn", type: "button", onclick: () => go("#upload") }, icon("upload"), "Upload again")));
       clearInterval(S.tickTimer);
     } else {
       foot.replaceChildren(icon("info"), el("span", {}, "Results open automatically when the report is ready."));
@@ -604,7 +627,7 @@ async function loadReport(jobId, stale) {
     location.replace(`#analysis/${encodeURIComponent(jobId)}`);
     return null;
   }
-  await loadVideo(job.video_id);
+  S.reportVideo = savedMeta(job.video_id);
   store.set(LS.job, jobId);
   return job;
 }
@@ -656,15 +679,24 @@ function makePlayer(job, scope, { legend = false } = {}) {
   const report = job.report;
   const ms = moments(report);
   let dur = Number(report.duration_s) || 0;
-  const video = el("video", { src: `/api/videos/${encodeURIComponent(job.video_id)}`, preload: "metadata", playsinline: true });
+  // Plays the browser's own copy of the file: the server deleted its copy after the check.
+  // Without one (e.g. after a reload) the timeline still works, just without the picture.
+  const src = localUrl(job.video_id);
+  const video = src ? el("video", { src, preload: "metadata", playsinline: true }) : null;
+  let pos = 0; // current time when there is no video
+  const now = () => (video ? video.currentTime || 0 : pos);
   const tc = el("span", { class: "player-tc" });
   const caption = el("div", { class: "caption", "aria-live": "off" });
   const big = el("button", { class: "play-big is-play", type: "button", "aria-label": "Play video" }, icon("play"));
-  const small = el("button", { class: "play-sm", type: "button", "aria-label": "Play video" }, icon("play"));
+  const small = el("button", { class: "play-sm", type: "button", "aria-label": "Play video", hidden: !video }, icon("play"));
   const head = el("div", { class: "tl-head" });
-  const player = el("div", { class: "player" }, video,
-    el("span", { class: "player-file" }, videoName()), tc,
-    el("div", { class: "player-center" }, big), caption);
+  const player = video
+    ? el("div", { class: "player" }, video,
+      el("span", { class: "player-file" }, videoName()), tc,
+      el("div", { class: "player-center" }, big), caption)
+    : el("div", { class: "player player-gone" },
+      el("span", { class: "player-file" }, videoName()), tc,
+      el("div", { class: "player-center" }, el("span", { class: "gone-note" }, icon("info"), "Video deleted after the check")), caption);
 
   const segs = [];
   for (const m of ms) {
@@ -687,7 +719,7 @@ function makePlayer(job, scope, { legend = false } = {}) {
   });
   track.addEventListener("keydown", (e) => {
     const step = { ArrowLeft: -5, ArrowRight: 5, ArrowDown: -5, ArrowUp: 5 }[e.key];
-    if (step) { e.preventDefault(); seek(video.currentTime + step, false); } else if (e.key === "Home") { e.preventDefault(); seek(0, false); } else if (e.key === "End") { e.preventDefault(); seek(dur, false); } else if (e.key === " " || e.key === "k") { e.preventDefault(); toggle(); }
+    if (step) { e.preventDefault(); seek(now() + step, false); } else if (e.key === "Home") { e.preventDefault(); seek(0, false); } else if (e.key === "End") { e.preventDefault(); seek(dur, false); } else if (e.key === " " || e.key === "k") { e.preventDefault(); toggle(); }
   });
 
   const half = dur / 2;
@@ -702,7 +734,7 @@ function makePlayer(job, scope, { legend = false } = {}) {
 
   const listeners = [];
   function update() {
-    const t = video.currentTime || 0;
+    const t = now();
     head.style.left = `${dur ? (Math.min(dur, t) / dur * 100).toFixed(2) : 0}%`;
     tc.textContent = `${fmt(t)} / ${fmt(dur)}`;
     track.setAttribute("aria-valuenow", String(Math.round(t)));
@@ -720,21 +752,24 @@ function makePlayer(job, scope, { legend = false } = {}) {
       b.firstElementChild.className = `ic ${p ? "ic-pause" : "ic-play"}`;
     }
   }
-  function toggle() { if (video.paused) video.play().catch(() => {}); else video.pause(); }
+  function toggle() { if (!video) return; if (video.paused) video.play().catch(() => {}); else video.pause(); }
   function seek(t, play = true) {
-    video.currentTime = Math.max(0, Math.min(dur || t, t));
+    t = Math.max(0, Math.min(dur || t, t));
+    if (video) video.currentTime = t; else pos = t;
     update();
-    if (play) video.play().catch(() => {});
+    if (play && video) video.play().catch(() => {});
   }
-  big.addEventListener("click", toggle);
-  small.addEventListener("click", toggle);
-  video.addEventListener("click", toggle);
-  video.addEventListener("timeupdate", update);
-  video.addEventListener("seeked", update);
-  video.addEventListener("play", () => setPlaying(true));
-  video.addEventListener("pause", () => setPlaying(false));
-  video.addEventListener("loadedmetadata", () => { if (!dur && video.duration) { dur = video.duration; update(); } });
-  video.addEventListener("error", () => { caption.textContent = "Video not available (it may have been deleted)."; });
+  if (video) {
+    big.addEventListener("click", toggle);
+    small.addEventListener("click", toggle);
+    video.addEventListener("click", toggle);
+    video.addEventListener("timeupdate", update);
+    video.addEventListener("seeked", update);
+    video.addEventListener("play", () => setPlaying(true));
+    video.addEventListener("pause", () => setPlaying(false));
+    video.addEventListener("loadedmetadata", () => { if (!dur && video.duration) { dur = video.duration; update(); } });
+    video.addEventListener("error", () => { caption.textContent = "Video not available (it was deleted after the check)."; });
+  }
   update();
   return { player, timeline, seek, onTime: (fn) => listeners.push(fn) };
 }

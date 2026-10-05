@@ -142,6 +142,16 @@ def mock_delay_s() -> float:
     return float(os.getenv("SC_MOCK_DELAY", "0.6"))
 
 
+def unused_video_ttl_s() -> float:
+    """An uploaded video that is never analysed is deleted after this long."""
+    return float(os.getenv("SC_UNUSED_VIDEO_TTL_MIN", "60")) * 60
+
+
+def report_ttl_days() -> float:
+    """Reports (job records) are deleted this many days after the job was created."""
+    return float(os.getenv("SC_REPORT_TTL_DAYS", "7"))
+
+
 def access_code() -> str | None:
     return os.getenv("SC_ACCESS_CODE") or None
 

@@ -3,6 +3,9 @@
 Status is persisted to storage after every change so GET /api/jobs/{id} (on
 any instance, once storage is shared) sees progress. Stages:
 uploaded -> inventory -> country:XX (one per country) -> translation -> done.
+
+When a job ends (done, error or cancelled) its video is deleted (app/retention.py);
+the report keeps only what the UI needs, so it works without the video.
 """
 from __future__ import annotations
 
@@ -12,13 +15,18 @@ import time
 import uuid
 from typing import Any
 
-from app import config, gemini, pipeline
-from app.schemas import CountryReport, Report
+from app import config, gemini, pipeline, retention
+from app.schemas import CountryReport, Privacy, Report
 from app.storage import get_storage
 
 log = logging.getLogger(__name__)
 
-_tasks: set[asyncio.Task] = set()  # keep references so tasks aren't garbage-collected
+# Running jobs: job_id -> (task, video_id). Also keeps task references alive.
+_active: dict[str, tuple[asyncio.Task, str]] = {}
+
+
+def active_video_ids() -> set[str]:
+    return {video_id for _, video_id in _active.values()}
 
 
 def _stage(key: str, label: str, status: str = "pending", detail: str = "") -> dict[str, str]:
@@ -44,15 +52,23 @@ def create_job(video_id: str, countries: list[str]) -> dict[str, Any]:
             _stage("done", "Report ready"),
         ],
         "report": None,
+        "video_deleted_at": None,
+        "expires_at": None,
     }
+    job["expires_at"] = retention.iso(expires_at(job))
     _save(job)
     return job
 
 
 def start_job(job: dict[str, Any]) -> None:
+    job_id = job["job_id"]
     task = asyncio.create_task(run_job(job))
-    _tasks.add(task)
-    task.add_done_callback(_tasks.discard)
+    _active[job_id] = (task, job["video_id"])
+    task.add_done_callback(lambda _: _active.pop(job_id, None))
+
+
+def expires_at(job: dict[str, Any]) -> float:
+    return job["created_at"] + config.report_ttl_days() * 86400
 
 
 def _save(job: dict[str, Any]) -> None:
@@ -134,15 +150,29 @@ async def run_job(job: dict[str, Any]) -> None:
             mock=mock,
             inventory=inventory,
             errors=errors,
+            privacy=Privacy(report_expires_at=retention.iso(expires_at(job))),
         )
         job["report"] = report.model_dump(mode="json")
         job["status"] = "done"
-        _set(job, "done", "done")
+    except asyncio.CancelledError:
+        log.warning("job %s cancelled", job["job_id"])
+        job["status"] = "cancelled"
+        job["error"] = "The analysis was cancelled."
+        raise
     except Exception as e:  # noqa: BLE001 - surfaced to the client
-        log.exception("job %s failed", job["job_id"])
+        log.error("job %s failed: %s", job["job_id"], type(e).__name__)
         job["status"] = "error"
         job["error"] = pipeline.public_error(e)
         for st in job["stages"]:
             if st["status"] == "running" or (current == "inventory" and st["key"] == "inventory"):
                 st["status"], st["detail"] = "error", job["error"]
-        _set(job, "done", "error")
+    finally:
+        # The video is not needed any more, whatever happened: delete it before
+        # the client sees the final status.
+        deleted_at = retention.purge_video(job["video_id"])
+        job["video_deleted_at"] = deleted_at
+        if job["report"] is not None:
+            job["report"]["privacy"]["video_deleted_at"] = deleted_at
+        if job["status"] == "running":
+            job["status"] = "error"
+        _set(job, "done", "done" if job["status"] == "done" else "error")

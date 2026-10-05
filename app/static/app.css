@@ -484,3 +484,8 @@ html.dark, html.dark body { background: #0b0d12; color-scheme: dark; }
 .access-dialog input { min-height: 44px; padding: 0 12px; border-radius: var(--r); border: 1px solid var(--border-strong); background: var(--surface); }
 .access-dialog .row { justify-content: flex-end; }
 .ccard .tag, .dh-title .tag { height: auto; min-height: 24px; padding-top: 3px; padding-bottom: 3px; white-space: normal; }
+.player-gone { display: grid; place-items: center; background: var(--surface-2); color: var(--text-2); border: 1px dashed var(--border); }
+.player-gone .player-file, .player-gone .player-tc { background: var(--surface); color: var(--text-2); border: 1px solid var(--border); }
+.gone-note { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+.gone-note .ic { width: 16px; height: 16px; }
+.player-gone .caption { color: #fff; }

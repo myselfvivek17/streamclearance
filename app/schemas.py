@@ -206,6 +206,12 @@ class CountryReport(BaseModel):
         return self.overall_risk
 
 
+class Privacy(BaseModel):
+    """When the video was deleted (set once the job ends) and when the report will be."""
+    video_deleted_at: str | None = None  # ISO 8601 UTC
+    report_expires_at: str | None = None
+
+
 class Report(BaseModel):
     video_id: str
     duration_s: float = Field(ge=0)
@@ -214,3 +220,4 @@ class Report(BaseModel):
     inventory: Inventory | None = None
     errors: list[str] = []
     disclaimer: str = DISCLAIMER
+    privacy: Privacy | None = None

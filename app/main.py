@@ -1,6 +1,8 @@
 """FastAPI app: upload, analysis jobs, country/law metadata and the static UI."""
 from __future__ import annotations
 
+import asyncio
+import contextlib
 import hmac
 import logging
 import uuid
@@ -12,7 +14,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from app import config, jobs, media, provisions, taxonomy
+from app import config, jobs, media, provisions, retention, taxonomy
 from app.schemas import Category
 from app.storage import TooLarge, get_storage
 
@@ -20,7 +22,32 @@ log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 config.apply_adk_env()  # ADK agents use the same Gemini backend as app/gemini.py
 
-app = FastAPI(title="StreamClearance")
+SWEEP_EVERY_S = 30 * 60
+
+
+def sweep() -> None:
+    """Delete videos nobody analysed within SC_UNUSED_VIDEO_TTL_MIN."""
+    n = retention.sweep_unused_videos(jobs.active_video_ids())
+    log.info("sweep: %d unused videos deleted", n)
+
+
+async def _sweeper() -> None:
+    while True:
+        try:
+            await asyncio.to_thread(sweep)
+        except Exception as e:  # noqa: BLE001 - keep sweeping
+            log.warning("sweep failed (%s)", type(e).__name__)
+        await asyncio.sleep(SWEEP_EVERY_S)
+
+
+@contextlib.asynccontextmanager
+async def lifespan(_: FastAPI):
+    task = asyncio.create_task(_sweeper())  # runs once on startup, then every 30 min
+    yield
+    task.cancel()
+
+
+app = FastAPI(title="StreamClearance", lifespan=lifespan)
 STATIC_DIR = Path(__file__).parent / "static"
 ACCESS_HEADER = "X-Access-Code"
 ACCESS_COOKIE = "sc_access"
@@ -182,6 +209,8 @@ async def analyze(req: AnalyzeRequest):
     store = get_storage()
     if store.load_video_meta(req.video_id) is None or store.video_path(req.video_id) is None:
         raise HTTPException(404, "video not found")
+    if req.video_id in jobs.active_video_ids():
+        raise HTTPException(409, "this video is already being analysed")
     codes = list(dict.fromkeys(c.upper() for c in req.countries))
     unknown = [c for c in codes if c not in config.COUNTRIES]
     if unknown:
