@@ -116,6 +116,15 @@ def plan(desired: dict[str, tuple[str, dict]], recorded: dict[str, dict],
     return sorted(upload), sorted(delete)
 
 
+def dump_index(index: dict) -> str:
+    """JSON with one line per document, so diffs show exactly what changed."""
+    head = {k: v for k, v in index.items() if k != "docs"}
+    lines = [f" {json.dumps(n)}: {json.dumps(m, ensure_ascii=False, sort_keys=True)}"
+             for n, m in sorted(index["docs"].items())]
+    return (json.dumps(head, indent=1, ensure_ascii=False)[:-2] + ',\n "docs": {\n'
+            + ",\n".join(lines) + "\n }\n}\n")
+
+
 def sync(countries: list[str] | None = None, *, dry_run: bool = False) -> dict:
     project = config.gcp_project()
     if not project and not dry_run:
@@ -169,9 +178,7 @@ def sync(countries: list[str] | None = None, *, dry_run: bool = False) -> dict:
                        "imported": wanted - len(failed),
                        "deleted": len(delete), "failed": failed}
     if not dry_run:
-        index["docs"] = dict(sorted(index["docs"].items()))
-        config.SEARCH_INDEX_PATH.write_text(json.dumps(index, indent=1, ensure_ascii=False) + "\n",
-                                            encoding="utf-8")
+        config.SEARCH_INDEX_PATH.write_text(dump_index(index), encoding="utf-8")
         law_search.reset()
     return summary
 
