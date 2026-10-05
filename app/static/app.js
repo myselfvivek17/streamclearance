@@ -543,7 +543,7 @@ async function screenAnalysis(jobId, stale) {
   const err = el("div", { style: "margin-top: 16px" });
   mount(el("main", { class: "main narrow" },
     pageHead("Step 3 of 4", "Checking your video",
-      "We are comparing what is said, shown and written on screen with each country’s rules. This usually takes 1–3 minutes, longer on free models."),
+      "We are comparing what is said, shown and written on screen with each country’s rules. This usually takes 1–3 minutes."),
     el("div", { class: "card an-card" },
       el("div", { class: "an-head" },
         el("div", { class: "row", style: "gap: 10px" }, icon("video", "color: var(--text-3)"),
@@ -757,7 +757,6 @@ function reportNotes(job) {
   const notes = [];
   if (r.mock) notes.push(alertBox("Mock mode: these results are canned examples, not a real analysis.", "alert-grey", "info"));
   if ((r.errors || []).length) notes.push(alertBox(`Some checks failed, so this report is incomplete: ${r.errors.join("; ")}`, "risk-amber", "warn"));
-  if (r.inventory && r.inventory.speech_transcribed === false) notes.push(alertBox("Speech could not be transcribed, so spoken content may be missing from this report.", "alert-grey", "info")); // OPENROUTER-TEMP
   return notes.length ? el("div", { class: "notes" }, notes) : null;
 }
 

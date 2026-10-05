@@ -5,14 +5,13 @@ timestamped flags tied to the exact law section and page. Advisory only, not
 legal advice. Most of these laws put duties on platforms, so the practical risk
 is takedown or geo-blocking in that country.
 
-## Status: M0–M5 working locally (mock mode until a Gemini key is added)
+## Status: M0–M5 working; Gemini on Vertex AI; deployable to Cloud Run
 
 | Path | What it does |
 |---|---|
 | `app/config.py` | Paths, model IDs (`SC_MODEL_FAST`, `SC_MODEL_SMART`), country → law map |
 | `app/schemas.py` | Pydantic models: `RuleCard`, `Segment`, `Inventory`, `Finding`, `CountryReport`, `Report`, `Category` |
-| `app/gemini.py` | The only module that calls Gemini (google-genai, AI Studio key) |
-| `app/openrouter_backend.py` | **Temporary** OpenRouter bridge (free models only); see below |
+| `app/gemini.py` | The only module that calls Gemini directly (google-genai: Vertex AI or AI Studio key); usage log + per-job call cap |
 | `app/validate.py` | `validate_findings()` drops findings with unknown card IDs or out-of-range timestamps |
 | `app/storage.py` | Local `uploads/` and `jobs/` behind a small interface (swap for GCS later) |
 | `app/media.py` | ffprobe duration (optional; skipped if ffprobe is missing) |
@@ -27,7 +26,7 @@ Countries: IN (IT Rules 2021, as updated Feb 2026), AU (Online Safety Act 2021),
 MY (Online Safety Act 2025), SG (Online Safety (Relief and Accountability) Bill
 2025, **the bill as introduced, so check it against the enacted Act**), PK (PECA Amendment 2025).
 
-No cloud deployment yet (no GCS, Vertex or Cloud Run).
+Deployment: see [Cloud Run](#cloud-run) below.
 
 ## Running the app
 
@@ -35,12 +34,11 @@ No cloud deployment yet (no GCS, Vertex or Cloud Run).
 ./run.sh                      # http://localhost:8430  (SC_PORT to change)
 ```
 
-Without `GEMINI_API_KEY` (or with `SC_MOCK=1`) everything runs in **mock mode**:
+Without a Gemini backend (or with `SC_MOCK=1`) everything runs in **mock mode**:
 stage A returns a canned inventory scaled to the real video length, stage B
 returns canned findings (plus one invented card ID the validator must drop),
 and the drift check returns one canned "increased" example. The UI shows a
-MOCK MODE banner. Set `GEMINI_API_KEY` in `.env` and restart to use Gemini
-(video goes through the AI Studio Files API).
+MOCK MODE banner. See [Gemini backends](#gemini-backends) to use Gemini.
 
 If `data/rules/<cc>.json` doesn't exist, the app falls back to
 `<cc>.dryrun.json`, generating it with the `build_rules --dry-run` logic, and
@@ -58,46 +56,50 @@ python3.12 -m venv .venv
 .venv/bin/pytest -q          # no network or API key needed
 ```
 
-## Adding the Gemini key
+## Gemini backends
+
+`config.gemini_backend()` picks, in order:
+
+1. **Vertex AI** if `GOOGLE_CLOUD_PROJECT` / `GCP_PROJECT` is set or
+   `SC_GEMINI_BACKEND=vertex`. Location `GCP_VERTEX_LOCATION` /
+   `GOOGLE_CLOUD_LOCATION`, default `global`. Credentials come from ADC:
+   locally `GOOGLE_APPLICATION_CREDENTIALS=.secrets/gcp-sa.json` (never commit
+   it), on Cloud Run the attached service account.
+2. **AI Studio** if `GEMINI_API_KEY` is set.
+3. Otherwise mock.
 
 ```bash
-cp .env.example .env         # .env is gitignored
-# put your AI Studio key in GEMINI_API_KEY=
+GOOGLE_APPLICATION_CREDENTIALS=.secrets/gcp-sa.json \
+GOOGLE_CLOUD_PROJECT=booming-entity-510706-e9 SC_PORT=8431 ./run.sh
 ```
 
-## Temporary OpenRouter bridge
+- Models: `SC_MODEL_FAST` / `SC_MODEL_SMART`, default `gemini-3.8-flash`. The
+  ADK agents use `SC_MODEL_SMART`; `config.apply_adk_env()` sets
+  `GOOGLE_GENAI_USE_VERTEXAI`, `GOOGLE_CLOUD_PROJECT`, `GOOGLE_CLOUD_LOCATION`
+  so ADK talks to the same backend.
+- Video: stage A is one multimodal call over the whole video, frames and
+  audio, so speech comes from the audio track. On Vertex the video is sent
+  inline up to `SC_VERTEX_INLINE_MB` (default 19), larger files go through a
+  temporary object in `gs://<project>-sc-uploads` (`SC_UPLOAD_BUCKET`;
+  asia-southeast1, lifecycle deletes objects after 1 day; the app also deletes
+  it after the call). AI Studio uses the Files API.
+- Cost: every call (direct and ADK) appends its token counts to
+  `jobs/usage.log`; `SC_MAX_CALLS_PER_JOB` (default 40) is a hard cap per job.
 
-Until a Gemini AI Studio key exists, `app/gemini.py` can dispatch to
-`app/openrouter_backend.py`. Provider order: `SC_MOCK=1` forces mock; else
-`SC_PROVIDER` (`gemini|openrouter|mock`) if set; else Gemini if
-`GEMINI_API_KEY` is set; else OpenRouter if `OPENROUTER_API_KEY` is set; else mock.
+## Cloud Run
 
-- **Free models only.** `SC_OR_MODEL` (default `google/gemma-4-31b-it:free`,
-  fallback `google/gemma-4-26b-a4b-it:free` on 429/5xx/unavailable). Any model id
-  not ending in `:free` is refused before a request is sent. Every call asks for
-  usage accounting and is logged to `jobs/usage.log`; a non-zero cost stops all
-  further OpenRouter calls with an error.
-- Gemma 4 takes no audio, so speech is transcribed first by
-  `SC_OR_AUDIO_MODEL` (default `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free`)
-  and merged into the stage A prompt. If that fails the inventory gets
-  `speech_transcribed: false` and the report shows a note.
-- Video is transcoded to ≤480p / mono 32k audio (ffmpeg) and sent inline (max
-  20 MB). If OpenRouter rejects video, frames every 2 s (max 60) are sent instead.
-- JSON: `json_schema` → `json_object` → schema in the prompt, then one repair
-  call, validated with Pydantic.
-- Free-tier limits: concurrency defaults to 1, at least 3.5 s between calls,
-  `Retry-After` honoured.
+`./deploy.sh` builds the image with Cloud Build into Artifact Registry
+(`asia-southeast1-docker.pkg.dev/<project>/streamclearance`) and deploys the
+`streamclearance` service in asia-southeast1 with the
+`hercules-deployer@` service account, Vertex env vars, 2 vCPU / 2 GiB,
+`--max-instances 1`. The service is public (`--allow-unauthenticated`) but
+every `/api` route needs the access code (`SC_ACCESS_CODE`); `deploy.sh`
+generates it once into `.secrets/access_code.txt` (gitignored).
 
-### Removing OpenRouter
-
-1. `git rm app/openrouter_backend.py tests/test_openrouter.py`
-2. Delete every line containing `OPENROUTER-TEMP`:
-   `grep -rn OPENROUTER-TEMP app` (app/config.py ×2, app/gemini.py ×3,
-   app/schemas.py, app/pipeline.py, app/static/app.js).
-3. Remove `"openrouter"` from `PROVIDERS` in `app/config.py`, the OpenRouter
-   block from `.env.example`, this section, and the
-   table row above; drop `OPENROUTER_API_KEY` from `.env`.
-4. `.venv/bin/pytest -q`.
+Uploads, jobs and `usage.log` live on the instance's local disk (in memory on
+Cloud Run). With `--max-instances 1` that's fine for a demo, but they vanish
+when the instance scales to zero (`--min-instances 0`) or is replaced by a
+new revision.
 
 ## Building rule cards
 

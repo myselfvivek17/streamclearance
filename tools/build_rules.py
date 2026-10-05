@@ -258,7 +258,7 @@ def build_cards(country: config.CountryLaw, generate: Generate) -> tuple[list[Ru
         log.info("%s: pages %d-%d", country.code, chunk[0], chunk[-1])
         prompt = build_prompt(country, pages, chunk)
         raws = generate(prompt)
-        if not raws:  # free models sometimes return nothing: one retry
+        if not raws:  # models sometimes return nothing: one retry
             log.warning("%s: pages %d-%d returned no cards, retrying once", country.code, chunk[0], chunk[-1])
             raws = generate(prompt)
         for raw in raws:
