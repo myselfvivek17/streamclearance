@@ -117,6 +117,15 @@ RAG Engine error (it is logged, and the country report gets a note).
 The service account needs `roles/aiplatform.user` (RAG Engine) and object
 write access to the upload bucket (only for indexing).
 
+Cost: indexing embeds about 1.2 M characters with text-embedding-005, and each
+query embeds a few words, so both are fractions of a cent. The corpora live in
+RAG Engine's managed vector DB: Spanner, "basic" tier (100 processing units,
+the project default). Google bills that Spanner instance as long as it exists.
+The docs only say so explicitly for GA regions, and asia-southeast1 is a
+preview region, so check the billing report. To stop the cost, delete the
+corpora, or set the tier to `Unprovisioned` (`UpdateRagEngineConfig`), which
+deletes all RAG data in that region. The app then falls back to BM25.
+
 ## Cloud Run
 
 `./deploy.sh` builds the image with Cloud Build into Artifact Registry
