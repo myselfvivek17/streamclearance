@@ -286,7 +286,7 @@ async function screenUpload(stale) {
       const f = e.dataTransfer && e.dataTransfer.files[0];
       if (f) accept(f);
     });
-    body.replaceChildren(dz, error ? el("div", { style: "margin-top: 12px" }, alertBox(error)) : null);
+    body.replaceChildren(...[dz, error ? el("div", { style: "margin-top: 12px" }, alertBox(error)) : null].filter(Boolean));
   }
 
   function accept(f) {
