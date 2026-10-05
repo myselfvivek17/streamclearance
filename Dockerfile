@@ -6,7 +6,8 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends ffmpeg \
  && rm -rf /var/lib/apt/lists/*
 
-RUN useradd --create-home --uid 10001 app
+RUN useradd --create-home --uid 10001 app \
+ && mkdir /app && chown app:app /app
 WORKDIR /app
 
 COPY requirements.txt .
