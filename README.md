@@ -101,6 +101,10 @@ Cloud Run). With `--max-instances 1` that's fine for a demo, but they vanish
 when the instance scales to zero (`--min-instances 0`) or is replaced by a
 new revision.
 
+Cloud Run caps HTTP/1 request bodies at 32 MiB, so uploads above that fail on
+Cloud Run even though `SC_MAX_UPLOAD_MB` is 200 (direct-to-GCS uploads would
+lift this).
+
 ## Building rule cards
 
 ```bash
