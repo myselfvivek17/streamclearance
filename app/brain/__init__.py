@@ -148,7 +148,7 @@ async def run(
         ctx: dict[str, Any] = {}
 
         async def fail(e: Exception) -> dict:
-            log.exception("brain failed for %s", cc)
+            log.error("brain failed for %s: %s", cc, type(e).__name__)
             state["results"][cc] = e
             if on_done:
                 await on_done(cc, None, pipeline.public_error(e))

@@ -211,7 +211,7 @@ def track_fallbacks() -> list[str]:
 
 
 def _note_fallback(country: str, e: Exception) -> None:
-    log.warning("%s: law search (RAG Engine) failed (%s); using local BM25", country, e)
+    log.warning("%s: law search (RAG Engine) failed (%s); using local BM25", country, type(e).__name__)
     notes = _fallbacks.get()
     msg = (f"Law search fallback: Vertex AI RAG Engine query failed ({type(e).__name__}); "
            "free-text search used local keyword matching (BM25) instead.")
@@ -267,8 +267,9 @@ def _file_search(country: str, query: str, k: int, kind: ProvisionKind | None = 
             body = body.strip().removeprefix(f"{title}, page {page}")  # the doc's own heading
             passages.append(Passage(law_id=law_id, law=title, page=page,
                                     snippet=" ".join(body.split())[:SNIPPET_CHARS]))
-    log.info("law search %s %r: %d provisions, %d passages (RAG Engine)",
-             country, query[:60], len(hits[:k]), len(passages))
+    # The query holds words from the video: log its length, not its text.
+    log.info("law search %s (%d chars): %d provisions, %d passages (RAG Engine)",
+             country, len(query), len(hits[:k]), len(passages))
     return hits[:k], passages
 
 

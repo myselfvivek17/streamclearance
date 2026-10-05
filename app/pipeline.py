@@ -99,11 +99,11 @@ def stage_a(video_path: Path, duration_s: float | None = None, *, mock: bool | N
     for d in sorted(draft.segments, key=lambda s: s.start_s):
         unknown = [x for x in d.leaves if not taxonomy.is_leaf(str(x).strip().lower())]
         if unknown:
-            log.warning("stage A: ignoring unknown taxonomy ids %s", unknown)
+            log.warning("stage A: ignoring %d unknown taxonomy ids", len(unknown))
         try:
             segments.append(Segment.model_validate(d.model_dump()))
         except ValidationError as e:
-            log.warning("stage A: dropping malformed segment: %s", e.errors()[0]["msg"])
+            log.warning("stage A: dropping malformed segment: %s", e.errors()[0]["type"])
     if duration_s is None:
         duration_s = max((s.end_s for s in segments), default=0.0)
     kept = []
@@ -259,7 +259,7 @@ def stage_b(
         try:
             parsed.append(Finding.model_validate({**item, "creator_liability": False}))
         except ValidationError as e:
-            log.warning("%s: dropping malformed finding: %s", country, e.errors()[0]["msg"])
+            log.warning("%s: dropping malformed finding: %s", country, e.errors()[0]["type"])
     findings = validate_findings(parsed, cards, inventory.duration_s)
     findings = [f for f in findings if f.risk != "green"]
 
@@ -520,7 +520,7 @@ async def run_translation(
     errors = []
     for (cc, lang), res in zip(tasks, results):
         if isinstance(res, BaseException):
-            log.error("translation check failed for %s/%s: %r", cc, lang, res)
+            log.error("translation check failed for %s/%s: %s", cc, lang, type(res).__name__)
             errors.append(f"translation {cc}/{lang}: {public_error(res)}")
             continue
         reports[cc].translation.extend(res)
@@ -552,7 +552,7 @@ async def run_countries(
                 report = await asyncio.to_thread(
                     stage_b, inventory, cc, cards, rules_status=status, mock=mock)
             except Exception as e:  # noqa: BLE001 - reported per country
-                log.exception("stage B failed for %s", cc)
+                log.error("stage B failed for %s: %s", cc, type(e).__name__)
                 if on_done:
                     await on_done(cc, None, public_error(e))
                 return e
@@ -568,4 +568,6 @@ def public_error(e: Exception) -> str:
     """Error text safe to show users (never includes request details or keys)."""
     if isinstance(e, gemini.GeminiUnavailable):
         return str(e)
+    if isinstance(e, ValidationError):  # its text echoes the invalid input (model output)
+        return f"ValidationError: {e.error_count()} invalid field(s)"
     return f"{type(e).__name__}: {str(e)[:200]}"

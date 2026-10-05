@@ -43,7 +43,8 @@ def verify(assessments: list[MomentAssessment], country: str, inventory: Invento
     seen: set[tuple[float, str]] = set()
 
     def drop(a: MomentAssessment, why: str) -> None:
-        log.warning("%s: verifier dropped %.1f-%.1fs %s: %s", country, a.start_s, a.end_s, a.leaf, why)
+        # Only times and the check that failed: leaf and ids are model output.
+        log.warning("%s: verifier dropped %.1f-%.1fs: %s", country, a.start_s, a.end_s, why.split(" ", 1)[0])
         out.dropped += 1
         out.reasons.append(why)
 

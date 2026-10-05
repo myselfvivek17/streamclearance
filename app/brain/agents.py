@@ -99,7 +99,7 @@ def _parse_list(text: str, model: type[BaseModel]) -> list:
         try:
             out.append(model.model_validate(item))
         except ValidationError as e:
-            log.warning("dropping malformed %s: %s", model.__name__, e.errors()[0]["msg"])
+            log.warning("dropping malformed %s: %s", model.__name__, e.errors()[0]["type"])
     return out
 
 
@@ -199,7 +199,7 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> tuple[lis
         raise
     except Exception as e:  # noqa: BLE001 - fall back, and say so in the report
         log.warning("%s: ADK assessor failed (%s); falling back to retrieval + one JSON call",
-                    country, e)
+                    country, type(e).__name__)
         note = (f"Assessor fallback: ADK tool-calling run failed ({type(e).__name__}); "
                 "provisions were retrieved in Python and assessed in one JSON call.")
         out = await _fallback_assess(country, ms)
@@ -285,7 +285,7 @@ async def critique(found: list[MomentAssessment], inventory: Inventory, country:
     except gemini.GeminiUnavailable:
         raise
     except Exception as e:  # noqa: BLE001
-        log.warning("%s: critic failed (%s); findings kept unchanged", country, e)
+        log.warning("%s: critic failed (%s); findings kept unchanged", country, type(e).__name__)
         return [], [f"Critic unavailable ({type(e).__name__}); findings were not re-checked."]
 
 

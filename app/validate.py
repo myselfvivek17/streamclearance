@@ -21,7 +21,7 @@ def validate_findings(
     for f in findings:
         unknown = [cid for cid in f.rule_card_ids if cid not in known]
         if unknown:
-            log.warning("dropping finding at %.1fs: unknown card ids %s", f.start_s, unknown)
+            log.warning("dropping finding at %.1fs: %d unknown card ids", f.start_s, len(unknown))
             continue
         if f.start_s < 0 or f.end_s > duration_s or f.start_s > f.end_s:
             log.warning(

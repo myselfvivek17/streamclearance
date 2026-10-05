@@ -14,12 +14,13 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from app import config, jobs, media, provisions, retention, taxonomy
+from app import config, jobs, logsafe, media, provisions, retention, taxonomy
 from app.schemas import Category
 from app.storage import TooLarge, get_storage
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+logsafe.install()  # no content in logs, including library logs and tracebacks
 config.apply_adk_env()  # ADK agents use the same Gemini backend as app/gemini.py
 
 SWEEP_EVERY_S = 30 * 60
