@@ -267,6 +267,8 @@ def _file_search(country: str, query: str, k: int, kind: ProvisionKind | None = 
             body = body.strip().removeprefix(f"{title}, page {page}")  # the doc's own heading
             passages.append(Passage(law_id=law_id, law=title, page=page,
                                     snippet=" ".join(body.split())[:SNIPPET_CHARS]))
+    log.info("law search %s %r: %d provisions, %d passages (RAG Engine)",
+             country, query[:60], len(hits[:k]), len(passages))
     return hits[:k], passages
 
 
