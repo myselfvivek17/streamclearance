@@ -16,7 +16,7 @@ IMAGE="${REGION}-docker.pkg.dev/${PROJECT}/${REPO}/${SERVICE}:$(git rev-parse --
 CODE_FILE=.secrets/access_code.txt
 if [[ ! -s "$CODE_FILE" ]]; then
   mkdir -p .secrets && chmod 700 .secrets
-  (umask 077; LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 10 >"$CODE_FILE")
+  (umask 077; python3 -c 'import secrets, string; a = string.ascii_letters + string.digits; print("".join(secrets.choice(a) for _ in range(10)), end="")' >"$CODE_FILE")
   echo "generated a new access code in $CODE_FILE"
 fi
 ACCESS_CODE="$(cat "$CODE_FILE")"
