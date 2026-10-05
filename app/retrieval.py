@@ -3,21 +3,28 @@
 Path A, `lookup(country, leaves)`: exact (country, taxonomy leaf) index.
 Deterministic and explainable; the primary path.
 
-Path B, `search(country, query, k)`: free-text search. Today a local BM25
-over provision text (pure Python). TODO(file-search): when GEMINI_API_KEY
-exists, switch to a Gemini File Search store (one store, metadata `country`,
-`law`, `status`; filter on `country`) via `_file_search`, keeping BM25 as the
-offline/mock fallback.
+Path B, `search(country, query, k)`: free-text search. On the Vertex backend
+it queries the Google document search (Vertex AI RAG Engine, app/law_search.py:
+one corpus per country holding every provision and every page of every law),
+mapping hits back to provisions; full-text hits map to the best provision on
+that law page, or come back as passages (law, page, snippet). Local BM25 over
+provision text is the offline/mock fallback, and the fallback on any search
+error (logged, and noted in the country report via `fallback_notes`).
 """
 from __future__ import annotations
 
+import contextvars
+import logging
 import math
 import re
 import threading
 from collections import Counter
+from dataclasses import dataclass
 
-from app import config, provisions, taxonomy
+from app import config, law_search, provisions, taxonomy
 from app.schemas import Provision, ProvisionKind
+
+log = logging.getLogger(__name__)
 
 MAX_RESULTS = 10
 _STATUS_RANK = {"in_force": 0, "amended": 1, "guideline": 2, "bill": 3}
@@ -180,20 +187,109 @@ def _get_bm25(country: str) -> BM25:
         return _bm25[country]
 
 
-def _file_search(country: str, query: str, k: int) -> list[Provision] | None:
-    """TODO(file-search): Gemini File Search, metadata filter `country = <cc>`.
+@dataclass(frozen=True)
+class Passage:
+    """A full-text hit that no provision on that page matches: context, not citable."""
+    law_id: str
+    law: str
+    page: int
+    snippet: str
 
-    Return provisions mapped back from the store's chunk metadata (`provision_id`),
-    or None to fall back to BM25. Not wired yet: there is no Gemini key.
+
+SNIPPET_CHARS = 600
+MAX_PASSAGES = 3
+
+_fallbacks: contextvars.ContextVar[list[str] | None] = contextvars.ContextVar(
+    "search_fallbacks", default=None)
+
+
+def track_fallbacks() -> list[str]:
+    """Collect search-fallback notes in the current context (one assessor run)."""
+    notes: list[str] = []
+    _fallbacks.set(notes)
+    return notes
+
+
+def _note_fallback(country: str, e: Exception) -> None:
+    log.warning("%s: law search (RAG Engine) failed (%s); using local BM25", country, e)
+    notes = _fallbacks.get()
+    msg = (f"Law search fallback: Vertex AI RAG Engine query failed ({type(e).__name__}); "
+           "free-text search used local keyword matching (BM25) instead.")
+    if notes is not None and msg not in notes:
+        notes.append(msg)
+
+
+def _overlap(a: str, b: str) -> int:
+    return len(set(tokens(a)) & set(tokens(b)))
+
+
+def _file_search(country: str, query: str, k: int, kind: ProvisionKind | None = "content",
+                 ) -> tuple[list[Provision], list[Passage]] | None:
+    """Vertex AI RAG Engine query on the country's corpus, mapped back to provisions.
+
+    None when the country has no corpus in data/search_index.json (use BM25).
+    Raises on service errors (the caller falls back).
     """
-    return None
+    index = law_search.load_index()
+    corpus = index.get("corpora", {}).get(country)
+    if not corpus:
+        return None
+    docs = index.get("docs", {})
+    by_id = provisions.by_id(country)
+    by_page: dict[tuple[str, int], list[Provision]] = {}
+    for p in by_id.values():
+        by_page.setdefault((p.law_id, p.page), []).append(p)
+    titles = {law.id: law.title for law in provisions.laws_for(country)}
+
+    hits: list[Provision] = []
+    passages: list[Passage] = []
+    for c in law_search.retrieve(corpus, query, top_k=min(3 * k + 5, 30),
+                                 location=index.get("location")):
+        meta = docs.get(c.doc)
+        if not meta or meta.get("country") != country:
+            continue
+        if meta.get("doc_type") == "provision":
+            p = by_id.get(meta.get("provision_id", ""))
+            if p and (kind is None or p.kind == kind) and p not in hits:
+                hits.append(p)
+            continue
+        page = int(meta.get("page", 0))
+        body = c.text.split("\n---\n", 1)[-1]
+        on_page = [p for p in by_page.get((meta.get("law_id", ""), page), [])
+                   if kind is None or p.kind == kind]
+        if on_page:
+            best = max(on_page, key=lambda p: (_overlap(_doc_text(p), body), -rank_key(p)[0]))
+            if best not in hits:
+                hits.append(best)
+        elif len(passages) < MAX_PASSAGES:
+            law_id = meta.get("law_id", "")
+            title = titles.get(law_id, law_id)
+            body = body.strip().removeprefix(f"{title}, page {page}")  # the doc's own heading
+            passages.append(Passage(law_id=law_id, law=title, page=page,
+                                    snippet=" ".join(body.split())[:SNIPPET_CHARS]))
+    return hits[:k], passages
 
 
-def search(country: str, query: str, k: int = 5) -> list[Provision]:
-    """Free-text search within one country's content provisions."""
+def search_with_passages(country: str, query: str, k: int = 5,
+                         kind: ProvisionKind | None = "content") -> tuple[list[Provision], list[Passage]]:
+    """Free-text search within one country: (provisions, full-text passages).
+
+    `kind` = "content" (default), "obligation", or None for both. Passages come only
+    from the document search; BM25 searches content provisions only.
+    """
     k = max(1, min(k, MAX_RESULTS))
-    if config.provider() == "gemini":
-        hits = _file_search(country, query, k)
-        if hits is not None:
-            return hits
-    return [p for _, p in _get_bm25(country).search(query, k)]
+    if config.law_search() == "rag":
+        try:
+            found = _file_search(country, query, k, kind)
+            if found is not None:
+                return found
+        except Exception as e:  # noqa: BLE001 - any search error: fall back, say so
+            _note_fallback(country, e)
+    if kind == "obligation":
+        return [], []
+    return [p for _, p in _get_bm25(country).search(query, k)], []
+
+
+def search(country: str, query: str, k: int = 5, kind: ProvisionKind | None = "content") -> list[Provision]:
+    """Free-text search within one country's provisions (content by default)."""
+    return search_with_passages(country, query, k, kind)[0]

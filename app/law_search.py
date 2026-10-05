@@ -87,7 +87,8 @@ def retrieve(corpus: str, query: str, top_k: int, *, location: str | None = None
     location = location or config.search_location()
     parent = corpus.split("/ragCorpora/")[0]
     body = {"vertex_rag_store": {"rag_resources": [{"rag_corpus": corpus}]},
-            "query": {"text": query[:2000], "rag_retrieval_config": {"top_k": top_k}}}
+            "query": {"text": query[:2000], "rag_retrieval_config": {
+                "top_k": top_k, "filter": {"vector_distance_threshold": config.search_max_distance()}}}}
 
     def call() -> dict:
         r = _get_session().post(f"{_host(location)}/v1/{parent}:retrieveContexts", json=body,

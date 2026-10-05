@@ -182,6 +182,7 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> tuple[lis
     from google.adk import Agent
 
     lookup_provisions, search_law = make_tools(country)
+    fallbacks = retrieval.track_fallbacks()  # law-search errors -> a report note
     agent = Agent(
         name=f"country_assessor_{country}", model=adk_model(),
         instruction=ASSESSOR_INSTRUCTION.format(country=country),
@@ -193,7 +194,7 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> tuple[lis
         out = _parse_list(text, MomentAssessment)
         if not out:
             raise ValueError("no assessments in the agent's reply")
-        return out, []
+        return out, fallbacks
     except gemini.GeminiUnavailable:
         raise
     except Exception as e:  # noqa: BLE001 - fall back, and say so in the report
@@ -201,7 +202,8 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> tuple[lis
                     country, e)
         note = (f"Assessor fallback: ADK tool-calling run failed ({type(e).__name__}); "
                 "provisions were retrieved in Python and assessed in one JSON call.")
-        return await _fallback_assess(country, ms), [note]
+        out = await _fallback_assess(country, ms)
+        return out, [note, *fallbacks]
 
 
 def candidates(country: str, m: dict) -> list[dict]:
@@ -217,7 +219,8 @@ def candidates(country: str, m: dict) -> list[dict]:
 async def _fallback_assess(country: str, ms: list[dict]) -> list[MomentAssessment]:
     import asyncio
 
-    items = [{**m, "candidate_provisions": candidates(country, m)} for m in ms]
+    items = await asyncio.to_thread(  # path B may query RAG Engine: off the event loop
+        lambda: [{**m, "candidate_provisions": candidates(country, m)} for m in ms])
     prompt = (f"Country: {country}.\nMoments with their candidate provisions (JSON):\n"
               f"{json.dumps(items, ensure_ascii=False)}\n\nReturn the assessments as a JSON array.")
     raw = await asyncio.to_thread(

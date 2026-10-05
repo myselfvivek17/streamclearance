@@ -5,6 +5,7 @@ so an agent can never cite a foreign provision.
 """
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Callable
 from typing import Any
 
@@ -35,8 +36,11 @@ def make_tools(bound: str) -> tuple[Callable[..., dict], Callable[..., dict]]:
         hits = retrieval.lookup(bound, leaves)
         return {"provisions": [provision_view(p) for p in hits]}
 
-    def search_law(country: str, query: str) -> dict:
-        """Free-text search over a country's loaded law provisions (use when lookup finds nothing).
+    async def search_law(country: str, query: str) -> dict:
+        """Free-text search over a country's loaded laws (use when lookup finds nothing).
+
+        Returns matching provisions, plus passages of the full law text (law, page,
+        snippet) that no provision covers: passages are context only; cite provision ids.
 
         Args:
           country: two-letter country code, e.g. "MY".
@@ -44,6 +48,9 @@ def make_tools(bound: str) -> tuple[Callable[..., dict], Callable[..., dict]]:
         """
         if country.strip().upper() != bound:
             return {"error": f"you assess {bound} only", "provisions": []}
-        return {"provisions": [provision_view(p) for p in retrieval.search(bound, query, k=5)]}
+        # a network query (RAG Engine): keep it off the event loop the other countries share
+        hits, passages = await asyncio.to_thread(retrieval.search_with_passages, bound, query, 5)
+        return {"provisions": [provision_view(p) for p in hits],
+                "passages": [{"law": x.law, "page": x.page, "snippet": x.snippet} for x in passages]}
 
     return lookup_provisions, search_law

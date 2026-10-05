@@ -20,6 +20,8 @@ is takedown or geo-blocking in that country.
 | `app/main.py` | FastAPI routes + optional access code + static UI |
 | `app/static/` | Plain HTML/CSS/JS UI (no framework, no CDN) |
 | `tools/extract_text.py` | `data/laws/raw/*.pdf` → `data/laws/text/*.json` (`[{page, text}]`) |
+| `app/law_search.py` | Vertex AI RAG Engine client (law search, retrieval path B) |
+| `tools/index_laws.py` | Sync provisions + full law text into the RAG Engine corpora → `data/search_index.json` |
 | `tools/build_rules.py` | Law text → Gemini-drafted rule cards → quote/page check → `data/rules/<cc>.json` |
 
 Countries: IN (IT Rules 2021, as updated Feb 2026), AU (Online Safety Act 2021),
@@ -85,6 +87,35 @@ GOOGLE_CLOUD_PROJECT=booming-entity-510706-e9 SC_PORT=8431 ./run.sh
   it after the call). AI Studio uses the Files API.
 - Cost: every call (direct and ADK) appends its token counts to
   `jobs/usage.log`; `SC_MAX_CALLS_PER_JOB` (default 40) is a hard cap per job.
+
+## Law search (Vertex AI RAG Engine)
+
+Retrieval path B (`retrieval.search`, the assessor's `search_law` tool) queries
+Vertex AI RAG Engine on the Vertex backend. Gemini File Search is not used
+because it only works with an AI Studio key (google-genai rejects it on
+Vertex). There is one corpus per country, `<SC_SEARCH_STORE>-<cc>` (default
+`streamclearance-laws-my`, ...), in `SC_SEARCH_LOCATION` (default
+asia-southeast1, a preview region). Each corpus holds one document per
+provision and one per page of every law in the registry. A provision hit
+maps back to its provision. A full-text hit maps to the best provision on
+that law page, or comes back as a passage (law, page, snippet).
+
+```bash
+GOOGLE_APPLICATION_CREDENTIALS=.secrets/gcp-sa.json GOOGLE_CLOUD_PROJECT=booming-entity-510706-e9 \
+  .venv/bin/python -m tools.index_laws          # idempotent; --country MY, --dry-run
+```
+
+Run it after changing provisions or law texts, then commit
+`data/search_index.json`. It records what was uploaded (file name → hash and
+metadata) and which corpus belongs to each country, and the app reads it to
+map hits back. Documents are staged in the upload bucket and imported in
+bulk.
+
+`SC_LAW_SEARCH=bm25` forces the local keyword search. Mock mode, the AI Studio
+backend and countries without a corpus also use BM25, and so does any
+RAG Engine error (it is logged, and the country report gets a note).
+The service account needs `roles/aiplatform.user` (RAG Engine) and object
+write access to the upload bucket (only for indexing).
 
 ## Cloud Run
 

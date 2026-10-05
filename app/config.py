@@ -93,6 +93,13 @@ def search_location() -> str:
     return os.getenv("SC_SEARCH_LOCATION", "asia-southeast1")
 
 
+def search_max_distance() -> float:
+    """Cosine-distance cutoff for law-search hits. The service default (~0.5) drops
+    relevant hits: measured with text-embedding-005, on-topic hits score 0.47-0.55
+    and unrelated queries 0.60+."""
+    return float(os.getenv("SC_SEARCH_MAX_DISTANCE", "0.6"))
+
+
 def law_search() -> str:
     """"rag" (Vertex AI RAG Engine) or "bm25" (local keyword search).
 
