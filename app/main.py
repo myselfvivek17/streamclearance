@@ -12,7 +12,8 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from app import config, jobs, media, provisions
+from app import config, jobs, media, provisions, taxonomy
+from app.schemas import Category
 from app.storage import TooLarge, get_storage
 
 log = logging.getLogger(__name__)
@@ -48,20 +49,41 @@ def _rules_status(c: config.CountryLaw) -> str:
     return "draft/unreviewed"
 
 
+def _country(c: config.CountryLaw) -> dict:
+    laws = provisions.law_infos(c.code)
+    deep = provisions.has_provisions(c.code)  # basic = legacy rule cards only
+    status = _rules_status(c)
+    return {
+        "code": c.code,
+        "name": c.name,
+        "law": c.law,
+        "label": c.label,
+        "drift_languages": list(c.drift_languages),
+        "rules_status": status,
+        "pdf_url": f"/api/laws/{c.code}/pdf",
+        "coverage": "deep" if deep else "basic",
+        "laws_count": len(laws),
+        "provisions_count": sum(law.provisions for law in laws),
+        "draft": status != "reviewed",
+        "bill": any(law.status == "bill" for law in laws),
+        "laws": [law.model_dump() for law in laws],
+    }
+
+
 @app.get("/api/countries")
 def countries():
-    return [
-        {
-            "code": c.code,
-            "name": c.name,
-            "law": c.law,
-            "label": c.label,
-            "drift_languages": list(c.drift_languages),
-            "rules_status": _rules_status(c),
-            "pdf_url": f"/api/laws/{c.code}/pdf",
-        }
-        for c in config.COUNTRIES.values()
-    ]
+    return [_country(c) for c in config.COUNTRIES.values()]
+
+
+@app.get("/api/taxonomy")
+def get_taxonomy():
+    """Labels for taxonomy leaves (report `leaf`) and legacy categories (report `category`)."""
+    leaves = taxonomy.leaves().values()
+    return {
+        "leaves": {leaf.id: leaf.label for leaf in leaves},
+        "categories": {cat.value: cat.value.replace("_or_", " or ").replace("_", " ").capitalize()
+                       for cat in Category},
+    }
 
 
 @app.get("/api/laws/{code}/pdf")
@@ -138,6 +160,15 @@ def get_video(video_id: str):
     if path is None or meta is None:
         raise HTTPException(404, "video not found")
     return FileResponse(path, media_type=meta["mime_type"])
+
+
+@app.get("/api/videos/{video_id}/meta")
+def get_video_meta(video_id: str):
+    """Upload metadata (file name, size, duration), so the UI can restore state after a reload."""
+    meta = get_storage().load_video_meta(video_id)
+    if meta is None:
+        raise HTTPException(404, "video not found")
+    return meta
 
 
 class AnalyzeRequest(BaseModel):

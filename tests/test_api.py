@@ -125,3 +125,37 @@ def test_law_pdf_per_registry_law():
     assert r.status_code == 200 and r.headers["content-type"] == "application/pdf"
     assert client.get("/api/laws/MY/NOPE/pdf").status_code == 404
     assert client.get("/api/laws/IN/MAS1956/pdf").status_code == 404
+
+
+def test_countries_coverage_fields(real_provisions):
+    with TestClient(app) as client:
+        cs = {c["code"]: c for c in client.get("/api/countries").json()}
+    my, sg, au = cs["MY"], cs["SG"], cs["AU"]
+    assert my["coverage"] == "deep" and au["coverage"] == "basic"
+    assert my["laws_count"] == len(my["laws"]) == 5
+    assert my["provisions_count"] == sum(law["provisions"] for law in my["laws"]) > 0
+    assert au["provisions_count"] == 0 and au["laws_count"] == 1
+    assert sg["bill"] is True and my["bill"] is False
+    assert all(c["draft"] == (c["rules_status"] != "reviewed") for c in cs.values())
+    assert my["laws"][0]["pdf_url"].startswith("/api/laws/MY/")
+
+
+def test_countries_basic_without_provisions():
+    with TestClient(app) as client:
+        cs = client.get("/api/countries").json()
+    assert all(c["coverage"] == "basic" and c["provisions_count"] == 0 for c in cs)
+
+
+def test_taxonomy_labels():
+    with TestClient(app) as client:
+        t = client.get("/api/taxonomy").json()
+    assert t["leaves"]["gambling.promotion"] == "Gambling promotion"
+    assert t["categories"]["illegal_goods_or_gambling"] == "Illegal goods or gambling"
+
+
+def test_video_meta(tiny_video):
+    with TestClient(app) as client:
+        up = _upload(client, tiny_video[0]).json()
+        meta = client.get(f"/api/videos/{up['video_id']}/meta").json()
+        assert meta == up and meta["filename"] == "clip.mp4"
+        assert client.get("/api/videos/" + "a" * 32 + "/meta").status_code == 404

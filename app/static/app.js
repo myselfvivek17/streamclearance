@@ -1,14 +1,18 @@
-// StreamClearance UI. Plain JS, no dependencies.
-// All server/model text is inserted with textContent (via el()), never innerHTML.
+// StreamClearance UI. Plain JS, no dependencies, no build step.
+// All server/model text is inserted with textContent (via el()), never parsed as HTML.
 "use strict";
 
 const $ = (id) => document.getElementById(id);
-const state = { videoId: null, jobId: null, job: null, countries: [], pollTimer: null };
+const LS = { theme: "sc.theme", video: "sc.video", job: "sc.lastJob", countries: "sc.countries" };
+const POLL_MS = 2000;
 
-const RISK_LABEL = { red: "High risk", amber: "Review", green: "Clear", check: "Check: not covered by loaded laws" };
-const STATUS_LABEL = { in_force: "in force", amended: "as amended", guideline: "guideline, not an Act", bill: "bill, not yet law" };
-const badgeOf = (c) => c.badge || c.overall_risk;
-const CATEGORY_LABEL = (c) => c.replace(/_/g, " ").replace(/\bor\b/g, "/");
+const S = {
+  status: null, countries: [], taxonomy: { leaves: {}, categories: {} },
+  video: null, // upload metadata of the current video
+  job: null, // last job fetched
+  pollTimer: null, tickTimer: null, advanceTimer: null,
+  seq: 0, // bumps on every route change so stale async renders are dropped
+};
 
 // ------------------------------------------------------------------ helpers
 
@@ -17,392 +21,1091 @@ function el(tag, attrs = {}, ...children) {
   for (const [k, v] of Object.entries(attrs)) {
     if (v === null || v === undefined || v === false) continue;
     if (k === "class") node.className = v;
+    else if (k === "style") node.style.cssText = v;
     else if (k.startsWith("on")) node.addEventListener(k.slice(2), v);
     else node.setAttribute(k, v === true ? "" : String(v));
   }
-  for (const child of children.flat()) {
+  for (const child of children.flat(Infinity)) {
     if (child === null || child === undefined || child === false) continue;
     node.append(child instanceof Node ? child : document.createTextNode(String(child)));
   }
   return node;
 }
 
-function fmtTime(s) {
+const icon = (name, style) => el("i", { class: `ic ic-${name}`, "aria-hidden": "true", style });
+const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch { /* blocked */ } },
+};
+
+function fmt(s) {
   s = Math.max(0, Math.floor(Number(s) || 0));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 }
+const range = (a, b) => `${fmt(a)}–${fmt(b)}`;
+const mb = (bytes) => `${Math.max(0.1, bytes / (1024 * 1024)).toFixed(1)} MB`;
+const overlaps = (a, b) => (a.start_s < b.end_s && b.start_s < a.end_s) || a.start_s === b.start_s;
 
-function setMsg(id, text, isError = false) {
-  const n = $(id);
-  n.textContent = text || "";
-  n.classList.toggle("error", !!isError);
+function joinWords(list) {
+  if (list.length <= 1) return list.join("");
+  return `${list.slice(0, -1).join(", ")} and ${list[list.length - 1]}`;
 }
 
-function overlaps(a, b) {
-  return (a.start_s < b.end_s && b.start_s < a.end_s) || a.start_s === b.start_s;
+let toastTimer = null;
+function toast(msg, sticky = false) {
+  const t = $("toast");
+  t.lastElementChild.textContent = msg;
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  if (!sticky) toastTimer = setTimeout(() => { t.hidden = true; }, 2800);
 }
 
-// ------------------------------------------------------------------ access code
+window.addEventListener("error", (e) => toast(`Something went wrong: ${e.message}`, true));
+window.addEventListener("unhandledrejection", (e) => toast(`Something went wrong: ${(e.reason && e.reason.message) || e.reason}`, true));
+
+// ------------------------------------------------------------------ labels
+
+const RISK = {
+  red: { cls: "risk-red", icon: "stop", verdict: "Don’t publish as is", level: "High risk", word: "Red", rank: 3, dot: "dot-red" },
+  amber: { cls: "risk-amber", icon: "warn", verdict: "Fix recommended", level: "Medium risk", word: "Amber", rank: 2, dot: "dot-amber" },
+  green: { cls: "risk-green", icon: "okc", verdict: "Looks clear", level: "Clear", word: "Green", rank: 0, dot: "dot-green" },
+  grey: { cls: "risk-grey", icon: "help", verdict: "Check manually", level: "Check manually", word: "Check manually", rank: 1, dot: "dot-grey" },
+};
+const NO_RISK = { cls: "", icon: "", verdict: "", level: "No issues", word: "", rank: -1, dot: "dot-none" };
+const riskMeta = (r) => RISK[r === "check" ? "grey" : r] || NO_RISK;
+const badgeOf = (c) => (c.badge === "check" ? "grey" : c.badge || c.overall_risk);
+
+const LAW_STATUS = { in_force: ["In force", "inforce"], amended: ["As amended", "inforce"], guideline: ["Guideline", "guideline"], bill: ["Bill", "bill"] };
+const lawStatus = (s) => LAW_STATUS[s] || [s, ""];
+const LANG_CODE = { Hindi: "hi", Malay: "ms", "Mandarin Chinese": "zh", Urdu: "ur", Tamil: "ta" };
+const DUTY = { creator: ["Creator"], advertiser: ["Advertiser"], platform: ["Platform"], both: ["Creator", "Platform"] };
+const DUTY_TEXT = { creator: "Creator", advertiser: "Advertiser", platform: "Platform", both: "Creator and platform" };
+const WHO_ORDER = ["Creator", "Advertiser", "Platform"];
+
+const leafLabel = (x) => (x.leaf && S.taxonomy.leaves[x.leaf]) || S.taxonomy.categories[x.category] || String(x.leaf || x.category || "Sensitive content").replace(/_/g, " ");
+const countryInfo = (cc) => S.countries.find((c) => c.code === cc) || { code: cc, name: cc, laws: [], drift_languages: [] };
+const covLabel = (info) => (info.coverage === "deep" ? "Deep coverage" : "Basic coverage");
+const covCls = (info) => (info.coverage === "deep" ? "tag tag-deep" : "tag");
+const flag = (cc, lg = true) => el("span", { class: `flag${lg ? " flag-lg" : ""} flag-${cc}`, "aria-hidden": "true" });
+const specified = (v) => v && !/^not specified/i.test(v);
+
+// ------------------------------------------------------------------ API
 
 function askAccessCode() {
   return new Promise((resolve) => {
     const dlg = $("access-dialog");
     const input = $("access-input");
     input.value = "";
-    dlg.addEventListener("close", function onClose() {
-      dlg.removeEventListener("close", onClose);
+    dlg.addEventListener("close", () => {
       const code = input.value.trim();
-      if (code) {
-        document.cookie = `sc_access=${encodeURIComponent(code)}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Strict`;
-      }
+      if (code) document.cookie = `sc_access=${encodeURIComponent(code)}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Strict`;
       resolve(!!code);
-    });
+    }, { once: true });
     dlg.showModal();
     input.focus();
   });
+}
+
+class ApiError extends Error {
+  constructor(message, status) { super(message); this.status = status; }
 }
 
 async function api(path, opts = {}) {
   for (let attempt = 0; attempt < 3; attempt++) {
     const res = await fetch(path, { credentials: "same-origin", ...opts });
     if (res.status === 401) {
-      if (!(await askAccessCode())) throw new Error("Access code required");
+      if (!(await askAccessCode())) throw new ApiError("Access code required", 401);
       continue;
     }
     let body = null;
     try { body = await res.json(); } catch { /* non-JSON */ }
-    if (!res.ok) throw new Error((body && body.detail && String(body.detail)) || `HTTP ${res.status}`);
+    if (!res.ok) throw new ApiError((body && body.detail && String(body.detail)) || `HTTP ${res.status}`, res.status);
     return body;
   }
-  throw new Error("Access code rejected");
+  throw new ApiError("Access code rejected", 401);
 }
 
-// ------------------------------------------------------------------ init
+let basics = null;
+function loadBasics() {
+  basics = basics || Promise.all([api("/api/status"), api("/api/countries"), api("/api/taxonomy")])
+    .then(([status, countries, taxonomy]) => {
+      S.status = status; S.countries = countries; S.taxonomy = taxonomy;
+      if (status.mock) $("mock-banner").hidden = false;
+    })
+    .catch((e) => { basics = null; throw e; });
+  return basics;
+}
 
-async function init() {
+async function loadVideo(videoId) {
+  if (S.video && S.video.video_id === videoId) return S.video;
   try {
-    const status = await api("/api/status");
-    $("mock-banner").hidden = !status.mock;
-    $("dz-limits").textContent =
-      `MP4, MOV or WebM · up to ${status.max_upload_mb} MB · ${Math.round(status.max_duration_s / 60)} min`;
-    state.countries = await api("/api/countries");
-    renderCountries();
+    return (S.video = await api(`/api/videos/${encodeURIComponent(videoId)}/meta`));
   } catch (e) {
-    setMsg("analyze-msg", e.message, true);
+    if (e.status === 404) return null;
+    throw e;
   }
-  setupDropzone();
-  $("analyze-btn").addEventListener("click", startAnalysis);
-  $("download-btn").addEventListener("click", downloadJson);
 }
 
-function renderCountries() {
-  const list = $("country-list");
-  list.replaceChildren(...state.countries.map((c) => el("label", { class: "country" },
-    el("input", { type: "checkbox", value: c.code, checked: true, onchange: updateAnalyzeBtn }),
-    el("span", { class: "name" }, `${c.name} (${c.code})`),
-    el("span", { class: "law" },
-      c.law,
-      c.label ? el("span", { class: "note" }, ` · ${c.label}`) : null,
-      c.rules_status !== "reviewed" ? el("span", { class: "note" }, " · draft rules, unreviewed") : null),
-  )));
-  updateAnalyzeBtn();
+const videoName = () => (S.video && S.video.filename) || "Your video";
+
+// ------------------------------------------------------------------ shell: theme, stepper, routing
+
+function setTheme(dark) {
+  document.documentElement.classList.toggle("dark", dark);
+  const btn = $("theme-btn");
+  const label = dark ? "Switch to light mode" : "Switch to dark mode";
+  btn.setAttribute("aria-label", label);
+  btn.title = label;
+  btn.firstElementChild.className = `ic ${dark ? "ic-sun" : "ic-moon"}`;
 }
 
-function selectedCountries() {
-  return [...document.querySelectorAll("#country-list input:checked")].map((i) => i.value);
+$("theme-btn").addEventListener("click", () => {
+  const dark = !document.documentElement.classList.contains("dark");
+  store.set(LS.theme, dark ? "dark" : "light");
+  setTheme(dark);
+});
+
+function parseRoute() {
+  const [name, id, cc] = location.hash.replace(/^#\/?/, "").split("/").map(decodeURIComponent);
+  return { name: name || "upload", id, cc: cc && cc.toUpperCase() };
 }
 
-function updateAnalyzeBtn() {
-  $("analyze-btn").disabled = !state.videoId || selectedCountries().length === 0;
+function go(hash) {
+  if (location.hash === hash) route(); else location.hash = hash;
 }
 
-// ------------------------------------------------------------------ upload
-
-function setupDropzone() {
-  const dz = $("dropzone");
-  const input = $("file-input");
-  input.addEventListener("change", () => input.files[0] && upload(input.files[0]));
-  dz.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); input.click(); }
-  });
-  ["dragenter", "dragover"].forEach((t) => dz.addEventListener(t, (e) => {
-    e.preventDefault(); dz.classList.add("over");
-  }));
-  ["dragleave", "drop"].forEach((t) => dz.addEventListener(t, (e) => {
-    e.preventDefault(); dz.classList.remove("over");
-  }));
-  dz.addEventListener("drop", (e) => {
-    const f = e.dataTransfer && e.dataTransfer.files[0];
-    if (f) upload(f);
-  });
-}
-
-function upload(file) {
-  const ok = /\.(mp4|mov|webm)$/i.test(file.name);
-  if (!ok) { setMsg("upload-msg", "Please choose an MP4, MOV or WebM file.", true); return; }
-  state.videoId = null;
-  updateAnalyzeBtn();
-  const bar = $("upload-progress");
-  bar.hidden = false;
-  bar.firstElementChild.style.width = "0";
-  setMsg("upload-msg", `Uploading ${file.name}…`);
-
-  const form = new FormData();
-  form.append("file", file);
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", "/api/upload");
-  xhr.upload.onprogress = (e) => {
-    if (e.lengthComputable) bar.firstElementChild.style.width = `${(100 * e.loaded) / e.total}%`;
+function renderStepper(r) {
+  const order = ["upload", "countries", "analysis", "results"];
+  const labels = ["Upload", "Countries", "Analysis", "Results"];
+  const cur = r.name === "country" ? 3 : Math.max(0, order.indexOf(r.name));
+  const jobId = r.id || store.get(LS.job);
+  const jobDone = S.job && S.job.job_id === jobId ? S.job.status === "done" : !!jobId;
+  const target = {
+    upload: "#upload",
+    countries: S.video || store.get(LS.video) ? "#countries" : null,
+    analysis: jobId ? `#analysis/${jobId}` : null,
+    results: jobId && jobDone ? `#results/${jobId}` : null,
   };
-  xhr.onload = async () => {
-    bar.hidden = true;
-    let body = null;
-    try { body = JSON.parse(xhr.responseText); } catch { /* ignore */ }
-    if (xhr.status === 401) {
-      if (await askAccessCode()) upload(file);
-      return;
-    }
-    if (xhr.status !== 200 || !body) {
-      setMsg("upload-msg", (body && body.detail) || `Upload failed (HTTP ${xhr.status})`, true);
-      return;
-    }
-    state.videoId = body.video_id;
-    setMsg("upload-msg", "Uploaded. Pick countries and press Analyze.");
-    const player = $("player");
-    player.src = `/api/videos/${encodeURIComponent(body.video_id)}`;
-    $("player-card").hidden = false;
-    const dur = body.duration_s != null ? ` · ${fmtTime(body.duration_s)}` : "";
-    $("video-meta").textContent = `${body.filename}${dur} · ${(body.size_bytes / 1e6).toFixed(1)} MB`;
-    updateAnalyzeBtn();
-  };
-  xhr.onerror = () => { bar.hidden = true; setMsg("upload-msg", "Upload failed (network error).", true); };
-  xhr.send(form);
+  $("stepper").replaceChildren(...order.map((k, i) => {
+    const isDone = i < cur;
+    const isCur = i === cur && r.name !== "country";
+    const href = target[k];
+    const can = !!href && !isCur;
+    return el("li", { class: `step ${isDone ? "done" : i === cur ? "current" : ""}` },
+      i > 0 ? el("span", { class: "step-line", "aria-hidden": "true" }) : null,
+      el("button", {
+        class: `step-btn ${can ? "can" : ""}`, type: "button", disabled: !can && !isCur,
+        "aria-current": i === cur ? "step" : null, onclick: () => { if (can) go(href); },
+      },
+      el("span", { class: "step-num" }, isDone ? [icon("check"), el("span", { class: "sr-only" }, "Done: ")] : String(i + 1)),
+      el("span", { class: "step-label" }, labels[i])));
+  }));
 }
 
-// ------------------------------------------------------------------ analysis
+function clearTimers() {
+  clearTimeout(S.pollTimer); clearInterval(S.tickTimer); clearTimeout(S.advanceTimer);
+}
 
-async function startAnalysis() {
-  const countries = selectedCountries();
-  if (!state.videoId || !countries.length) return;
-  $("analyze-btn").disabled = true;
-  setMsg("analyze-msg", "");
-  $("report").hidden = true;
+function mount(...nodes) {
+  $("view").replaceChildren(...nodes);
+}
+
+async function route() {
+  clearTimers();
+  const seq = ++S.seq;
+  const r = parseRoute();
+  renderStepper(r);
+  const stale = () => seq !== S.seq;
   try {
-    const { job_id } = await api("/api/analyze", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ video_id: state.videoId, countries }),
+    await loadBasics();
+    if (stale()) return;
+    if (r.name === "countries") await screenCountries(stale);
+    else if (r.name === "analysis" && r.id) await screenAnalysis(r.id, stale);
+    else if (r.name === "results" && r.id) await screenResults(r.id, stale);
+    else if (r.name === "country" && r.id && r.cc) await screenCountry(r.id, r.cc, stale);
+    else await screenUpload(stale);
+  } catch (e) {
+    if (stale()) return;
+    mount(el("main", { class: "main narrow" },
+      el("div", { class: "alert risk-red", role: "alert" }, icon("warn"), el("span", {}, e.message || String(e))),
+      el("div", { class: "footer-bar" }, el("button", { class: "btn", type: "button", onclick: () => go("#upload") }, icon("left"), "Start over"))));
+  }
+  if (!stale()) {
+    renderStepper(r);
+    const h1 = $("view").querySelector("h1");
+    if (h1 && document.activeElement === document.body) { h1.tabIndex = -1; h1.focus({ preventScroll: true }); }
+  }
+}
+
+window.addEventListener("hashchange", () => { window.scrollTo(0, 0); route(); });
+
+function pageHead(eyebrow, title, lede) {
+  return el("div", { class: "page-head" },
+    el("span", { class: "eyebrow" }, eyebrow),
+    el("h1", { class: "h1" }, title),
+    lede ? el("p", { class: "lede" }, lede) : null);
+}
+
+const alertBox = (msg, cls = "risk-red", ic = "warn") =>
+  el("div", { class: `alert ${cls}`, role: cls === "risk-red" ? "alert" : "note" }, icon(ic), el("span", {}, msg));
+
+// ------------------------------------------------------------------ 1 · upload
+
+async function screenUpload(stale) {
+  const saved = store.get(LS.video);
+  if (saved && !S.video) await loadVideo(saved);
+  if (stale()) return;
+  if (saved && !S.video) store.set(LS.video, null);
+  const maxMb = S.status.max_upload_mb;
+  const maxMin = Math.round(S.status.max_duration_s / 60);
+
+  const body = el("div");
+  const main = el("main", { class: "main narrow" },
+    pageHead("Step 1 of 4", "Check your video before you publish",
+      "Upload a video and choose where you will post it. StreamClearance flags moments that could break local law, explains why, and suggests a fix."),
+    body);
+  mount(main);
+
+  function showDrop(error) {
+    const input = el("input", { type: "file", accept: ".mp4,.mov,.webm,video/mp4,video/quicktime,video/webm",
+      onchange: () => input.files[0] && accept(input.files[0]) });
+    const dz = el("div", { class: "dropzone" },
+      el("div", { class: "dz-icon" }, icon("upload")),
+      el("h2", { class: "h2" }, "Drag and drop your video here"),
+      el("div", { class: "dz-or" }, "or"),
+      el("label", { class: "btn btn-primary file-input-label" }, "Choose file", input),
+      el("div", { class: "limits", style: "margin-top: 8px" },
+        el("span", {}, icon("video"), "MP4, MOV or WebM"),
+        el("span", {}, icon("file"), `Up to ${maxMb} MB`),
+        el("span", {}, icon("clock"), `Up to ${plural(maxMin, "minute")}`)));
+    dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.classList.add("over"); });
+    dz.addEventListener("dragleave", () => dz.classList.remove("over"));
+    dz.addEventListener("drop", (e) => {
+      e.preventDefault(); dz.classList.remove("over");
+      const f = e.dataTransfer && e.dataTransfer.files[0];
+      if (f) accept(f);
     });
-    state.jobId = job_id;
-    $("progress-card").hidden = false;
-    poll();
-  } catch (e) {
-    setMsg("analyze-msg", e.message, true);
-    updateAnalyzeBtn();
+    body.replaceChildren(dz, error ? el("div", { style: "margin-top: 12px" }, alertBox(error)) : null);
   }
+
+  function accept(f) {
+    if (!/\.(mp4|mov|webm)$/i.test(f.name)) return showDrop("That file type isn’t supported. Upload an MP4, MOV or WebM video.");
+    if (f.size > maxMb * 1024 * 1024) return showDrop(`That file is over ${maxMb} MB. Trim or compress it and try again.`);
+    upload(f);
+  }
+
+  function upload(f) {
+    const pct = el("span", { class: "mono small muted" }, "0%");
+    const bar = el("span", { style: "width: 0%" });
+    const prog = el("div", { class: "progress", role: "progressbar", "aria-label": "Upload progress",
+      "aria-valuemin": "0", "aria-valuemax": "100", "aria-valuenow": "0" }, bar);
+    const status = el("p", { class: "small muted" }, "Uploading…");
+    body.replaceChildren(el("div", { class: "card card-pad stack", style: "gap: 14px", "aria-live": "polite" },
+      el("div", { class: "row" }, icon("video", "color: var(--text-3)"), el("span", { class: "grow", style: "font-weight: 500" }, f.name), pct),
+      prog, status));
+
+    const form = new FormData();
+    form.append("file", f);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/upload");
+    xhr.upload.onprogress = (e) => {
+      if (!e.lengthComputable) return;
+      const p = Math.round((100 * e.loaded) / e.total);
+      bar.style.width = `${p}%`; pct.textContent = `${p}%`; prog.setAttribute("aria-valuenow", p);
+      if (p >= 100) status.textContent = "Checking the video…";
+    };
+    xhr.onload = async () => {
+      if (stale()) return;
+      let res = null;
+      try { res = JSON.parse(xhr.responseText); } catch { /* ignore */ }
+      if (xhr.status === 401) {
+        if (await askAccessCode()) upload(f); else showDrop("Access code required.");
+        return;
+      }
+      if (xhr.status !== 200 || !res) {
+        const detail = (res && res.detail) || `Upload failed (HTTP ${xhr.status}).`;
+        const msg = xhr.status === 413 ? `That file is over ${maxMb} MB. Trim or compress it and try again.`
+          : /limit is/.test(detail) ? `That video is too long: ${detail}. Trim it and try again.`
+            : xhr.status === 415 ? "That file type isn’t supported. Upload an MP4, MOV or WebM video."
+              : `Upload failed: ${detail}`;
+        showDrop(msg);
+        return;
+      }
+      S.video = res;
+      store.set(LS.video, res.video_id);
+      showFile();
+      renderStepper(parseRoute());
+    };
+    xhr.onerror = () => { if (!stale()) showDrop("Upload failed (network error). Check your connection and try again."); };
+    xhr.send(form);
+  }
+
+  function showFile() {
+    const v = S.video;
+    const ext = (v.ext || "").replace(".", "").toUpperCase();
+    const dur = v.duration_s != null ? fmt(v.duration_s) : "–";
+    body.replaceChildren(
+      el("div", { class: "card file-card" },
+        el("div", { class: "thumb" },
+          el("video", { src: `/api/videos/${encodeURIComponent(v.video_id)}#t=0.5`, preload: "metadata", muted: true, playsinline: true,
+            "aria-hidden": "true", style: "position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" }),
+          el("span", { class: "thumb-dur" }, dur)),
+        el("div", { class: "stack grow", style: "gap: 14px; justify-content: center; min-width: 220px" },
+          el("div", { class: "row", style: "gap: 10px" }, el("span", { class: "badge risk-green" }, icon("okc"), "Uploaded")),
+          el("div", { class: "h2", style: "word-break: break-all" }, v.filename),
+          el("dl", { class: "meta-list", style: "margin: 0" },
+            el("div", {}, el("dt", {}, "Duration"), el("dd", {}, dur)),
+            el("div", {}, el("dt", {}, "Size"), el("dd", {}, mb(v.size_bytes))),
+            el("div", {}, el("dt", {}, "Format"), el("dd", {}, ext))),
+          el("div", {}, el("button", { class: "link-btn small", type: "button", onclick: () => {
+            S.video = null; store.set(LS.video, null); showDrop(); renderStepper(parseRoute());
+          } }, "Replace video")))),
+      el("div", { class: "footer-bar" },
+        el("span", { class: "small muted" }, "Next, choose the countries you want to publish in."),
+        el("button", { class: "btn btn-primary", type: "button", onclick: () => go("#countries") }, "Next", icon("right"))));
+  }
+
+  if (S.video) showFile(); else showDrop();
 }
 
-async function poll() {
-  clearTimeout(state.pollTimer);
-  let job;
+// ------------------------------------------------------------------ 2 · countries
+
+async function screenCountries(stale) {
+  const saved = store.get(LS.video);
+  if (saved && !S.video) await loadVideo(saved);
+  if (stale()) return;
+
+  let selected;
+  try { selected = new Set(JSON.parse(store.get(LS.countries) || "null")); } catch { selected = null; }
+  if (!selected || !selected.size) {
+    const deep = S.countries.filter((c) => c.coverage === "deep").map((c) => c.code);
+    selected = new Set(deep.length ? deep : S.countries.map((c) => c.code));
+  }
+  for (const cc of [...selected]) if (!S.countries.some((c) => c.code === cc)) selected.delete(cc);
+
+  const countLabel = el("span", { style: "font-weight: 600" });
+  const names = el("span", { class: "small muted" });
+  const analyse = el("button", { class: "btn btn-primary", type: "button", onclick: start }, "Analyse video", icon("right"));
+  const msg = el("div", { style: "margin-top: 12px" });
+
+  function update() {
+    const codes = S.countries.map((c) => c.code).filter((c) => selected.has(c));
+    countLabel.textContent = plural(codes.length, "country", "countries");
+    names.textContent = codes.length ? codes.map((c) => countryInfo(c).name).join(", ") : "Select at least one country";
+    analyse.disabled = !codes.length || !S.video;
+    store.set(LS.countries, JSON.stringify(codes));
+    return codes;
+  }
+
+  async function start() {
+    const codes = update();
+    if (!codes.length || !S.video) return;
+    analyse.disabled = true;
+    msg.replaceChildren();
+    try {
+      const { job_id } = await api("/api/analyze", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ video_id: S.video.video_id, countries: codes }),
+      });
+      store.set(LS.job, job_id);
+      S.job = null;
+      go(`#analysis/${job_id}`);
+    } catch (e) {
+      if (e.status === 404) { S.video = null; store.set(LS.video, null); }
+      msg.replaceChildren(alertBox(e.status === 404 ? "The uploaded video is no longer available. Upload it again." : `Could not start the analysis: ${e.message}`));
+      update();
+    }
+  }
+
+  const cards = S.countries.map((c) => {
+    const box = el("input", { type: "checkbox", checked: selected.has(c.code), onchange: () => {
+      if (box.checked) selected.add(c.code); else selected.delete(c.code);
+      card.classList.toggle("on", box.checked);
+      update();
+    } });
+    const lawsLabel = c.coverage === "deep"
+      ? `${plural(c.laws_count, "law")} · ${plural(c.provisions_count, "provision")}`
+      : `${plural(c.laws_count, "law")} · basic rule cards`;
+    const card = el("label", { class: `ccard ${selected.has(c.code) ? "on" : ""}` },
+      box,
+      el("div", { class: "row", style: "gap: 12px" },
+        flag(c.code),
+        el("div", { class: "stack grow" }, el("span", { class: "c-name" }, c.name), el("span", { class: "c-laws" }, lawsLabel)),
+        el("span", { class: "check-box", "aria-hidden": "true" }, icon("check"))),
+      el("div", { class: "tags" },
+        el("span", { class: covCls(c) }, covLabel(c)),
+        c.bill ? el("span", { class: "tag tag-draft" }, icon("info"), "Bill, not yet enacted") : null,
+        c.draft ? el("span", { class: "tag tag-draft" }, icon("draft"), "Draft rules: not yet reviewed by a lawyer") : null));
+    return card;
+  });
+
+  mount(el("main", { class: "main" },
+    pageHead("Step 2 of 4", "Where will you publish?",
+      "Pick every country you plan to post in. We check your video against the laws loaded for each one."),
+    S.video ? null : el("div", { style: "margin-bottom: 16px" },
+      el("div", { class: "alert alert-grey", role: "note" }, icon("info"),
+        el("span", {}, "Upload a video first. ", el("a", { href: "#upload" }, "Go to upload")))),
+    el("fieldset", { style: "border: 0; padding: 0; margin: 0" },
+      el("legend", { class: "sr-only" }, "Countries to check"),
+      el("div", { class: "country-grid" }, cards)),
+    el("div", { class: "card selection-bar" },
+      el("div", { class: "stack", style: "gap: 2px" }, countLabel, names),
+      el("div", { class: "row wrap" },
+        el("button", { class: "btn btn-ghost", type: "button", onclick: () => go("#upload") }, icon("left"), "Back"),
+        analyse)),
+    msg,
+    el("p", { class: "xsmall muted", style: "margin-top: 12px" },
+      el("b", { style: "font-weight: 600" }, "Deep coverage"),
+      " means the main laws and guidelines for video ads are loaded as checked provisions. ",
+      el("b", { style: "font-weight: 600" }, "Basic coverage"),
+      " means only general rule cards are loaded, so more moments will need a manual check.")));
+  update();
+}
+
+// ------------------------------------------------------------------ 3 · analysis
+
+async function fetchJob(jobId) {
   try {
-    job = await api(`/api/jobs/${encodeURIComponent(state.jobId)}`);
+    S.job = await api(`/api/jobs/${encodeURIComponent(jobId)}`);
   } catch (e) {
-    setMsg("analyze-msg", e.message, true);
-    state.pollTimer = setTimeout(poll, 3000);
-    return;
+    if (e.status === 404) throw new Error("That analysis was not found. It may have been deleted; start a new one.");
+    throw e;
   }
-  state.job = job;
-  renderStages(job);
-  if (job.mock) $("mock-banner").hidden = false;
-  if (job.status === "done") {
-    renderReport(job.report);
-    updateAnalyzeBtn();
-  } else if (job.status === "error") {
-    setMsg("analyze-msg", `Analysis failed: ${job.error || "unknown error"}`, true);
-    updateAnalyzeBtn();
-  } else {
-    state.pollTimer = setTimeout(poll, 1200);
+  if (S.job.mock) $("mock-banner").hidden = false;
+  return S.job;
+}
+
+const STATUS_LABEL = { done: "Done", running: "Running", pending: "Pending", error: "Failed", skipped: "Skipped" };
+const STATUS_ICON = { done: "check", running: "spin", error: "x", skipped: "right" };
+
+function stageRow({ label, status, detail, sub, cc, dot }) {
+  const ic = STATUS_ICON[status];
+  return el("li", { class: `stage ${status}${sub ? " sub" : ""}` },
+    el("span", { class: `st-icon st-${status}` }, ic ? icon(ic) : null),
+    el("div", { class: "grow" },
+      el("div", { class: "row", style: "gap: 8px" }, cc ? flag(cc, false) : null, el("span", { class: "st-label" }, label)),
+      detail ? el("div", { class: "st-detail" }, dot ? el("span", { class: `dot ${dot}`, "aria-hidden": "true" }) : null, detail) : null),
+    el("span", { class: "st-status" }, STATUS_LABEL[status] || status));
+}
+
+function buildStages(job) {
+  const by = Object.fromEntries(job.stages.map((s) => [s.key, s]));
+  const st = (k) => (by[k] ? by[k].status : "pending");
+  const rows = [];
+  const v = S.video;
+  rows.push({ label: "Video uploaded", status: "done",
+    detail: v ? [v.filename, mb(v.size_bytes), v.duration_s != null ? fmt(v.duration_s) : null].filter(Boolean).join(" · ") : "" });
+
+  const inv = by.inventory || {};
+  rows.push({ label: "Understanding the video (speech, visuals, on-screen text)", status: st("inventory"),
+    detail: inv.status === "done" ? (inv.detail || "").replace(/segments?/, "moments").replace(", ", " · ")
+      : inv.status === "running" ? "Transcribing speech and reading on-screen text…" : inv.detail });
+
+  const cs = job.countries.map((cc) => st(`country:${cc}`));
+  const lawsStatus = cs.every((s) => s === "done") ? "done" : cs.some((s) => s === "running") ? "running"
+    : cs.every((s) => s === "error") ? "error" : cs.every((s) => s === "done" || s === "error") ? "done" : "pending";
+  rows.push({ label: "Checking each country’s laws", status: lawsStatus });
+  for (const cc of job.countries) {
+    const s = by[`country:${cc}`] || { status: "pending", detail: "" };
+    const info = countryInfo(cc);
+    let detail = s.detail; let dot = null;
+    if (s.status === "done") {
+      const [badge, rest] = (s.detail || "").split(" · ");
+      const m = riskMeta(badge);
+      detail = [m.word || badge, rest].filter(Boolean).join(" · ");
+      dot = m.dot;
+    } else if (s.status === "running") detail = `Checking ${plural(info.laws_count || 1, "law")}…`;
+    else if (s.status === "pending") detail = "Waiting";
+    rows.push({ label: info.name, cc, sub: true, status: s.status, detail, dot });
   }
+
+  const langs = [...new Set(job.countries.flatMap((cc) => countryInfo(cc).drift_languages || []))];
+  const tr = by.translation || {};
+  rows.push({ label: `Translation check${langs.length ? ` (${langs.join(", ")})` : ""}`, status: st("translation"),
+    detail: !langs.length ? "Not needed: English only"
+      : tr.status === "skipped" ? `Not needed: ${tr.detail}`
+        : tr.status === "running" ? "Translating and back-translating each flagged spoken line…"
+          : tr.status === "done" ? (tr.detail || "").replace(/^(\d+) line checks/, (_, n) => plural(Number(n), "spoken line") + " checked") : tr.detail });
+  rows.push({ label: "Report ready", status: st("done"), detail: st("done") === "done" ? "Opening results…" : "" });
+  return rows;
 }
 
-function renderStages(job) {
-  $("stages").replaceChildren(...job.stages.map((s) => el("li", { class: s.status },
-    el("span", { class: "dot", "aria-hidden": "true" }),
-    el("span", {}, s.label, el("span", { class: "visually-hidden" }, ` (${s.status})`)),
-    el("span", { class: "detail" }, s.detail || (s.status === "pending" ? "" : s.status)),
-  )));
+async function screenAnalysis(jobId, stale) {
+  const job = await fetchJob(jobId);
+  await loadVideo(job.video_id);
+  if (stale()) return;
+  store.set(LS.job, jobId);
+
+  const stages = el("ol", { class: "stages" });
+  const elapsed = el("span", { class: "elapsed" });
+  const foot = el("div", { class: "an-foot", "aria-live": "polite" });
+  const err = el("div", { style: "margin-top: 16px" });
+  mount(el("main", { class: "main narrow" },
+    pageHead("Step 3 of 4", "Checking your video",
+      "We are comparing what is said, shown and written on screen with each country’s rules. This usually takes 1–3 minutes, longer on free models."),
+    el("div", { class: "card an-card" },
+      el("div", { class: "an-head" },
+        el("div", { class: "row", style: "gap: 10px" }, icon("video", "color: var(--text-3)"),
+          el("span", { style: "font-weight: 600" }, videoName()),
+          el("span", { class: "small muted" }, `· ${plural(job.countries.length, "country", "countries")}`)),
+        elapsed),
+      stages, foot),
+    err));
+
+  const tick = () => {
+    const j = S.job;
+    const end = j.status === "running" || j.status === "queued" ? Date.now() / 1000 : j.updated_at;
+    const label = fmt(end - j.created_at);
+    elapsed.replaceChildren(icon("clock"), label);
+    elapsed.setAttribute("aria-label", `Elapsed time ${label}`);
+  };
+  S.tickTimer = setInterval(tick, 1000);
+
+  const draw = (j) => {
+    stages.replaceChildren(...buildStages(j).map(stageRow));
+    tick();
+    if (j.status === "done") {
+      foot.replaceChildren(icon("okc"), el("span", { class: "grow" }, "Report ready. Opening results…"),
+        el("button", { class: "btn btn-primary btn-sm", type: "button", onclick: () => go(`#results/${jobId}`) }, "View results"));
+      clearInterval(S.tickTimer);
+      S.advanceTimer = setTimeout(() => { if (!stale()) go(`#results/${jobId}`); }, 1200);
+    } else if (j.status === "error") {
+      foot.replaceChildren(icon("x"), el("span", { class: "grow" }, "The analysis stopped."));
+      err.replaceChildren(alertBox(`Analysis failed: ${j.error || "unknown error"}`),
+        el("div", { class: "footer-bar" },
+          el("button", { class: "btn", type: "button", onclick: () => go("#countries") }, icon("left"), "Try again")));
+      clearInterval(S.tickTimer);
+    } else {
+      foot.replaceChildren(icon("info"), el("span", {}, "Results open automatically when the report is ready."));
+    }
+    renderStepper(parseRoute());
+  };
+  draw(job);
+
+  const poll = async () => {
+    if (stale()) return;
+    try {
+      draw(await fetchJob(jobId));
+    } catch (e) {
+      err.replaceChildren(alertBox(`Lost contact with the server, retrying: ${e.message}`, "alert-grey", "info"));
+    }
+    if (!stale() && (S.job.status === "running" || S.job.status === "queued")) S.pollTimer = setTimeout(poll, POLL_MS);
+  };
+  if (job.status === "running" || job.status === "queued") S.pollTimer = setTimeout(poll, POLL_MS);
 }
 
-// ------------------------------------------------------------------ report
+// ------------------------------------------------------------------ report model
 
-function seek(t) {
-  const player = $("player");
-  if (!player.src) return;
-  player.currentTime = Number(t) || 0;
-  player.play().catch(() => {});
-  if (window.matchMedia("(max-width: 860px)").matches) {
-    player.scrollIntoView({ behavior: "smooth", block: "center" });
+async function loadReport(jobId, stale) {
+  const job = await fetchJob(jobId);
+  if (stale()) return null;
+  if (job.status !== "done" || !job.report) {
+    location.replace(`#analysis/${encodeURIComponent(jobId)}`);
+    return null;
   }
+  await loadVideo(job.video_id);
+  store.set(LS.job, jobId);
+  return job;
 }
 
-function renderReport(report) {
-  $("report").hidden = false;
-  if (report.mock) $("mock-banner").hidden = false;
-
-  $("summary").replaceChildren(...report.countries.map((c) => el("a", { href: `#cr-${c.country}` },
-    el("span", { class: "pill" }, c.country, el("span", { class: `badge ${badgeOf(c)}` }, badgeOf(c))))));
-
-  const errs = $("report-errors");
-  errs.hidden = !report.errors.length;
-  errs.textContent = report.errors.length ? `Some checks failed: ${report.errors.join("; ")}` : "";
-  if (report.inventory && report.inventory.speech_transcribed === false) { errs.hidden = false; errs.textContent += " Note: speech could not be transcribed, so spoken content may be missing from this report."; } // OPENROUTER-TEMP
-
-  $("country-reports").replaceChildren(...report.countries.map(renderCountry));
-  $("disclaimer").textContent = report.disclaimer;
-  $("report").scrollIntoView({ behavior: "smooth", block: "start" });
+/** Timeline moments: stage A segments (fallback: the flagged intervals themselves). */
+function moments(report) {
+  const segs = (report.inventory && report.inventory.segments) || [];
+  if (segs.length) return segs;
+  const seen = new Map();
+  for (const c of report.countries) {
+    for (const x of [...c.findings, ...(c.uncovered || [])]) seen.set(`${x.start_s}-${x.end_s}`, { start_s: x.start_s, end_s: x.end_s });
+  }
+  return [...seen.values()].sort((a, b) => a.start_s - b.start_s);
 }
 
-function renderCountry(c) {
-  const meta = state.countries.find((x) => x.code === c.country) || {};
-  const brain = c.brain === "adk";
-  const cards = Object.fromEntries(c.cited_cards.map((k) => [k.id, k]));
-  const provs = Object.fromEntries((c.cited_provisions || []).map((p) => [p.id, p]));
-  const findings = c.findings.length
-    ? el("ol", { class: "findings" }, c.findings.map((f) => renderFinding(c, f, cards, provs)))
-    : el("p", { class: "empty" }, brain
-      ? "No moment in this video is covered by a loaded provision of this country's laws."
-      : "No moments in this video matched this country's rule cards.");
-  const badge = badgeOf(c);
-
-  return el("article", { class: "card country-report", id: `cr-${c.country}` },
-    el("div", { class: "cr-head" },
-      el("h3", {}, meta.name || c.country),
-      el("span", { class: `badge ${badge}` }, `${badge} · ${RISK_LABEL[badge]}`),
-      c.rules_status !== "reviewed"
-        ? el("span", { class: "badge draft", title: "Provisions/rule cards have not been reviewed by a person yet" }, "draft rules")
-        : null),
-    brain ? renderLaws(c) : el("p", { class: "cr-law" }, c.law, c.label ? el("span", { class: "note" }, ` · ${c.label}`) : null),
-    el("p", { class: "framing" }, c.risk_framing),
-    findings,
-    (c.platform_obligations || []).length ? renderObligations(c) : null,
-    (c.uncovered || []).length
-      ? el("div", { class: "uncovered" },
-          el("p", { class: "k" }, brain
-            ? "Not covered by any loaded law (other local laws may still apply):"
-            : "Not covered by this law (check other local laws):"),
-          el("ul", {}, c.uncovered.map((u) => el("li", {},
-            el("button", { class: "chip", type: "button", onclick: () => seek(u.start_s),
-              title: "Jump to this moment" }, `▶ ${fmtTime(u.start_s)}–${fmtTime(u.end_s)}`),
-            ` ${u.leaf || CATEGORY_LABEL(u.category)}`,
-            u.note ? el("span", { class: "muted" }, ` · ${u.note}`) : null))))
-      : null,
-    c.dropped_findings
-      ? el("p", { class: "empty" }, `${c.dropped_findings} model suggestion(s) were dropped by the citation ${brain ? "verifier" : "validator"}.`)
-      : null,
-    c.critic_changes
-      ? el("p", { class: "empty" }, `The critic changed ${c.critic_changes} finding(s).`)
-      : null,
-    (c.notes || []).map((n) => el("p", { class: "empty" }, n)),
-  );
+function momentRisk(c, m) {
+  let best = { risk: null, label: "" };
+  for (const f of c.findings) {
+    if (overlaps(f, m) && riskMeta(f.risk).rank > riskMeta(best.risk).rank) best = { risk: f.risk, label: leafLabel(f) };
+  }
+  if (best.risk) return best;
+  const d = (c.translation || []).find((x) => x.drift === "increased" && overlaps(x, m));
+  if (d) return { risk: "amber", label: `Riskier when translated (${d.language})` };
+  const u = (c.uncovered || []).find((x) => overlaps(x, m));
+  if (u) return { risk: "grey", label: `${leafLabel(u)}: check manually` };
+  return best;
 }
 
-function renderLaws(c) {
-  return el("div", { class: "laws" },
-    el("p", { class: "k" }, "Laws loaded for this country:"),
-    el("ul", {}, (c.laws || []).map((l) => el("li", {},
-      el("a", { href: l.pdf_url, target: "_blank", rel: "noopener" }, l.title),
-      el("span", { class: "muted" }, ` · ${STATUS_LABEL[l.status] || l.status} · ${l.provisions} provision${l.provisions === 1 ? "" : "s"}`),
-      l.label ? el("span", { class: "note" }, ` · ${l.label}`) : null))));
+function worstRisk(countries, m) {
+  let best = { risk: null, label: "" };
+  for (const c of countries) {
+    const r = momentRisk(c, m);
+    if (riskMeta(r.risk).rank > riskMeta(best.risk).rank) best = r;
+  }
+  return best;
 }
 
-function renderObligations(c) {
-  return el("details", { class: "obligations" },
-    el("summary", {}, `Platform obligations (${c.platform_obligations.length}): what a platform must do about the content found`),
-    c.platform_obligations.map(renderProvision));
+const segText = (s) => (s.transcript || "").trim();
+const segScreen = (s) => (s.on_screen_text || "").trim().replace(/\s*\n\s*/g, " / ");
+
+function quoteAt(report, x) {
+  const s = moments(report).find((m) => overlaps(m, x));
+  return s ? segText(s) || segScreen(s) : "";
 }
 
-function renderFinding(c, f, cards, provs) {
-  const drift = c.translation.filter((d) => overlaps(d, f));
-  return el("li", { class: `finding ${f.risk}` },
-    el("div", { class: "f-head" },
-      el("button", { class: "chip", type: "button", onclick: () => seek(f.start_s),
-        title: "Jump to this moment" }, `▶ ${fmtTime(f.start_s)}–${fmtTime(f.end_s)}`),
-      el("span", { class: `badge ${f.risk}` }, f.risk),
-      el("span", { class: "cat" }, f.leaf || CATEGORY_LABEL(f.category)),
-      f.creator_liability ? el("span", { class: "badge creator" }, "creator liability") : null,
-      f.exception_applies ? el("span", { class: "badge draft" }, "exception may apply") : null,
-      drift.map((d) => el("span", { class: `badge drift-${d.drift}` }, `${d.language}: drift ${d.drift}`)),
-    ),
-    el("div", { class: "f-row" }, el("span", { class: "k" }, "Why"), f.rationale),
-    f.exception_applies && f.exception_reason
-      ? el("div", { class: "f-row" }, el("span", { class: "k" }, "Exception"), f.exception_reason) : null,
-    f.critic_note ? el("div", { class: "f-row" }, el("span", { class: "k" }, "Critic"), f.critic_note) : null,
-    el("div", { class: "f-row" }, el("span", { class: "k" }, "Suggested fix"), f.suggested_fix),
-    f.rule_card_ids.map((id) => provs[id] ? renderProvision(provs[id]) : renderCite(c.country, cards[id], id)),
-    (f.obligation_ids || []).length
-      ? el("div", { class: "f-row" }, el("span", { class: "k" }, "Platform must"),
-          (c.platform_obligations || []).filter((p) => f.obligation_ids.includes(p.id))
-            .map((p) => `${p.section}: ${p.summary}`).join(" · "))
-      : null,
-    drift.map(renderDrift),
-  );
+// ------------------------------------------------------------------ video player + timeline
+
+function makePlayer(job, scope, { legend = false } = {}) {
+  const report = job.report;
+  const ms = moments(report);
+  let dur = Number(report.duration_s) || 0;
+  const video = el("video", { src: `/api/videos/${encodeURIComponent(job.video_id)}`, preload: "metadata", playsinline: true });
+  const tc = el("span", { class: "player-tc" });
+  const caption = el("div", { class: "caption", "aria-live": "off" });
+  const big = el("button", { class: "play-big is-play", type: "button", "aria-label": "Play video" }, icon("play"));
+  const small = el("button", { class: "play-sm", type: "button", "aria-label": "Play video" }, icon("play"));
+  const head = el("div", { class: "tl-head" });
+  const player = el("div", { class: "player" }, video,
+    el("span", { class: "player-file" }, videoName()), tc,
+    el("div", { class: "player-center" }, big), caption);
+
+  const segs = [];
+  for (const m of ms) {
+    const w = worstRisk(scope, m);
+    if (!w.risk || !dur) continue;
+    const meta = riskMeta(w.risk);
+    const aria = `Jump to ${range(m.start_s, m.end_s)}: ${w.label}, ${meta.level}`;
+    const b = el("button", { class: `tl-seg ${w.risk === "check" ? "grey" : w.risk}`, type: "button", "aria-label": aria, title: aria,
+      style: `left: ${(m.start_s / dur * 100).toFixed(2)}%; width: ${(Math.max(0.3, m.end_s - m.start_s) / dur * 100).toFixed(2)}%`,
+      onclick: (e) => { e.stopPropagation(); seek(m.start_s); } });
+    b.moment = m;
+    segs.push(b);
+  }
+  const track = el("div", { class: "tl-track", role: "slider", tabindex: "0", "aria-label": "Video position",
+    "aria-valuemin": "0", "aria-valuemax": String(Math.round(dur)) },
+  el("div", { class: "tl-base" }), segs, head);
+  track.addEventListener("click", (e) => {
+    const rect = track.getBoundingClientRect();
+    if (dur) seek(((e.clientX - rect.left) / rect.width) * dur, false);
+  });
+  track.addEventListener("keydown", (e) => {
+    const step = { ArrowLeft: -5, ArrowRight: 5, ArrowDown: -5, ArrowUp: 5 }[e.key];
+    if (step) { e.preventDefault(); seek(video.currentTime + step, false); } else if (e.key === "Home") { e.preventDefault(); seek(0, false); } else if (e.key === "End") { e.preventDefault(); seek(dur, false); } else if (e.key === " " || e.key === "k") { e.preventDefault(); toggle(); }
+  });
+
+  const half = dur / 2;
+  const timeline = el("div", { class: "timeline" },
+    el("div", { class: "tl-controls" }, small, track),
+    el("div", { class: "tl-ticks" }, el("span", {}, "0:00"), el("span", {}, fmt(half)), el("span", {}, fmt(dur))),
+    legend ? el("div", { class: "tl-legend" },
+      el("span", {}, el("i", { class: "legend-sw red", "aria-hidden": "true" }), "High risk"),
+      el("span", {}, el("i", { class: "legend-sw amber", "aria-hidden": "true" }), "Medium risk (striped)"),
+      el("span", {}, el("i", { class: "legend-sw grey", "aria-hidden": "true" }), "Check manually"),
+      el("span", { class: "muted" }, "Select a marker to jump to that moment")) : null);
+
+  const listeners = [];
+  function update() {
+    const t = video.currentTime || 0;
+    head.style.left = `${dur ? (Math.min(dur, t) / dur * 100).toFixed(2) : 0}%`;
+    tc.textContent = `${fmt(t)} / ${fmt(dur)}`;
+    track.setAttribute("aria-valuenow", String(Math.round(t)));
+    track.setAttribute("aria-valuetext", `${fmt(t)} of ${fmt(dur)}`);
+    const cur = ms.find((m) => t >= m.start_s && t < m.end_s);
+    caption.textContent = cur ? segText(cur) : "";
+    for (const b of segs) b.classList.toggle("active", b.moment === cur);
+    for (const fn of listeners) fn(t, cur);
+  }
+  function setPlaying(p) {
+    player.classList.toggle("playing", p);
+    for (const b of [big, small]) {
+      b.setAttribute("aria-label", p ? "Pause video" : "Play video");
+      b.classList.toggle("is-play", !p);
+      b.firstElementChild.className = `ic ${p ? "ic-pause" : "ic-play"}`;
+    }
+  }
+  function toggle() { if (video.paused) video.play().catch(() => {}); else video.pause(); }
+  function seek(t, play = true) {
+    video.currentTime = Math.max(0, Math.min(dur || t, t));
+    update();
+    if (play) video.play().catch(() => {});
+  }
+  big.addEventListener("click", toggle);
+  small.addEventListener("click", toggle);
+  video.addEventListener("click", toggle);
+  video.addEventListener("timeupdate", update);
+  video.addEventListener("seeked", update);
+  video.addEventListener("play", () => setPlaying(true));
+  video.addEventListener("pause", () => setPlaying(false));
+  video.addEventListener("loadedmetadata", () => { if (!dur && video.duration) { dur = video.duration; update(); } });
+  video.addEventListener("error", () => { caption.textContent = "Video not available (it may have been deleted)."; });
+  update();
+  return { player, timeline, seek, onTime: (fn) => listeners.push(fn) };
 }
 
-function renderProvision(p) {
-  const href = `/api/laws/${encodeURIComponent(p.country)}/${encodeURIComponent(p.law_id)}/pdf#page=${encodeURIComponent(p.page)}`;
-  const k = p.consequence || {};
-  return el("div", { class: "cite" },
-    el("div", { class: "src" },
-      el("strong", {}, p.section),
-      el("span", {}, p.law_title),
-      p.law_status !== "in_force" ? el("span", { class: "note" }, STATUS_LABEL[p.law_status] || p.law_status) : null,
-      el("a", { href, target: "_blank", rel: "noopener" }, `PDF p. ${p.page}`),
-      el("span", { class: "cat" }, `[${p.id}]`)),
-    el("blockquote", {}, `“${p.verbatim_text}”`),
-    (p.exceptions || []).length
-      ? el("div", { class: "duty" }, "Exceptions: ", el("ul", {}, p.exceptions.map((x) => el("li", {}, x))))
-      : null,
-    el("div", { class: "duty" }, `Duty on: ${p.duty_holder} · ${k.kind || "not specified"}${k.timeframe && !k.timeframe.startsWith("not specified") ? `, ${k.timeframe}` : ""}`),
-    k.penalty && !k.penalty.startsWith("not specified") ? el("div", { class: "duty" }, `Penalty: ${k.penalty}`) : null,
-  );
+// ------------------------------------------------------------------ 4 · results
+
+function reasonOf(c) {
+  const b = badgeOf(c);
+  if (c.findings.length) {
+    const labels = [...new Set(c.findings.map(leafLabel))];
+    const s = joinWords(labels.map((l, i) => (i ? l.charAt(0).toLowerCase() + l.slice(1) : l)));
+    return s;
+  }
+  if (b === "grey") return "Sensitive content found, but no loaded law covers it";
+  return "No moment matched a loaded law";
 }
 
-function renderCite(cc, card, id) {
-  if (!card) return el("div", { class: "cite" }, `Rule ${id}`);
-  const href = `/api/laws/${encodeURIComponent(cc)}/pdf#page=${encodeURIComponent(card.page)}`;
-  return el("div", { class: "cite" },
-    el("div", { class: "src" },
-      el("strong", {}, card.section),
-      el("span", {}, card.law),
-      el("a", { href, target: "_blank", rel: "noopener" }, `PDF p. ${card.page}`),
-      el("span", { class: "cat" }, `[${card.id}]`)),
-    card.quote ? el("blockquote", {}, `“${card.quote}”`) : null,
-    el("div", { class: "duty" }, `Platform duty: ${card.platform_duty}`),
-    card.applies_to !== "platform" ? el("div", { class: "duty" }, `Penalty: ${card.penalty}`) : null,
-  );
+function reportNotes(job) {
+  const r = job.report;
+  const notes = [];
+  if (r.mock) notes.push(alertBox("Mock mode: these results are canned examples, not a real analysis.", "alert-grey", "info"));
+  if ((r.errors || []).length) notes.push(alertBox(`Some checks failed, so this report is incomplete: ${r.errors.join("; ")}`, "risk-amber", "warn"));
+  if (r.inventory && r.inventory.speech_transcribed === false) notes.push(alertBox("Speech could not be transcribed, so spoken content may be missing from this report.", "alert-grey", "info")); // OPENROUTER-TEMP
+  return notes.length ? el("div", { class: "notes" }, notes) : null;
 }
 
-function renderDrift(d) {
-  return el("details", { class: "drift", open: d.drift === "increased" },
-    el("summary", {},
-      el("span", { class: `badge drift-${d.drift}` }, `translation drift: ${d.drift}`),
-      `${d.language} · ${fmtTime(d.start_s)}`),
-    el("dl", {},
-      el("dt", {}, "Original"), el("dd", {}, d.original),
-      el("dt", {}, d.language), el("dd", {}, d.translated),
-      el("dt", {}, "Back-translated"), el("dd", {}, d.back_translated),
-      el("dt", {}, "Assessment"), el("dd", {}, d.explanation)),
-  );
+async function screenResults(jobId, stale) {
+  const job = await loadReport(jobId, stale);
+  if (!job || stale()) return;
+  const r = job.report;
+  const cs = r.countries;
+  const failed = job.countries.filter((cc) => !cs.some((c) => c.country === cc));
+  const errFor = (cc) => (r.errors || []).find((e) => e.startsWith(`${cc}:`));
+
+  const needFix = cs.filter((c) => ["red", "amber"].includes(badgeOf(c))).length;
+  const greyN = cs.filter((c) => badgeOf(c) === "grey").length;
+  const n = cs.length;
+  const headline = needFix ? `${needFix} of ${n} ${n === 1 ? "country needs" : "countries need"} changes before you publish`
+    : greyN ? `${greyN} of ${n} ${n === 1 ? "country needs" : "countries need"} a manual check`
+      : `Looks clear in ${n === 1 ? "the 1 country" : `all ${n} countries`} checked`;
+
+  const p = makePlayer(job, cs, { legend: true });
+  const ms = moments(r);
+  const items = ms.map((m) => {
+    const w = worstRisk(cs, m);
+    const meta = riskMeta(w.risk);
+    const speech = segText(m);
+    const screen = segScreen(m);
+    const btn = el("button", { class: "tr-item", type: "button", onclick: () => p.seek(m.start_s) },
+      el("span", { class: "tr-time" }, range(m.start_s, m.end_s)),
+      el("span", { class: `dot ${meta.dot}`, "aria-hidden": "true" }),
+      el("span", { class: "tr-text" },
+        speech ? `“${speech}”` : screen ? [el("span", { class: "tr-src" }, "On screen"), screen] : el("span", { class: "muted" }, m.visuals || "No speech or text"),
+        el("span", { class: "tr-flag" }, w.risk ? `${meta.level} · ${w.label}` : "No issues")));
+    btn.moment = m;
+    return el("li", {}, btn);
+  });
+  p.onTime((t, cur) => { for (const li of items) li.firstElementChild.classList.toggle("active", li.firstElementChild.moment === cur && t > 0); });
+
+  const cards = cs.map((c) => {
+    const info = countryInfo(c.country);
+    const meta = riskMeta(badgeOf(c));
+    const nf = c.findings.length; const nu = (c.uncovered || []).length;
+    const countLabel = nf ? `${plural(nf, "issue")}${nu ? ` · ${nu} to check` : ""}` : nu ? `${nu} to check manually` : "Nothing to fix";
+    const reason = reasonOf(c);
+    return el("button", { class: "rcard", type: "button", "aria-label": `${info.name}: ${meta.verdict}. ${reason}. View details`,
+      onclick: () => go(`#country/${jobId}/${c.country}`) },
+    el("div", { class: "rcard-top" }, flag(c.country),
+      el("span", { class: "stack grow" }, el("span", { class: "c-name" }, info.name), el("span", { class: "xsmall muted" }, covLabel(info)))),
+    el("div", {}, el("span", { class: `badge badge-lg ${meta.cls}` }, icon(meta.icon), meta.verdict)),
+    el("p", { class: "rcard-reason" }, reason),
+    el("div", { class: "rcard-foot" }, el("span", {}, countLabel), el("span", { class: "go" }, "View details", icon("right"))));
+  });
+  for (const cc of failed) {
+    const info = countryInfo(cc);
+    const e = errFor(cc);
+    cards.push(el("div", { class: "rcard", style: "cursor: default" },
+      el("div", { class: "rcard-top" }, flag(cc),
+        el("span", { class: "stack grow" }, el("span", { class: "c-name" }, info.name), el("span", { class: "xsmall muted" }, covLabel(info)))),
+      el("div", {}, el("span", { class: "badge badge-lg risk-grey" }, icon("x"), "Check failed")),
+      el("p", { class: "rcard-reason" }, e ? e.slice(cc.length + 1).trim() : "This country could not be checked. Run the analysis again."),
+      el("div", { class: "rcard-foot" }, el("span", {}, "Not checked"))));
+  }
+
+  mount(el("main", { class: "main" },
+    pageHead(`Results · ${videoName()}`, headline, "Select a country to see each problem moment, why it matters and how to fix it."),
+    reportNotes(job),
+    el("section", { class: "card player-wrap", "aria-label": "Video and problem moments" },
+      el("div", { class: "player-col" }, p.player, p.timeline),
+      el("div", { class: "transcript" },
+        el("h2", { class: "h3" }, "What the video says"),
+        el("ul", { class: "tr-list" }, items))),
+    el("section", { class: "section", "aria-label": "Verdict by country" },
+      el("div", { class: "section-head" }, el("h2", { class: "h2" }, "By country"),
+        el("span", { class: "small muted" }, `${plural(job.countries.length, "country", "countries")} checked`)),
+      el("div", { class: "results-grid" }, cards),
+      el("div", { class: "disclaimer", style: "margin-top: 16px" }, icon("info"),
+        el("span", {}, el("b", { style: "font-weight: 600" }, "Advisory only, not legal advice. "),
+          "StreamClearance flags likely risks. Confirm with a qualified lawyer before relying on it."))),
+    el("div", { class: "footer-bar" },
+      el("button", { class: "btn", type: "button", onclick: () => go("#upload") }, icon("upload"), "Check another video"),
+      el("button", { class: "btn", type: "button", onclick: () => download(job) }, icon("download"), "Download report (JSON)"))));
 }
 
-function downloadJson() {
-  if (!state.job || !state.job.report) return;
-  const blob = new Blob([JSON.stringify(state.job.report, null, 2)], { type: "application/json" });
-  const a = el("a", { href: URL.createObjectURL(blob), download: `streamclearance-${state.job.job_id}.json` });
+function download(job) {
+  const name = `streamclearance-${job.job_id}.json`;
+  const blob = new Blob([JSON.stringify(job.report, null, 2)], { type: "application/json" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: name });
   document.body.append(a);
   a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  toast(`Downloaded ${name}`);
 }
 
-init();
+// ------------------------------------------------------------------ 5 · country detail
+
+function disclosure(label, iconName, content, { open = false, style } = {}) {
+  const chev = icon("chev");
+  chev.classList.add("chev");
+  const btn = el("button", { class: `disclosure ${open ? "open" : ""}`, type: "button", "aria-expanded": String(open), style },
+    icon(iconName, "color: var(--text-3)"), el("span", { class: "grow" }, label), chev);
+  const body = el("div", { hidden: !open }, content);
+  btn.addEventListener("click", () => {
+    const now = btn.getAttribute("aria-expanded") !== "true";
+    btn.setAttribute("aria-expanded", String(now));
+    btn.classList.toggle("open", now);
+    body.hidden = !now;
+  });
+  return [btn, body];
+}
+
+const pdfLink = (href, text, srText) => el("a", { class: "pdf-link", href, target: "_blank", rel: "noopener" },
+  icon("file"), text, srText ? el("span", { class: "sr-only" }, srText) : null);
+
+function provisionCard(cc, p) {
+  const [st, stCls] = lawStatus(p.law_status);
+  const k = p.consequence || {};
+  const href = `/api/laws/${encodeURIComponent(cc)}/${encodeURIComponent(p.law_id)}/pdf#page=${encodeURIComponent(p.page)}`;
+  const ex = p.exceptions || [];
+  return el("div", { class: "prov" },
+    el("div", { class: "prov-head" },
+      el("div", { class: "stack", style: "gap: 2px" },
+        el("span", { class: "prov-title" }, p.law_title),
+        el("span", { class: "prov-sec" }, `${p.section} · page ${p.page}`)),
+      el("div", { class: "row wrap", style: "gap: 6px" },
+        el("span", { class: `status-pill ${stCls}` }, st),
+        p.review && p.review.status !== "reviewed" ? el("span", { class: "tag tag-draft" }, icon("draft"), "Draft, not reviewed") : null,
+        pdfLink(href, `Open PDF at p. ${p.page}`, ` of ${p.law_title}`))),
+    el("blockquote", { class: "vquote" }, p.verbatim_text),
+    el("dl", { class: "kv", style: "margin: 0" },
+      p.summary ? [el("dt", {}, "In short"), el("dd", {}, p.summary)] : null,
+      specified(k.penalty) ? [el("dt", {}, "Penalty"), el("dd", {}, k.penalty)] : null,
+      specified(k.kind) || specified(k.timeframe) ? [el("dt", {}, "Consequence"), el("dd", {}, [k.kind, k.timeframe].filter(specified).map((x) => x.replace(/_/g, " ")).join(", "))] : null,
+      [el("dt", {}, "Applies to"), el("dd", {}, DUTY_TEXT[p.duty_holder] || p.duty_holder)],
+      ex.length ? [el("dt", {}, "Exceptions"), el("dd", {}, ex.length === 1 ? ex[0] : el("ul", { style: "margin: 0; padding-left: 18px" }, ex.map((x) => el("li", {}, x))))] : null));
+}
+
+function ruleCardCard(cc, card) {
+  const href = `/api/laws/${encodeURIComponent(cc)}/pdf#page=${encodeURIComponent(card.page)}`;
+  return el("div", { class: "prov" },
+    el("div", { class: "prov-head" },
+      el("div", { class: "stack", style: "gap: 2px" },
+        el("span", { class: "prov-title" }, card.law),
+        el("span", { class: "prov-sec" }, `${card.section} · page ${card.page}`)),
+      el("div", { class: "row wrap", style: "gap: 6px" },
+        el("span", { class: "status-pill" }, "Basic rule card"),
+        card.needs_review ? el("span", { class: "tag tag-draft" }, icon("draft"), "Draft, not reviewed") : null,
+        pdfLink(href, `Open PDF at p. ${card.page}`, ` of ${card.law}`))),
+    card.quote ? el("blockquote", { class: "vquote" }, card.quote) : null,
+    el("dl", { class: "kv", style: "margin: 0" },
+      el("dt", {}, "In short"), el("dd", {}, card.conduct),
+      specified(card.platform_duty) ? [el("dt", {}, "Platform duty"), el("dd", {}, card.platform_duty)] : null,
+      specified(card.penalty) ? [el("dt", {}, "Penalty"), el("dd", {}, card.penalty)] : null,
+      el("dt", {}, "Applies to"), el("dd", {}, DUTY_TEXT[card.applies_to] || card.applies_to)));
+}
+
+function liableOf(f, provs, cards) {
+  const who = new Set();
+  for (const id of f.rule_card_ids) {
+    if (provs[id]) (DUTY[provs[id].duty_holder] || []).forEach((w) => who.add(w));
+    else if (cards[id]) (DUTY[cards[id].applies_to] || []).forEach((w) => who.add(w));
+  }
+  if (f.creator_liability) who.add("Creator");
+  return WHO_ORDER.filter((w) => who.has(w));
+}
+
+function issueCard(job, c, f, p, provs, cards) {
+  const m = riskMeta(f.risk);
+  const label = leafLabel(f);
+  const quote = quoteAt(job.report, f);
+  const chev = icon("chev");
+  chev.classList.add("chev");
+  const toggleBtn = el("button", { class: "issue-toggle", type: "button", "aria-expanded": "false" },
+    el("span", { class: `badge ${m.cls}` }, icon(m.icon), m.level),
+    el("span", { class: "issue-title" }, el("b", {}, label), quote ? el("span", {}, `“${quote}”`) : null),
+    chev);
+  const preview = el("div", { class: "fix-preview" }, icon("wrench", "color: var(--accent)"), el("b", {}, "Fix:"), el("span", {}, f.suggested_fix));
+
+  const legal = f.rule_card_ids.map((id) => (provs[id] ? provisionCard(c.country, provs[id]) : cards[id] ? ruleCardCard(c.country, cards[id]) : null)).filter(Boolean);
+  const liable = liableOf(f, provs, cards);
+  const ownDuties = (c.platform_obligations || []).filter((o) => (f.obligation_ids || []).includes(o.id));
+  const body = el("div", { class: "issue-body", hidden: true },
+    el("div", { class: "stack", style: "gap: 4px" }, el("span", { class: "eyebrow" }, "Why it’s a problem"), el("p", { style: "text-wrap: pretty" }, f.rationale)),
+    el("div", { class: "fix" }, el("span", { class: "fix-icon" }, icon("wrench")),
+      el("div", {}, el("div", { class: "fix-label" }, "How to fix"), el("p", { class: "fix-text" }, f.suggested_fix))),
+    liable.length ? el("dl", { class: "kv", style: "margin: 0" },
+      el("dt", {}, "Who’s liable"),
+      el("dd", { class: "liable" }, liable.map((w) => el("span", { class: "tag on" }, icon("user"), w)))) : null,
+    f.critic_note ? el("div", { class: "note" }, icon("bot"), el("span", {}, el("b", {}, "Reviewer AI note: "), f.critic_note)) : null,
+    f.exception_applies ? el("div", { class: "note" }, icon("info"), el("span", {}, el("b", {}, "An exception may apply: "), f.exception_reason || "see the exceptions in the legal basis.")) : null,
+    ownDuties.length ? el("div", { class: "note" }, icon("monitor"), el("span", {}, el("b", {}, "Platforms must also act: "),
+      ownDuties.map((o) => `${o.section} (${o.law_id})`).join(", "), ". See Platform obligations below.")) : null,
+    legal.length ? el("div", { class: "legal" }, disclosure(`Legal basis · ${plural(legal.length, "provision")}`, "scale", legal)) : null);
+
+  const art = el("article", { class: "issue" },
+    el("div", { class: "issue-head" },
+      el("button", { class: "chip-time", type: "button", "aria-label": `Play ${range(f.start_s, f.end_s)}`, onclick: () => p.seek(f.start_s) },
+        icon("play"), range(f.start_s, f.end_s)),
+      toggleBtn),
+    preview, body);
+  toggleBtn.addEventListener("click", () => {
+    const open = toggleBtn.getAttribute("aria-expanded") !== "true";
+    toggleBtn.setAttribute("aria-expanded", String(open));
+    art.classList.toggle("open", open);
+    body.hidden = !open; preview.hidden = open;
+  });
+  return art;
+}
+
+function translationSection(c, info, p) {
+  const langs = info.drift_languages || [];
+  const lines = c.translation || [];
+  const lang = lines[0] ? lines[0].language : langs[0];
+  const head = el("div", { class: "section-head" },
+    el("h2", { class: "h2" }, el("span", { class: "row" }, icon("lang", "width: 18px; height: 18px; color: var(--text-3)"),
+      `Translation check${lang ? ` · ${lang}` : ""}`)),
+    el("span", { class: "small muted" }, "Does the meaning get riskier in the local language?"));
+  const sec = (...kids) => el("section", { class: "section", "aria-label": "Translation check" }, head, kids);
+  if (!langs.length) return sec(el("p", { class: "small muted" }, `Not run. Videos for ${info.name} are checked in English.`));
+  if (!lines.length) {
+    return sec(el("p", { class: "small muted" }, c.findings.length
+      ? "No flagged spoken lines to translate (the flagged moments have no speech)."
+      : "Not run: nothing was flagged for this country."));
+  }
+  const riskier = lines.filter((d) => d.drift === "increased");
+  let all = !riskier.length;
+  const code = LANG_CODE[lang] || "";
+  const rowsBox = el("div");
+  const note = el("span");
+  const more = el("button", { class: "link-btn small", type: "button" });
+  const draw = () => {
+    rowsBox.replaceChildren(...(all ? lines : riskier).map((d) => el("div", { class: "tr-row" },
+      el("div", {}, el("span", { class: "lbl" }, "Time"),
+        el("button", { class: "chip-time", type: "button", "aria-label": `Play ${range(d.start_s, d.end_s)}`, onclick: () => p.seek(d.start_s) }, icon("play"), range(d.start_s, d.end_s))),
+      el("div", {}, el("span", { class: "lbl" }, "Original"), d.original),
+      el("div", {}, el("span", { class: "lbl" }, d.language), el("span", { class: "tr-native", lang: code || null }, d.translated)),
+      el("div", {}, el("span", { class: "lbl" }, "Back-translation"), el("span", { class: `tr-back ${d.drift === "increased" ? "changed" : ""}` }, d.back_translated)),
+      el("div", {}, el("span", { class: "lbl" }, "Result"),
+        d.drift === "increased" ? el("span", { class: "badge risk-amber" }, icon("warn"), "Riskier")
+          : d.drift === "reduced" ? el("span", { class: "tag" }, icon("info"), "Less risky") : el("span", { class: "tag" }, icon("check"), "Same meaning"),
+        d.explanation ? el("div", { class: "tr-why" }, d.explanation) : null))));
+    note.textContent = all ? `Showing all ${plural(lines.length, "checked line")}.`
+      : `${riskier.length} of ${plural(lines.length, "line")} read riskier. The other ${lines.length - riskier.length} kept their meaning.`;
+    more.textContent = all ? "Show only riskier lines" : "Show all lines";
+    more.hidden = !riskier.length || riskier.length === lines.length;
+  };
+  more.addEventListener("click", () => { all = !all; draw(); });
+  draw();
+  return sec(el("div", { class: "card tr-grid" },
+    el("div", { class: "tr-row head" }, el("span", {}, "Time"), el("span", {}, "Original"), el("span", {}, lang), el("span", {}, "Back-translation"), el("span", {}, "Result")),
+    rowsBox, el("div", { class: "tr-more" }, note, more)));
+}
+
+async function screenCountry(jobId, cc, stale) {
+  const job = await loadReport(jobId, stale);
+  if (!job || stale()) return;
+  const c = job.report.countries.find((x) => x.country === cc);
+  if (!c) { location.replace(`#results/${encodeURIComponent(jobId)}`); return; }
+  const info = countryInfo(cc);
+  const meta = riskMeta(badgeOf(c));
+  const provs = Object.fromEntries((c.cited_provisions || []).map((x) => [x.id, x]));
+  const cards = Object.fromEntries((c.cited_cards || []).map((x) => [x.id, x]));
+  const laws = (c.laws || []).length ? c.laws : info.laws || [];
+  const nf = c.findings.length;
+  const unc = c.uncovered || [];
+  const obl = c.platform_obligations || [];
+  const p = makePlayer(job, [c]);
+  const back = () => go(`#results/${jobId}`);
+
+  const lawList = el("ul", { class: "law-list" }, laws.map((l) => {
+    const [st, stCls] = lawStatus(l.status);
+    return el("li", { class: "law" },
+      el("span", { class: "law-title" }, l.title),
+      el("span", { class: "law-meta" }, el("span", { class: `status-pill ${stCls}` }, st), pdfLink(l.pdf_url, "PDF", ` of ${l.title}`)),
+      l.label ? el("span", { class: "law-note" }, l.label) : null);
+  }));
+
+  const notes = [
+    ...(c.notes || []),
+    c.dropped_findings ? `${plural(c.dropped_findings, "model suggestion")} dropped by the citation ${c.brain === "adk" ? "verifier" : "validator"} (the cited text did not fit).` : null,
+    c.critic_changes ? `The reviewer AI changed ${plural(c.critic_changes, "finding")}.` : null,
+  ].filter(Boolean);
+
+  const verdictSub = meta === RISK.grey
+    ? "Sensitive content found, but no loaded law covers it. Check these moments manually."
+    : nf ? `${reasonOf(c)}.` : "No moment matched a loaded law.";
+
+  mount(el("main", { class: "main" },
+    el("button", { class: "back", type: "button", onclick: back }, icon("left"), "All countries"),
+    el("div", { class: "detail-top", style: "margin-top: 8px" },
+      el("section", { class: "card detail-head", "aria-label": "Verdict" },
+        el("div", { class: "dh-title" }, flag(cc), el("h1", { class: "h1" }, info.name),
+          el("span", { class: covCls(info) }, covLabel(info)),
+          c.rules_status !== "reviewed" ? el("span", { class: "tag tag-draft" }, icon("draft"), "Draft rules: not yet reviewed by a lawyer") : null),
+        el("div", { class: "stack", style: "gap: 8px" },
+          el("div", {}, el("span", { class: `badge badge-lg ${meta.cls}` }, icon(meta.icon), meta.verdict)),
+          el("p", { class: "rcard-reason" }, verdictSub),
+          c.risk_framing ? el("p", { class: "small muted" }, c.risk_framing) : null),
+        el("div", { class: "stat-row" },
+          el("div", { class: "stat" }, el("b", {}, String(nf)), el("span", {}, "Issues to fix")),
+          el("div", { class: "stat" }, el("b", {}, String(unc.length)), el("span", {}, "To check manually")),
+          el("div", { class: "stat" }, el("b", {}, String(laws.length)), el("span", {}, "Laws checked"))),
+        el("div", {}, disclosure(`Laws checked (${laws.length})`, "scale", lawList))),
+      el("section", { class: "card mini-player", "aria-label": "Video" }, p.player, p.timeline)),
+
+    notes.length ? el("div", { class: "notes", style: "margin-top: 20px" }, notes.map((n) => alertBox(n, "alert-grey", "info"))) : null,
+
+    el("section", { class: "section", "aria-label": "Issues" },
+      el("div", { class: "section-head" }, el("h2", { class: "h2" }, `Issues to fix (${nf})`),
+        nf ? el("span", { class: "small muted" }, "Open an issue for the legal basis") : null),
+      nf ? c.findings.map((f) => issueCard(job, c, f, p, provs, cards))
+        : el("div", { class: "neutral-card" }, icon("info", "width: 18px; height: 18px; color: var(--text-3); margin-top: 2px"),
+          el("div", {}, el("div", { class: "h3" }, "No moment matched a loaded law"),
+            el("p", { class: "small muted", style: "margin-top: 2px" },
+              `This does not mean the video is safe here. Coverage for ${info.name} is ${info.coverage || "basic"}${unc.length ? ", so see the moments to check manually below." : "."}`)))),
+
+    el("section", { class: "section", "aria-label": "Not covered by any loaded law" },
+      el("div", { class: "section-head" }, el("h2", { class: "h2" }, `Not covered by any loaded law (${unc.length})`),
+        el("span", { class: "small muted" }, "Sensitive, but nothing we loaded applies")),
+      unc.length ? el("div", { class: "stack", style: "gap: 10px" }, unc.map((u) => el("div", { class: "neutral-card" },
+        el("button", { class: "chip-time", type: "button", "aria-label": `Play ${range(u.start_s, u.end_s)}`, onclick: () => p.seek(u.start_s) }, icon("play"), range(u.start_s, u.end_s)),
+        el("div", { class: "stack grow", style: "gap: 6px" },
+          el("div", { class: "row wrap" }, el("span", { class: "badge risk-grey" }, icon("help"), "Check manually"), el("span", { class: "h3" }, leafLabel(u))),
+          el("p", { class: "small", style: "color: var(--text-2)" }, u.note || `Sensitive, but no loaded law for ${info.name} covers it. Other local laws may still apply.`)))))
+        : el("p", { class: "small muted" }, "Nothing to check manually.")),
+
+    translationSection(c, info, p),
+
+    el("section", { class: "section", "aria-label": "Platform obligations" },
+      el("div", { class: "card", style: "padding: 0 18px" },
+        disclosure([`Platform obligations (${obl.length}) `,
+          el("span", { class: "small muted", style: "font-weight: 400" }, "· what YouTube, Instagram and others must do. Not your action items.")], "monitor",
+        el("div", { style: "padding-bottom: 8px" }, obl.length ? obl.map((o) => el("div", { class: "oblig" }, icon("monitor"),
+          el("div", { class: "stack", style: "gap: 2px" },
+            el("span", { class: "small", style: "font-weight: 600" }, `${o.law_title} · `, el("span", { class: "mono" }, o.section)),
+            el("span", { class: "small", style: "color: var(--text-2)" }, o.summary || o.verbatim_text),
+            el("span", {}, pdfLink(`/api/laws/${encodeURIComponent(cc)}/${encodeURIComponent(o.law_id)}/pdf#page=${encodeURIComponent(o.page)}`, `PDF p. ${o.page}`, ` of ${o.law_title}`)))))
+          : el("p", { class: "small muted", style: "padding: 4px 0 12px" }, c.brain === "adk"
+            ? "No platform duties are triggered by these findings."
+            : "Not available with basic coverage: platform duties are only listed for countries with deep coverage.")),
+        { style: "border-top: 0" }))),
+
+    el("div", { class: "disclaimer", style: "margin-top: 24px" }, icon("info"),
+      el("span", {}, el("b", { style: "font-weight: 600" }, "Advisory only, not legal advice. "),
+        "Quotes come from the loaded law PDFs. Confirm with a qualified lawyer before relying on them.")),
+    el("div", { class: "footer-bar" },
+      el("button", { class: "btn", type: "button", onclick: back }, icon("left"), "Back to overview"),
+      el("button", { class: "btn", type: "button", onclick: () => download(job) }, icon("download"), "Download report (JSON)"))));
+}
+
+// ------------------------------------------------------------------ start
+
+setTheme(document.documentElement.classList.contains("dark"));
+route();

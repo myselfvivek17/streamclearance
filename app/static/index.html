@@ -3,79 +3,52 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="dark">
   <title>StreamClearance</title>
+  <link rel="icon" href="data:,">
+  <link rel="preload" href="/fonts/ibm-plex-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/app.css">
+  <script>
+    // Apply the saved theme before first paint (no flash of the wrong theme).
+    try {
+      var t = localStorage.getItem("sc.theme");
+      if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
+    } catch (e) { /* storage blocked */ }
+  </script>
 </head>
 <body>
-  <div id="mock-banner" class="banner" hidden>
-    <strong>MOCK MODE</strong> &mdash; no Gemini key is configured, so results below are canned examples, not a real analysis.
+<div class="app" id="app">
+  <div id="mock-banner" class="banner" role="note" hidden>
+    <strong>Mock mode.</strong> No model key is configured, so results are canned examples, not a real analysis.
   </div>
 
-  <header class="top">
-    <div class="brand">
-      <span class="logo" aria-hidden="true">&#9654;</span>
-      <div>
-        <h1>StreamClearance</h1>
-        <p class="tag">Per-country takedown risk for short videos, cited to the law.</p>
-      </div>
+  <header class="topbar">
+    <div class="topbar-in">
+      <a class="brand" href="#upload" style="color: inherit; text-decoration: none">
+        <span class="brand-mark"><i class="ic ic-shield" aria-hidden="true"></i></span>StreamClearance
+      </a>
+      <nav class="grow" aria-label="Progress">
+        <ol class="stepper" id="stepper"></ol>
+      </nav>
+      <button class="icon-btn" id="theme-btn" type="button"><i class="ic" aria-hidden="true"></i></button>
     </div>
   </header>
 
-  <main class="layout">
-    <section class="col-video">
-      <div class="card" id="upload-card">
-        <h2><span class="step">1</span> Upload a video</h2>
-        <label id="dropzone" class="dropzone" tabindex="0">
-          <input id="file-input" type="file" accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm" hidden>
-          <span class="dz-main">Drop a video here or <u>choose a file</u></span>
-          <span class="dz-sub" id="dz-limits">MP4, MOV or WebM &middot; up to 200 MB &middot; 10 min</span>
-        </label>
-        <div id="upload-progress" class="progress" hidden><div class="bar"></div></div>
-        <p id="upload-msg" class="msg" role="status"></p>
-      </div>
+  <div id="view"><main class="main"><p class="loading">Loading…</p></main></div>
 
-      <div class="card player-card" id="player-card" hidden>
-        <video id="player" controls playsinline preload="metadata"></video>
-        <p class="meta" id="video-meta"></p>
-      </div>
-    </section>
+  <div class="toast" id="toast" role="status" hidden><i class="ic ic-info" aria-hidden="true"></i><span></span></div>
 
-    <section class="col-report">
-      <div class="card" id="countries-card">
-        <h2><span class="step">2</span> Pick target countries</h2>
-        <div id="country-list" class="country-list"></div>
-        <button id="analyze-btn" class="btn primary" disabled>Analyze</button>
-        <p id="analyze-msg" class="msg" role="status"></p>
-      </div>
-
-      <div class="card" id="progress-card" hidden>
-        <h2><span class="step">3</span> Progress</h2>
-        <ol id="stages" class="stages"></ol>
-      </div>
-
-      <div id="report" hidden>
-        <div class="report-head">
-          <h2>Report</h2>
-          <button id="download-btn" class="btn">Download JSON</button>
-        </div>
-        <div id="summary" class="summary"></div>
-        <p id="report-errors" class="msg error" hidden></p>
-        <div id="country-reports"></div>
-        <p class="disclaimer" id="disclaimer"></p>
-      </div>
-    </section>
-  </main>
-
-  <dialog id="access-dialog">
-    <form method="dialog" id="access-form">
-      <h2>Access code</h2>
-      <p>This demo is protected. Enter the access code you were given.</p>
+  <dialog id="access-dialog" class="access-dialog" aria-labelledby="access-title">
+    <form method="dialog">
+      <h2 class="h2" id="access-title">Access code</h2>
+      <p class="small muted">This demo is protected. Enter the access code you were given.</p>
+      <label class="sr-only" for="access-input">Access code</label>
       <input id="access-input" type="password" autocomplete="current-password" required>
-      <div class="dialog-actions"><button class="btn primary" value="ok">Continue</button></div>
+      <div class="row"><button class="btn btn-primary" value="ok">Continue</button></div>
     </form>
   </dialog>
-
-  <script src="/app.js"></script>
+</div>
+<script src="/app.js"></script>
 </body>
 </html>
