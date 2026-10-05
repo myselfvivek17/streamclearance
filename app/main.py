@@ -18,6 +18,7 @@ from app.storage import TooLarge, get_storage
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+config.apply_adk_env()  # ADK agents use the same Gemini backend as app/gemini.py
 
 app = FastAPI(title="StreamClearance")
 STATIC_DIR = Path(__file__).parent / "static"

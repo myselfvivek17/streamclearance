@@ -9,7 +9,7 @@ country's main language, back-translated blind, and Gemini judges whether the
 risk changed.
 
 Every stage has a deterministic mock used when `config.mock_mode()` is true
-(no GEMINI_API_KEY, or SC_MOCK=1), so the whole app runs without a key.
+(no Gemini backend configured, or SC_MOCK=1), so the whole app runs without a key.
 """
 from __future__ import annotations
 
@@ -110,7 +110,7 @@ def stage_a(video_path: Path, duration_s: float | None = None, *, mock: bool | N
         kept.append(s.model_copy(update={"end_s": min(s.end_s, duration_s)}))
     return Inventory(
         duration_s=duration_s, languages=draft.languages, segments=kept,
-        speech_transcribed=raw.get("speech_transcribed"),  # OPENROUTER-TEMP
+        speech_transcribed=True,  # Gemini hears the audio track in the same call
     )
 
 

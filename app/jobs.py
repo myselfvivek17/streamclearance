@@ -12,7 +12,7 @@ import time
 import uuid
 from typing import Any
 
-from app import config, pipeline
+from app import config, gemini, pipeline
 from app.schemas import CountryReport, Report
 from app.storage import get_storage
 
@@ -70,6 +70,7 @@ def _set(job: dict[str, Any], key: str, status: str, detail: str = "") -> None:
 async def run_job(job: dict[str, Any]) -> None:
     store = get_storage()
     mock = job["mock"]
+    gemini.job_budget(job["job_id"])  # cost guard: SC_MAX_CALLS_PER_JOB model calls per job
     job["status"] = "running"
     current = "inventory"
     try:

@@ -1,22 +1,30 @@
-"""The single entry point for every Gemini call (AI Studio key, not Vertex).
+"""The single entry point for every Gemini call: Vertex AI or an AI Studio key.
 
-Tests mock `generate_json` / `generate_json_with_video`. The API key is read
-from the environment and is never printed or logged. Calls are blocking; the
-pipeline runs them in worker threads. Rate-limit (429) and transient 5xx
-errors are retried with exponential backoff.
+Backend (see `config.gemini_backend`): Vertex AI when a GCP project is set
+(credentials from ADC: GOOGLE_APPLICATION_CREDENTIALS locally, the attached
+service account on Cloud Run), else AI Studio when GEMINI_API_KEY is set.
+
+Tests mock `generate_json` / `generate_json_with_video`. Keys are read from the
+environment and never printed or logged. Calls are blocking; the pipeline runs
+them in worker threads. Rate-limit (429) and transient 5xx errors are retried
+with exponential backoff. Token usage of every call goes to jobs/usage.log, and
+`job_budget` caps the number of calls per job (SC_MAX_CALLS_PER_JOB).
 """
 from __future__ import annotations
 
+import contextvars
 import json
 import logging
 import random
+import re
+import threading
 import time
+import uuid
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any, TypeVar
 
 from app import config
-from app import openrouter_backend  # OPENROUTER-TEMP
 
 log = logging.getLogger(__name__)
 
@@ -30,20 +38,110 @@ class GeminiUnavailable(RuntimeError):
     pass
 
 
+class CallBudgetExceeded(GeminiUnavailable):
+    pass
+
+
 _client = None
+_client_backend: str | None = None
 _sleep = time.sleep  # patched in tests
+
+USAGE_LOG = config.STORAGE_DIR / "jobs" / "usage.log"
+_usage_lock = threading.Lock()
 
 
 def _get_client():
-    global _client
-    if _client is None:
-        key = config.gemini_api_key()
-        if not key:
-            raise GeminiUnavailable("GEMINI_API_KEY is not set (add it to .env)")
+    global _client, _client_backend
+    backend = config.gemini_backend()
+    if _client is None or _client_backend != backend:
         from google import genai
 
-        _client = genai.Client(api_key=key)
+        if backend == "vertex":
+            project = config.gcp_project()
+            if not project:
+                raise GeminiUnavailable("SC_GEMINI_BACKEND=vertex needs GOOGLE_CLOUD_PROJECT")
+            _client = genai.Client(vertexai=True, project=project, location=config.vertex_location())
+        elif backend == "studio":
+            _client = genai.Client(api_key=config.gemini_api_key())
+        else:
+            raise GeminiUnavailable(
+                "No Gemini backend: set GOOGLE_CLOUD_PROJECT (Vertex AI) or GEMINI_API_KEY")
+        _client_backend = backend
     return _client
+
+
+# ---------------------------------------------------------------- cost guard + usage log
+
+class _Budget:
+    def __init__(self, job_id: str, limit: int):
+        self.job_id, self.limit, self.used = job_id, limit, 0
+        self._lock = threading.Lock()
+
+    def take(self, what: str) -> None:
+        with self._lock:
+            if self.used >= self.limit:
+                raise CallBudgetExceeded(
+                    f"Model call limit reached ({self.limit} per job, SC_MAX_CALLS_PER_JOB); "
+                    f"refused {what}")
+            self.used += 1
+
+
+_budget: contextvars.ContextVar[_Budget | None] = contextvars.ContextVar("gemini_budget", default=None)
+
+
+def job_budget(job_id: str, limit: int | None = None) -> _Budget:
+    """Start counting calls for this job in the current context (inherited by
+    asyncio tasks and asyncio.to_thread workers)."""
+    b = _Budget(job_id, config.MAX_CALLS_PER_JOB if limit is None else limit)
+    _budget.set(b)
+    return b
+
+
+def count_call(what: str) -> None:
+    """Raise CallBudgetExceeded if the current job has used up its calls."""
+    b = _budget.get()
+    if b is not None:
+        b.take(what)
+
+
+def log_usage(what: str, model: str, usage: Any) -> None:
+    """Append one call's token counts to jobs/usage.log (usage = genai usage_metadata)."""
+    b = _budget.get()
+    tokens = {k: getattr(usage, f"{k}_token_count", None) if usage is not None else None
+              for k in ("prompt", "candidates", "thoughts", "total")}
+    line = json.dumps({"ts": time.strftime("%Y-%m-%dT%H:%M:%S"), "job": b.job_id if b else None,
+                       "what": what, "model": model, **tokens})
+    log.info("gemini usage %s", line)
+    try:
+        with _usage_lock:
+            USAGE_LOG.parent.mkdir(parents=True, exist_ok=True)
+            with USAGE_LOG.open("a", encoding="utf-8") as f:
+                f.write(line + "\n")
+    except OSError:
+        log.warning("could not write %s", USAGE_LOG)
+
+
+def _generate(client, model: str, contents: Any, cfg: Any, *, what: str):
+    count_call(what)
+    resp = with_retry(
+        lambda: client.models.generate_content(model=model, contents=contents, config=cfg),
+        what=what)
+    log_usage(what, getattr(resp, "model_version", None) or model,
+              getattr(resp, "usage_metadata", None))
+    return resp
+
+
+def extract_json(text: str) -> Any:
+    """First JSON object or array in a model reply (tolerates code fences and prose)."""
+    text = re.sub(r"```(?:json)?", "", text)
+    decoder = json.JSONDecoder()
+    for i, ch in enumerate(text):
+        if ch in "[{":
+            try:
+                return decoder.raw_decode(text, i)[0]
+            except json.JSONDecodeError:
+                continue
+    raise ValueError("no JSON found in model output")
 
 
 def _status_code(exc: BaseException) -> int | None:
@@ -97,15 +195,10 @@ def generate_json(
     temperature: float = 0.2,
 ) -> Any:
     """Call Gemini with structured JSON output and return the parsed JSON."""
-    if config.provider() == "openrouter": return openrouter_backend.generate_json(prompt, response_schema, system_instruction=system_instruction, temperature=temperature)  # OPENROUTER-TEMP
     model = model or config.SC_MODEL_SMART
     cfg = _config(response_schema, system_instruction, temperature)
     log.info("gemini.generate_json model=%s prompt_chars=%d", model, len(prompt))
-    client = _get_client()
-    resp = with_retry(
-        lambda: client.models.generate_content(model=model, contents=prompt, config=cfg),
-        what="generate_json",
-    )
+    resp = _generate(_get_client(), model, prompt, cfg, what="generate_json")
     return _parse(resp, model)
 
 
@@ -119,14 +212,29 @@ def generate_json_with_video(
     system_instruction: str | None = None,
     temperature: float = 0.2,
 ) -> Any:
-    """Upload a video via the Files API, wait until ACTIVE, then generate JSON.
+    """One multimodal call over the whole video (frames and audio) -> JSON.
 
-    The uploaded file is deleted afterwards (best effort; AI Studio also expires
-    files after 48h).
+    Vertex: inline bytes up to SC_VERTEX_INLINE_MB, else a temporary object in
+    the GCS upload bucket. AI Studio: the Files API. Uploads are deleted
+    afterwards (best effort; the bucket and AI Studio also expire them).
     """
-    if config.provider() == "openrouter": return openrouter_backend.generate_json_with_video(video_path, mime_type, prompt, response_schema, system_instruction=system_instruction, temperature=temperature)  # OPENROUTER-TEMP
     model = model or config.SC_MODEL_FAST
     client = _get_client()
+    cfg = _config(response_schema, system_instruction, temperature)
+    if config.gemini_backend() == "vertex":
+        size = video_path.stat().st_size
+        if size <= config.VERTEX_INLINE_MAX_BYTES:
+            from google.genai import types
+
+            log.info("gemini.generate_json_with_video model=%s inline %d bytes", model, size)
+            part = types.Part.from_bytes(data=video_path.read_bytes(), mime_type=mime_type)
+            return _parse(_generate(client, model, [part, prompt], cfg,
+                                    what="generate_json_with_video"), model)
+        return _video_via_gcs(client, video_path, mime_type, prompt, cfg, model)
+    return _video_via_files_api(client, video_path, mime_type, prompt, cfg, model)
+
+
+def _video_via_files_api(client, video_path: Path, mime_type: str, prompt: str, cfg, model: str) -> Any:
     log.info("gemini.files.upload %s (%d bytes)", video_path.name, video_path.stat().st_size)
     f = with_retry(
         lambda: client.files.upload(file=str(video_path), config={"mime_type": mime_type}),
@@ -141,16 +249,49 @@ def generate_json_with_video(
             f = with_retry(lambda: client.files.get(name=f.name), what="files.get")
         if state != "ACTIVE":
             raise RuntimeError(f"Gemini file processing failed (state={state})")
-
-        cfg = _config(response_schema, system_instruction, temperature)
         log.info("gemini.generate_json_with_video model=%s", model)
-        resp = with_retry(
-            lambda: client.models.generate_content(model=model, contents=[f, prompt], config=cfg),
-            what="generate_json_with_video",
-        )
-        return _parse(resp, model)
+        return _parse(_generate(client, model, [f, prompt], cfg, what="generate_json_with_video"), model)
     finally:
         try:
             client.files.delete(name=f.name)
         except Exception:  # noqa: BLE001
             log.warning("could not delete Gemini file %s", f.name)
+
+
+GCS_UPLOAD_URL = "https://storage.googleapis.com/upload/storage/v1/b/{bucket}/o"
+GCS_OBJECT_URL = "https://storage.googleapis.com/storage/v1/b/{bucket}/o/{name}"
+
+
+def _gcs_session():
+    import google.auth
+    from google.auth.transport.requests import AuthorizedSession
+
+    creds, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/devstorage.read_write"])
+    return AuthorizedSession(creds)
+
+
+def _video_via_gcs(client, video_path: Path, mime_type: str, prompt: str, cfg, model: str) -> Any:
+    from urllib.parse import quote
+
+    from google.genai import types
+
+    bucket = config.upload_bucket()
+    name = f"videos/{uuid.uuid4().hex}{video_path.suffix.lower()}"
+    session = _gcs_session()
+    log.info("gcs upload %s -> gs://%s/%s (%d bytes)", video_path.name, bucket, name,
+             video_path.stat().st_size)
+    with video_path.open("rb") as fh:
+        r = session.post(GCS_UPLOAD_URL.format(bucket=bucket),
+                         params={"uploadType": "media", "name": name},
+                         headers={"Content-Type": mime_type}, data=fh, timeout=600)
+    if r.status_code >= 300:
+        raise RuntimeError(f"GCS upload failed: HTTP {r.status_code}")
+    try:
+        part = types.Part.from_uri(file_uri=f"gs://{bucket}/{name}", mime_type=mime_type)
+        log.info("gemini.generate_json_with_video model=%s gcs", model)
+        return _parse(_generate(client, model, [part, prompt], cfg, what="generate_json_with_video"), model)
+    finally:
+        try:
+            session.delete(GCS_OBJECT_URL.format(bucket=bucket, name=quote(name, safe="")), timeout=60)
+        except Exception:  # noqa: BLE001
+            log.warning("could not delete gs://%s/%s", bucket, name)

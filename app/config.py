@@ -34,29 +34,62 @@ MAX_DRIFT_SEGMENTS = int(os.getenv("SC_MAX_DRIFT_SEGMENTS", "6"))
 
 
 def gemini_api_key() -> str | None:
-    """AI Studio key (not Vertex). Read lazily so it is never captured at import time."""
+    """AI Studio key. Read lazily so it is never captured at import time."""
     return os.getenv("GEMINI_API_KEY") or None
 
 
-PROVIDERS = ("gemini", "openrouter", "mock")
+def gcp_project() -> str | None:
+    return os.getenv("GOOGLE_CLOUD_PROJECT") or os.getenv("GCP_PROJECT") or None
+
+
+def vertex_location() -> str:
+    return os.getenv("GCP_VERTEX_LOCATION") or os.getenv("GOOGLE_CLOUD_LOCATION") or "global"
+
+
+def gemini_backend() -> str | None:
+    """"vertex" (Vertex AI, ADC / service account), "studio" (AI Studio key) or None.
+
+    Vertex wins when SC_GEMINI_BACKEND=vertex or a GCP project is set.
+    """
+    forced = os.getenv("SC_GEMINI_BACKEND", "").strip().lower()
+    if forced not in ("", "vertex", "studio"):
+        raise ValueError("SC_GEMINI_BACKEND must be vertex or studio")
+    if forced == "vertex" or (not forced and gcp_project()):
+        return "vertex"
+    if gemini_api_key():
+        return "studio"
+    return None
+
+
+def apply_adk_env() -> None:
+    """ADK builds its own genai client from env vars; point it at the same backend."""
+    if gemini_backend() == "vertex":
+        os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "TRUE"
+        if gcp_project():
+            os.environ["GOOGLE_CLOUD_PROJECT"] = gcp_project()
+        os.environ["GOOGLE_CLOUD_LOCATION"] = vertex_location()
+    elif gemini_backend() == "studio":
+        os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "FALSE"
+
+
+# Inline video bytes up to this size on Vertex; larger files go through GCS.
+VERTEX_INLINE_MAX_BYTES = int(float(os.getenv("SC_VERTEX_INLINE_MB", "19")) * 1024 * 1024)
+
+
+def upload_bucket() -> str:
+    """GCS bucket for videos too large to inline (lifecycle: deleted after 1 day)."""
+    return os.getenv("SC_UPLOAD_BUCKET") or f"{gcp_project()}-sc-uploads"
+
+
+# Cost guard: hard cap on model calls (direct + ADK) per analysis job.
+MAX_CALLS_PER_JOB = int(os.getenv("SC_MAX_CALLS_PER_JOB", "40"))
 
 
 def provider() -> str:
-    """SC_MOCK=1 forces mock; else SC_PROVIDER if set; else the first configured key; else mock."""
+    """SC_MOCK=1 forces mock; else "gemini" (Vertex or AI Studio) if configured; else mock."""
     if os.getenv("SC_MOCK") == "1":
         return "mock"
-    forced = os.getenv("SC_PROVIDER", "").strip().lower()
-    if forced:
-        if forced not in PROVIDERS:
-            raise ValueError(f"SC_PROVIDER must be one of {', '.join(PROVIDERS)}")
-        return forced
-    if gemini_api_key():
-        return "gemini"
-    if os.getenv("OPENROUTER_API_KEY"): return "openrouter"  # OPENROUTER-TEMP
-    return "mock"
-
-
-if provider() == "openrouter" and not os.getenv("SC_GEMINI_CONCURRENCY"): GEMINI_CONCURRENCY = 1  # OPENROUTER-TEMP
+    return "gemini" if gemini_backend() else "mock"
 
 
 def mock_mode() -> bool:

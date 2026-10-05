@@ -2,7 +2,7 @@
 
 Assessor: one per country, with tools `lookup_provisions` and `search_law`;
 returns one MomentAssessment per (sensitive moment, leaf). If ADK tool calling
-fails (free models are flaky), it falls back to: retrieval in Python -> one
+fails, it falls back to: retrieval in Python -> one
 JSON call with the retrieved provisions in the prompt. The fallback is noted
 in the report.
 
@@ -22,7 +22,7 @@ from typing import Literal
 from pydantic import BaseModel, ValidationError
 
 from app import config, gemini, provisions, retrieval
-from app.brain.models import adk_model, log_usage
+from app.brain.models import adk_model, count_call, log_usage
 from app.brain.tools import make_tools, provision_view
 from app.schemas import Inventory, Risk
 
@@ -83,9 +83,7 @@ async def run_agent(agent, message: str) -> str:
 
 
 def _parse_list(text: str, model: type[BaseModel]) -> list:
-    from app.openrouter_backend import extract_json  # tolerant JSON extraction
-
-    raw = extract_json(text)
+    raw = gemini.extract_json(text)
     if isinstance(raw, dict):
         lists = [v for v in raw.values() if isinstance(v, list)]
         raw = lists[0] if len(lists) == 1 else [raw]
@@ -180,7 +178,8 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> tuple[lis
     agent = Agent(
         name=f"country_assessor_{country}", model=adk_model(),
         instruction=ASSESSOR_INSTRUCTION.format(country=country),
-        tools=[lookup_provisions, search_law], after_model_callback=log_usage,
+        tools=[lookup_provisions, search_law],
+        before_model_callback=count_call, after_model_callback=log_usage,
     )
     try:
         text = await run_agent(agent, _assess_prompt(country, ms))
@@ -268,7 +267,7 @@ async def critique(found: list[MomentAssessment], inventory: Inventory, country:
     from google.adk import Agent
 
     agent = Agent(name=f"critic_{country}", model=adk_model(), instruction=CRITIC_INSTRUCTION,
-                  after_model_callback=log_usage)
+                  before_model_callback=count_call, after_model_callback=log_usage)
     try:
         text = await run_agent(agent, json.dumps(_critic_items(country, found, inventory),
                                                  ensure_ascii=False))
