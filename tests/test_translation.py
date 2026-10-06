@@ -67,3 +67,8 @@ def test_real_drift_translates_back_translates_blind_and_judges(monkeypatch):
 def test_drift_languages_in_hindi_my_malay():
     assert config.COUNTRIES["IN"].drift_languages == ("Hindi",)
     assert config.COUNTRIES["MY"].drift_languages == ("Malay",)
+
+
+def test_drift_languages_sg_official_languages():
+    assert config.COUNTRIES["SG"].drift_languages == ("Mandarin Chinese", "Malay", "Tamil")
+    assert config.COUNTRIES["AU"].drift_languages == ()

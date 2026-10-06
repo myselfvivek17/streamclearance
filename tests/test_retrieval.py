@@ -91,3 +91,27 @@ def test_obligations_ranked_specific_first(real_provisions):
     assert duties and all(p.kind == "obligation" for p in duties)
     assert len(duties[0].targets) <= len(duties[-1].targets)
     assert retrieval.obligations("MY", ["health.cure_claim"]) == []
+
+
+def test_real_store_au_sg(real_provisions):
+    au_cure = retrieval.search("AU", "herbal tea cures diabetes", k=3)
+    assert au_cure and all(p.law_id == "TGACODE2021" for p in au_cure)
+    assert {p.law_id for p in retrieval.lookup("AU", ["health.cure_claim"])} == {"TGACODE2021"}
+    au_casino = retrieval.lookup("AU", ["gambling.promotion"])
+    assert au_casino and {p.law_id for p in au_casino} == {"IGA2001"}
+    assert any(p.id.startswith("AU/IGA2001/s61BA") for p in au_casino)  # Part 7A advertising ban
+    assert "IGA2001" in {p.law_id for p in retrieval.search("AU", "casino promo code free bets")}
+    sg_casino = retrieval.search("SG", "online casino referral code", k=5)
+    assert sg_casino and {p.law_id for p in sg_casino} == {"GCA2022"}
+    assert {p.law_id for p in retrieval.lookup("SG", ["gambling.promotion"])} == {"GCA2022"}
+    # SG has no health-advertising law: nothing is forced
+    assert retrieval.lookup("SG", ["health.cure_claim"]) == []
+    assert retrieval.search("SG", "herbal tea cures diabetes") == []
+    duties = retrieval.obligations("SG", ["harassment.bullying"])
+    assert duties and all(p.kind == "obligation" and p.law_id == "OSRA2025" for p in duties)
+    duties_bm25 = retrieval.BM25([p for p in provisions.provisions_for("SG") if p.kind == "obligation"])
+    top = duties_bm25.search("harmful online content what must platforms do", 3)
+    assert top and all(p.law_id == "OSRA2025" for _, p in top)
+    for cc in ("AU", "SG"):
+        assert not any(t.startswith(("drugs", "health")) for p in retrieval.lookup(cc, ["gambling.promotion"])
+                       for t in p.targets)

@@ -246,7 +246,7 @@ COUNTRIES: dict[str, CountryLaw] = {
             "SG", "Singapore",
             "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
             "singapore_online_safety_relief_accountability_act_2025",
-            drift_languages=("Mandarin Chinese",),
+            drift_languages=("Mandarin Chinese", "Malay", "Tamil"),
         ),
         CountryLaw(
             "PK", "Pakistan",
