@@ -97,7 +97,7 @@ def privacy_values() -> dict[str, str]:
     elif backend == "studio":
         gemini_where = "Google’s Gemini model through the Gemini API (Google AI Studio)."
     else:
-        gemini_where = "nobody: this instance runs in demo mode and sends nothing to a model."
+        gemini_where = "none. This copy runs in demo mode and sends nothing to a model."
     return {
         "unused_ttl": _duration(config.unused_video_ttl_s() / 60, "minute"),
         "report_ttl": _duration(config.report_ttl_days(), "day"),

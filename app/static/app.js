@@ -914,7 +914,7 @@ function howMade(r) {
   ];
   if (r.privacy && r.privacy.report_expires_at) {
     rows.push(el("li", {}, el("b", {}, "Video deleted: "), r.privacy.video_deleted_at ? when(r.privacy.video_deleted_at) : "not yet",
-      " · ", el("b", {}, "Report deleted: "), when(r.privacy.report_expires_at)));
+      " · ", el("b", {}, "Report will be deleted: "), when(r.privacy.report_expires_at)));
   }
   return el("section", { class: "section", "aria-label": "How this report was made" },
     el("div", { class: "card", style: "padding: 0 18px" },

@@ -45,13 +45,13 @@
       <li><b>Your video</b> is deleted as soon as its check ends, whether it finished, failed or was cancelled. A video you upload but never check is deleted after {{unused_ttl}}.</li>
       <li><b>Reports</b> are deleted {{report_ttl}} after they are created. You can delete a report at any time with “Delete this report now”; it is removed straight away.</li>
       <li><b>Request logs</b> are kept by Google Cloud Logging for 30 days.</li>
-      <li>Your browser keeps its own copy of the video you selected (to play it next to the report) until you close or reload the page.</li>
+      <li>Your browser keeps its own copy of the video you selected (to play it next to the report) until you close or reload the page, and remembers the file name and your last report id in its local storage.</li>
     </ul>
 
     <h2 class="h2">Where it is processed</h2>
     <ul>
       <li>The app and its storage: {{app_where}}.</li>
-      <li>The video and its transcript are analysed by {{gemini_where}}</li>
+      <li>Analysis of the video and its transcript: {{gemini_where}}</li>
     </ul>
 
     <h2 class="h2">Who else is involved</h2>

@@ -496,7 +496,7 @@ html.dark, html.dark body { background: #0b0d12; color-scheme: dark; }
 .prose h2 { margin: 28px 0 8px; }
 .prose p, .prose li { color: var(--text-2); max-width: 68ch; }
 .prose p { margin: 0 0 10px; }
-.prose ul { padding-left: 20px; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.prose ul { padding-left: 20px; margin: 0 0 10px; display: flex; flex-direction: column; gap: 6px; }
 .prose a, .site-footer a { color: var(--accent); }
 .site-footer { max-width: 1200px; margin: 0 auto; padding: 0 24px 32px; font-size: 13px; color: var(--text-3); display: flex; gap: 16px; flex-wrap: wrap; }
 .privacy-note { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 13px; color: var(--text-3); }
