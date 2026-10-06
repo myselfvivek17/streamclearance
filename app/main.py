@@ -4,13 +4,14 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import hmac
+import html
 import logging
 import uuid
 from pathlib import Path
 from urllib.parse import unquote
 
 from fastapi import FastAPI, HTTPException, Request, UploadFile
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -70,7 +71,56 @@ async def access_code_gate(request: Request, call_next):
 @app.get("/api/status")
 def status():
     return {"mock": config.mock_mode(), "max_upload_mb": config.MAX_UPLOAD_BYTES // (1024 * 1024),
-            "max_duration_s": config.MAX_DURATION_S}
+            "max_duration_s": config.MAX_DURATION_S,
+            # What the upload page may promise (each one true in code: app/retention.py, config.no_training)
+            "privacy": {"video_deleted_after_check": True, "report_ttl_days": config.report_ttl_days(),
+                        "no_training": config.no_training()}}
+
+
+def _duration(value: float, unit: str) -> str:
+    n = f"{value:g}"
+    return f"{n} {unit}{'' if n == '1' else 's'}"
+
+
+def privacy_values() -> dict[str, str]:
+    """The configuration-dependent sentences of the /privacy page."""
+    region = config.app_region()
+    backend = None if config.mock_mode() else config.gemini_backend()
+    if backend == "vertex":
+        loc = config.vertex_location()
+        gemini_where = f"Google’s Gemini model on Vertex AI, in Google Cloud location <b>{html.escape(loc)}</b>"
+        if loc == "global":
+            gemini_where += (": Google may process it in any of its regions, so there is no data residency"
+                             " guarantee for this step.")
+        else:
+            gemini_where += " (Singapore)." if loc == "asia-southeast1" else "."
+    elif backend == "studio":
+        gemini_where = "Google’s Gemini model through the Gemini API (Google AI Studio)."
+    else:
+        gemini_where = "nobody: this instance runs in demo mode and sends nothing to a model."
+    return {
+        "unused_ttl": _duration(config.unused_video_ttl_s() / 60, "minute"),
+        "report_ttl": _duration(config.report_ttl_days(), "day"),
+        "app_where": (f"Google Cloud Run in Singapore (<b>{html.escape(region)}</b>)" if region == "asia-southeast1"
+                      else f"Google Cloud Run, region <b>{html.escape(region)}</b>" if region
+                      else "the server this copy of the app runs on"),
+        "gemini_where": gemini_where,
+        "training": ("Your content is never used to train AI models. Google’s terms for Vertex AI forbid"
+                     " training on customer data without permission." if config.no_training() else
+                     "This instance uses the Gemini API, whose terms depend on the plan: check them before"
+                     " uploading anything confidential."),
+        "caching": ("Caching of requests by Vertex AI is turned off for this project." if config.vertex_cache_disabled()
+                    else "Vertex AI may keep requests in memory (not on disk) for up to 24 hours to answer"
+                         " repeated requests faster, separated from other customers."),
+    }
+
+
+@app.get("/privacy", response_class=HTMLResponse)
+def privacy_page():
+    page = (STATIC_DIR.parent / "templates" / "privacy.html").read_text(encoding="utf-8")
+    for key, value in privacy_values().items():
+        page = page.replace("{{" + key + "}}", value)
+    return page
 
 
 def _rules_status(c: config.CountryLaw) -> str:

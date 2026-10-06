@@ -9,3 +9,4 @@ jobs/
 .pytest_cache/
 data/provisions/**/*.dryrun.json
 .secrets/
+data/build_info.json

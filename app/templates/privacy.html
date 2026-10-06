@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy · StreamClearance</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/app.css">
+  <script>
+    try {
+      var t = localStorage.getItem("sc.theme");
+      if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
+    } catch (e) { /* storage blocked */ }
+  </script>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="topbar-in">
+      <a class="brand" href="/" style="color: inherit; text-decoration: none">
+        <span class="brand-mark"><i class="ic ic-shield" aria-hidden="true"></i></span>StreamClearance
+      </a>
+    </div>
+  </header>
+  <main class="main narrow prose">
+    <div class="page-head">
+      <span class="eyebrow">Privacy</span>
+      <h1 class="h1">How StreamClearance handles your video</h1>
+      <p class="lede">In plain language: what we keep, for how long, and where it is processed.</p>
+    </div>
+
+    <h2 class="h2">What we collect</h2>
+    <ul>
+      <li>The video you upload, its file name, size and length.</li>
+      <li>The countries you choose.</li>
+      <li>The report: what the video shows and says (transcript and on-screen text), the moments flagged and why.</li>
+      <li>Standard web request logs kept by Google Cloud (address requested, IP address, time). They carry report ids, not your content.</li>
+    </ul>
+    <p>We only use this to run the check you asked for. No account, no tracking, no advertising.</p>
+
+    <h2 class="h2">How long we keep it</h2>
+    <ul>
+      <li><b>Your video</b> is deleted as soon as its check ends, whether it finished, failed or was cancelled. A video you upload but never check is deleted after {{unused_ttl}}.</li>
+      <li><b>Reports</b> are deleted {{report_ttl}} after they are created. You can delete a report at any time with “Delete this report now”; it is removed straight away.</li>
+      <li><b>Request logs</b> are kept by Google Cloud Logging for 30 days.</li>
+      <li>Your browser keeps its own copy of the video you selected (to play it next to the report) until you close or reload the page.</li>
+    </ul>
+
+    <h2 class="h2">Where it is processed</h2>
+    <ul>
+      <li>The app and its storage: {{app_where}}.</li>
+      <li>The video and its transcript are analysed by {{gemini_where}}</li>
+    </ul>
+
+    <h2 class="h2">Who else is involved</h2>
+    <p>One sub-processor: <b>Google Cloud</b> (Cloud Run hosting, Cloud Storage for large videos during a check, Gemini on Vertex AI, Vertex AI RAG Engine for searching the law texts, Cloud Logging).</p>
+
+    <h2 class="h2">Model training and caching</h2>
+    <ul>
+      <li>{{training}}</li>
+      <li>{{caching}}</li>
+      <li>If Google’s safety systems flag a request as possible abuse, Google may keep it for up to 90 days to review it, and not for training.</li>
+    </ul>
+
+    <h2 class="h2">Your choices</h2>
+    <ul>
+      <li>Delete a report now from the results page. It removes the report and anything still stored for that video.</li>
+      <li>Questions or a deletion request: [CONTACT EMAIL].</li>
+    </ul>
+
+    <h2 class="h2">Principles</h2>
+    <p>StreamClearance is designed with Malaysia PDPA 2010 and India DPDP Act 2023 principles in mind (data minimisation, purpose limitation, retention limits). This page describes how the app works; it is not a statement of legal compliance.</p>
+
+    <p class="small muted">The results are an automated pre-check, not legal advice. A person makes the publish decision.</p>
+    <p><a href="/">Back to StreamClearance</a></p>
+  </main>
+</div>
+</body>
+</html>

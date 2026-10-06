@@ -22,6 +22,7 @@ DISCLAIMER = (
     "Advisory only, not legal advice. Most of these laws place duties on platforms; "
     "the practical risk is takedown or geo-blocking in that country."
 )
+REPORT_DISCLAIMER = "Automated pre-check, not legal advice. A person makes the publish decision."
 RISK_ORDER: dict[str, int] = {"green": 0, "amber": 1, "red": 2}
 
 
@@ -212,6 +213,35 @@ class Privacy(BaseModel):
     report_expires_at: str | None = None
 
 
+class LawVersion(BaseModel):
+    """One law a report was checked against, as it was at the time."""
+    country: str
+    law_id: str
+    title: str
+    legal_status: LawStatus | None = None  # in_force / bill / ...; None for basic coverage
+    status: Literal["draft", "reviewed"]  # "reviewed" once a person signed off every provision
+    source_file: str
+    source_sha256: str | None = None  # of the law PDF the provisions were taken from
+    provisions: int = 0
+    provisions_built: str | None = None  # last commit of the provisions file (ISO 8601)
+
+
+class ModelInfo(BaseModel):
+    backend: str  # gemini-vertex, gemini-studio or mock
+    fast: str
+    smart: str
+    location: str | None = None  # Vertex AI location
+
+
+class Provenance(BaseModel):
+    """How this report was made."""
+    created_at: str  # ISO 8601 UTC
+    app_git_sha: str
+    brain: Literal["adk", "legacy"]
+    model: ModelInfo
+    laws: list[LawVersion] = []
+
+
 class Report(BaseModel):
     video_id: str
     duration_s: float = Field(ge=0)
@@ -219,5 +249,6 @@ class Report(BaseModel):
     mock: bool = False
     inventory: Inventory | None = None
     errors: list[str] = []
-    disclaimer: str = DISCLAIMER
+    disclaimer: str = REPORT_DISCLAIMER
     privacy: Privacy | None = None
+    provenance: Provenance | None = None

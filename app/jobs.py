@@ -16,7 +16,7 @@ import time
 import uuid
 from typing import Any
 
-from app import config, gemini, pipeline, retention
+from app import config, gemini, pipeline, provenance, retention
 from app.schemas import CountryReport, Privacy, Report
 from app.storage import get_storage
 
@@ -169,6 +169,9 @@ async def run_job(job: dict[str, Any]) -> None:
             inventory=inventory,
             errors=errors,
             privacy=Privacy(report_expires_at=retention.iso(expires_at(job))),
+            provenance=await asyncio.to_thread(
+                provenance.provenance, [cc for cc in job["countries"] if cc in reports], mock,
+                job["created_at"]),
         )
         job["report"] = report.model_dump(mode="json")
         job["status"] = "done"

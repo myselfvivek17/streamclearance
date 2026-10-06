@@ -164,6 +164,24 @@ def report_ttl_days() -> float:
     return float(os.getenv("SC_REPORT_TTL_DAYS", "7"))
 
 
+def app_region() -> str | None:
+    """Cloud Run region the app (and its local storage) runs in; deploy.sh sets it."""
+    return os.getenv("SC_APP_REGION") or None
+
+
+def vertex_cache_disabled() -> bool:
+    """Set SC_VERTEX_CACHE_DISABLED=1 once the project's Vertex AI cacheConfig has
+    disableCache: true (README "Manual step for zero data retention"). Only
+    changes what the privacy page says."""
+    return os.getenv("SC_VERTEX_CACHE_DISABLED") == "1"
+
+
+def no_training() -> bool:
+    """Vertex AI never trains on customer data (Service Specific Terms); mock sends
+    nothing anywhere. AI Studio's free tier may, so no such claim there."""
+    return provider() == "mock" or gemini_backend() == "vertex"
+
+
 def access_code() -> str | None:
     return os.getenv("SC_ACCESS_CODE") or None
 

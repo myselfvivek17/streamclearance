@@ -107,6 +107,16 @@ What the app does (details and the data flow: `docs/GOVERNANCE.md`):
 - **Logs**: ids, sizes, counts, durations, model names and token counts only
   (`app/logsafe.py`; `tests/test_logs.py` checks a canary phrase never reaches
   a log line or `jobs/usage.log`).
+- **Provenance**: each report's `provenance` records the laws used (id,
+  title, draft/reviewed, source PDF sha256, provisions file date), model ids
+  and Vertex location, the app git sha and created_at (`app/provenance.py`;
+  `deploy.sh` writes `data/build_info.json` since the image has no `.git`).
+  Results show it under "How this report was made".
+- **`/privacy`**: a plain-language page (public, no access code) whose
+  configuration-dependent sentences (TTLs, Gemini location, caching) come from
+  config (`app/main.py` `privacy_values`). `SC_APP_REGION` (set by
+  `deploy.sh`) names the Cloud Run region; set `SC_VERTEX_CACHE_DISABLED=1`
+  once the cacheConfig step below is done.
 - **Upload bucket**: soft delete is off (`retentionDurationSeconds: 0`, set
   2026-10-05), so deleted objects are gone, not recoverable for 7 days; the
   lifecycle rule deletes anything left after 1 day.

@@ -271,6 +271,21 @@ const alertBox = (msg, cls = "risk-red", ic = "warn") =>
 
 // ------------------------------------------------------------------ 1 · upload
 
+// Only what the server says is true in this deployment (/api/status `privacy`).
+function privacyNote() {
+  const pv = S.status.privacy;
+  if (!pv) return null;
+  const days = pv.report_ttl_days;
+  const parts = [
+    pv.video_deleted_after_check ? "Your video is deleted right after the check." : null,
+    days ? `Reports are deleted after ${plural(days, "day")}.` : null,
+    pv.no_training ? "Content is never used to train models." : null,
+  ].filter(Boolean);
+  if (!parts.length) return null;
+  return el("p", { class: "privacy-note" }, icon("shield"),
+    el("span", {}, parts.join(" "), " ", el("a", { href: "/privacy" }, "Privacy")));
+}
+
 async function screenUpload(stale) {
   const saved = store.get(LS.video);
   if (saved && !S.video) await loadVideo(saved);
@@ -305,7 +320,7 @@ async function screenUpload(stale) {
       const f = e.dataTransfer && e.dataTransfer.files[0];
       if (f) accept(f);
     });
-    body.replaceChildren(...[dz, error ? el("div", { style: "margin-top: 12px" }, alertBox(error)) : null].filter(Boolean));
+    body.replaceChildren(...[dz, privacyNote(), error ? el("div", { style: "margin-top: 12px" }, alertBox(error)) : null].filter(Boolean));
   }
 
   function accept(f) {
@@ -870,12 +885,40 @@ async function screenResults(jobId, stale) {
         el("span", { class: "small muted" }, `${plural(job.countries.length, "country", "countries")} checked`)),
       el("div", { class: "results-grid" }, cards),
       el("div", { class: "disclaimer", style: "margin-top: 16px" }, icon("info"),
-        el("span", {}, el("b", { style: "font-weight: 600" }, "Advisory only, not legal advice. "),
-          "StreamClearance flags likely risks. Confirm with a qualified lawyer before relying on it."))),
+        el("span", {}, el("b", { style: "font-weight: 600" }, "Automated pre-check, not legal advice. "),
+          "A person makes the publish decision."))),
+    howMade(r),
     el("div", { class: "footer-bar" },
       el("button", { class: "btn", type: "button", onclick: () => go("#upload") }, icon("upload"), "Check another video"),
       el("button", { class: "btn", type: "button", onclick: () => download(job) }, icon("download"), "Download report (JSON)"),
       el("button", { class: "btn btn-danger", type: "button", onclick: () => deleteReport(job) }, icon("x"), "Delete this report now"))));
+}
+
+// "How this report was made": laws (and their review status), model, app version.
+function howMade(r) {
+  const pv = r.provenance;
+  if (!pv) return null;
+  const m = pv.model;
+  const when = (iso) => (iso ? new Date(iso).toLocaleString() : "unknown");
+  const short = (h) => (h ? `${h.slice(0, 12)}…` : "unknown");
+  const rows = [
+    el("li", {}, el("b", {}, "Created: "), when(pv.created_at)),
+    el("li", {}, el("b", {}, "Model: "), m.backend === "mock" ? "none (mock mode)"
+      : `${m.smart}${m.fast !== m.smart ? ` / ${m.fast}` : ""}${m.location ? ` on Vertex AI, location ${m.location}` : ""}`),
+    el("li", {}, el("b", {}, "App version: "), el("span", { class: "mono" }, pv.app_git_sha)),
+    ...pv.laws.map((l) => el("li", {},
+      el("b", {}, `${l.country} · ${l.title}: `),
+      el("span", { class: `badge ${l.status === "reviewed" ? "risk-green" : "risk-grey"}` }, l.status === "reviewed" ? "Reviewed" : "Draft, not yet reviewed by a person"),
+      ` · ${plural(l.provisions, "provision")}, built ${when(l.provisions_built)} · source `,
+      el("span", { class: "mono", title: l.source_sha256 || "" }, `${l.source_file} sha256 ${short(l.source_sha256)}`))),
+  ];
+  if (r.privacy && r.privacy.report_expires_at) {
+    rows.push(el("li", {}, el("b", {}, "Video deleted: "), r.privacy.video_deleted_at ? when(r.privacy.video_deleted_at) : "not yet",
+      " · ", el("b", {}, "Report deleted: "), when(r.privacy.report_expires_at)));
+  }
+  return el("section", { class: "section", "aria-label": "How this report was made" },
+    el("div", { class: "card", style: "padding: 0 18px" },
+      disclosure("How this report was made", "info", el("ul", { class: "made-list" }, rows), { style: "border-top: 0" })));
 }
 
 async function deleteReport(job) {
