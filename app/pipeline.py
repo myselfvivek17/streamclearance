@@ -4,9 +4,9 @@ Stage A: video -> Inventory (one Gemini video call per video).
 Stage B: Inventory + one country's rule cards -> CountryReport (one call per
 country, run concurrently under a small cap). Findings citing card IDs that
 are not in that country's cards are dropped by `validate_findings`.
-Translation drift: each flagged line with speech is translated into the
-country's main language, back-translated blind, and Gemini judges whether the
-risk changed.
+Translation drift: for every country with a drift language and a video with
+speech (findings or not), up to MAX_DRIFT_SEGMENTS spoken lines (riskiest first)
+are translated, back-translated blind, and Gemini judges whether the risk changed.
 
 Every stage has a deterministic mock used when `config.mock_mode()` is true
 (no Gemini backend configured, or SC_MOCK=1), so the whole app runs without a key.
@@ -406,16 +406,33 @@ def _overlaps(f: Finding, s: Segment) -> bool:
     return (f.start_s < s.end_s and s.start_s < f.end_s) or f.start_s == s.start_s
 
 
-def flagged_segments(inventory: Inventory, report: CountryReport) -> list[Segment]:
-    """Segments with speech that overlap a finding or carry an idiom that could turn
-    literal in translation, capped (flagged ones first)."""
+def has_speech(inventory: Inventory) -> bool:
+    return any(s.transcript.strip() for s in inventory.segments)
+
+
+def flagged_segments(inventory: Inventory, report: CountryReport | None = None) -> list[Segment]:
+    """Speech segments for the drift check, riskiest first, capped at MAX_DRIFT_SEGMENTS.
+
+    1. segments overlapping one of the country's findings (with no report yet:
+       segments stage A tagged with a taxonomy leaf, which every finding needs);
+    2. segments with an idiom that could turn literal in translation;
+    3. the rest of the speech, so a country with no findings is still checked:
+       segments with a taxonomy leaf, then with a claim, then in order.
+    """
     speech = [s for s in inventory.segments if s.transcript.strip()]
-    flagged = [s for s in speech if any(_overlaps(f, s) for f in report.findings)]
+    if report is None:
+        flagged = [s for s in speech if s.leaves]
+    else:
+        flagged = [s for s in speech if any(_overlaps(f, s) for f in report.findings)]
     idioms = [s for s in speech if s.idioms and s not in flagged]
-    return (flagged + idioms)[: config.MAX_DRIFT_SEGMENTS]
+    rest = sorted((s for s in speech if s not in flagged and s not in idioms),
+                  key=lambda s: (not s.leaves, not s.claims, s.start_s))
+    return (flagged + idioms + rest)[: config.MAX_DRIFT_SEGMENTS]
 
 
-def _categories_at(report: CountryReport, seg: Segment) -> list[str]:
+def _categories_at(report: CountryReport | None, seg: Segment) -> list[str]:
+    if report is None:
+        return sorted({c.value for c in seg.categories if c != Category.other})
     return sorted({f.category.value for f in report.findings if _overlaps(f, seg)})
 
 
@@ -497,14 +514,23 @@ def _mock_drift(segs: list[Segment], language: str, *, increase_first: bool) -> 
     return out
 
 
+NO_SPEECH = "No speech to translate."
+
+
 async def run_translation(
     inventory: Inventory, reports: dict[str, CountryReport], *, mock: bool | None = None,
 ) -> list[str]:
     """Fill report.translation for every country with a drift language. Returns errors."""
     mock = config.mock_mode() if mock is None else mock
     sem = asyncio.Semaphore(max(1, config.GEMINI_CONCURRENCY))
-    tasks = [(cc, lang) for cc, rep in reports.items()
-             for lang in config.COUNTRIES[cc].drift_languages if rep.findings]
+    if not has_speech(inventory):
+        for cc, rep in reports.items():
+            if config.COUNTRIES[cc].drift_languages:
+                rep.translation_note = NO_SPEECH
+        return []
+    # Every country with a drift language, findings or not: a line that is fine in
+    # English can become risky in translation.
+    tasks = [(cc, lang) for cc in reports for lang in config.COUNTRIES[cc].drift_languages]
     # Mock: exactly one deterministic "increased" example, on the first eligible pair.
     first = next((t for t in tasks if flagged_segments(inventory, reports[t[0]])), None)
 

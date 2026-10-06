@@ -567,7 +567,7 @@ function buildStages(job) {
   rows.push({ label: `Translation check${langs.length ? ` (${langs.join(", ")})` : ""}`, status: st("translation"),
     detail: !langs.length ? "Not needed: English only"
       : tr.status === "skipped" ? `Not needed: ${tr.detail}`
-        : tr.status === "running" ? "Translating and back-translating each flagged spoken line…"
+        : tr.status === "running" ? "Translating and back-translating the spoken lines…"
           : tr.status === "done" ? (tr.detail || "").replace(/^(\d+) line checks/, (_, n) => plural(Number(n), "spoken line") + " checked") : tr.detail });
   rows.push({ label: "Report ready", status: st("done"), detail: st("done") === "done" ? "Opening results…" : "" });
   return rows;
@@ -802,6 +802,8 @@ function reasonOf(c) {
     const s = joinWords(labels.map((l, i) => (i ? l.charAt(0).toLowerCase() + l.slice(1) : l)));
     return s;
   }
+  const riskier = [...new Set((c.translation || []).filter((d) => d.drift === "increased").map((d) => d.language))];
+  if (riskier.length) return `A spoken line reads riskier in ${joinWords(riskier)}`;
   if (b === "grey") return "Sensitive content found, but no loaded law covers it";
   return "No moment matched a loaded law";
 }
@@ -1064,7 +1066,8 @@ function issueCard(job, c, f, p, provs, cards) {
 function translationSection(c, info, p) {
   const langs = info.drift_languages || [];
   const lines = c.translation || [];
-  const lang = lines[0] ? lines[0].language : langs[0];
+  const shown = [...new Set(lines.map((d) => d.language))];
+  const lang = shown.length > 1 ? shown.join(", ") : shown[0] || langs.join(", ");
   const head = el("div", { class: "section-head" },
     el("h2", { class: "h2" }, el("span", { class: "row" }, icon("lang", "width: 18px; height: 18px; color: var(--text-3)"),
       `Translation check${lang ? ` · ${lang}` : ""}`)),
@@ -1072,13 +1075,10 @@ function translationSection(c, info, p) {
   const sec = (...kids) => el("section", { class: "section", "aria-label": "Translation check" }, head, kids);
   if (!langs.length) return sec(el("p", { class: "small muted" }, `Not run. Videos for ${info.name} are checked in English.`));
   if (!lines.length) {
-    return sec(el("p", { class: "small muted" }, c.findings.length
-      ? "No flagged spoken lines to translate (the flagged moments have no speech)."
-      : "Not run: nothing was flagged for this country."));
+    return sec(el("p", { class: "small muted" }, c.translation_note || "No spoken lines were checked."));
   }
   const riskier = lines.filter((d) => d.drift === "increased");
   let all = !riskier.length;
-  const code = LANG_CODE[lang] || "";
   const rowsBox = el("div");
   const note = el("span");
   const more = el("button", { class: "link-btn small", type: "button" });
@@ -1087,7 +1087,7 @@ function translationSection(c, info, p) {
       el("div", {}, el("span", { class: "lbl" }, "Time"),
         el("button", { class: "chip-time", type: "button", "aria-label": `Play ${range(d.start_s, d.end_s)}`, onclick: () => p.seek(d.start_s) }, icon("play"), range(d.start_s, d.end_s))),
       el("div", {}, el("span", { class: "lbl" }, "Original"), d.original),
-      el("div", {}, el("span", { class: "lbl" }, d.language), el("span", { class: "tr-native", lang: code || null }, d.translated)),
+      el("div", {}, el("span", { class: "lbl" }, d.language), el("span", { class: "tr-native", lang: LANG_CODE[d.language] || null }, d.translated)),
       el("div", {}, el("span", { class: "lbl" }, "Back-translation"), el("span", { class: `tr-back ${d.drift === "increased" ? "changed" : ""}` }, d.back_translated)),
       el("div", {}, el("span", { class: "lbl" }, "Result"),
         d.drift === "increased" ? el("span", { class: "badge risk-amber" }, icon("warn"), "Riskier")
@@ -1101,7 +1101,7 @@ function translationSection(c, info, p) {
   more.addEventListener("click", () => { all = !all; draw(); });
   draw();
   return sec(el("div", { class: "card tr-grid" },
-    el("div", { class: "tr-row head" }, el("span", {}, "Time"), el("span", {}, "Original"), el("span", {}, lang), el("span", {}, "Back-translation"), el("span", {}, "Result")),
+    el("div", { class: "tr-row head" }, el("span", {}, "Time"), el("span", {}, "Original"), el("span", {}, shown.length > 1 ? "Translation" : lang), el("span", {}, "Back-translation"), el("span", {}, "Result")),
     rowsBox, el("div", { class: "tr-more" }, note, more)));
 }
 

@@ -189,6 +189,7 @@ class CountryReport(BaseModel):
     dropped_findings: int = 0
     uncovered: list[Uncovered] = []
     translation: list[DriftCheck] = []
+    translation_note: str = ""  # why there are no drift checks, e.g. "No speech to translate."
     disclaimer: str = DISCLAIMER
     # Brain (SC_BRAIN=adk) only:
     brain: Literal["adk", "legacy"] = "legacy"
@@ -201,7 +202,10 @@ class CountryReport(BaseModel):
     @computed_field
     @property
     def badge(self) -> Badge:
-        """Grey "check" instead of green when sensitive moments are simply not covered."""
+        """Grey "check" instead of green when sensitive moments are simply not covered;
+        at least amber when a line reads riskier once translated for this country."""
+        if self.overall_risk != "red" and any(d.drift == "increased" for d in self.translation):
+            return "amber"
         if self.overall_risk == "green" and self.uncovered:
             return "check"
         return self.overall_risk

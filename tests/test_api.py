@@ -168,3 +168,52 @@ def test_video_meta(tiny_video):
         meta = client.get(f"/api/videos/{up['video_id']}/meta").json()
         assert meta == up and meta["filename"] == "clip.mp4"
         assert client.get("/api/videos/" + "a" * 32 + "/meta").status_code == 404
+
+
+def _patched_inventory(monkeypatch, *, speech: bool, leaves: bool):
+    from app import pipeline
+
+    real = pipeline.mock_inventory
+
+    def fake(duration_s):
+        inv = real(duration_s)
+        for s in inv.segments:
+            s.transcript = s.transcript if speech else ""
+            s.leaves = s.leaves if leaves else []
+            s.categories = s.categories if leaves else []
+            s.idioms = s.idioms if speech else []
+            s.claims = s.claims if leaves else []
+        return inv
+
+    monkeypatch.setattr(pipeline, "mock_inventory", fake)
+
+
+def test_clean_video_with_speech_gets_drift_for_every_drift_country(tiny_video, monkeypatch):
+    _patched_inventory(monkeypatch, speech=True, leaves=False)
+    with TestClient(app) as client:
+        video_id = _upload(client, tiny_video[0]).json()["video_id"]
+        job_id = client.post("/api/analyze", json={"video_id": video_id,
+                                                   "countries": ["MY", "IN", "AU"]}).json()["job_id"]
+        job = _wait(client, job_id)
+        assert job["status"] == "done", job
+        by = {c["country"]: c for c in job["report"]["countries"]}
+        assert all(not c["findings"] for c in by.values())
+        assert by["MY"]["translation"] and by["IN"]["translation"] and not by["AU"]["translation"]
+        tr = next(s for s in job["stages"] if s["key"] == "translation")
+        assert tr["status"] == "done"
+        riskier = [c for c in by.values() if any(d["drift"] == "increased" for d in c["translation"])]
+        assert len(riskier) == 1 and riskier[0]["badge"] == "amber"
+
+
+def test_no_speech_video_says_so(tiny_video, monkeypatch):
+    _patched_inventory(monkeypatch, speech=False, leaves=True)
+    with TestClient(app) as client:
+        video_id = _upload(client, tiny_video[0]).json()["video_id"]
+        job_id = client.post("/api/analyze", json={"video_id": video_id,
+                                                   "countries": ["MY", "AU"]}).json()["job_id"]
+        job = _wait(client, job_id)
+        assert job["status"] == "done", job
+        tr = next(s for s in job["stages"] if s["key"] == "translation")
+        assert (tr["status"], tr["detail"]) == ("skipped", "no speech to translate")
+        by = {c["country"]: c for c in job["report"]["countries"]}
+        assert by["MY"]["translation"] == [] and by["MY"]["translation_note"] == "No speech to translate."

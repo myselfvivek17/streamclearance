@@ -160,7 +160,12 @@ async def run_job(job: dict[str, Any]) -> None:
             raise RuntimeError("every country failed: " + "; ".join(errors))
 
         current = "translation"
-        if any(config.COUNTRIES[cc].drift_languages and r.findings for cc, r in reports.items()):
+        if not any(config.COUNTRIES[cc].drift_languages for cc in reports):
+            _set(job, "translation", "skipped", "English-speaking audiences only")
+        elif not pipeline.has_speech(inventory):
+            await pipeline.run_translation(inventory, reports, mock=mock)  # sets the per-country note
+            _set(job, "translation", "skipped", "no speech to translate")
+        else:
             _set(job, "translation", "running")
             with metrics.timed("translation"):
                 t_errors = await pipeline.run_translation(inventory, reports, mock=mock)
@@ -168,8 +173,6 @@ async def run_job(job: dict[str, Any]) -> None:
             checks = sum(len(r.translation) for r in reports.values())
             _set(job, "translation", "error" if t_errors and not checks else "done",
                  f"{checks} line checks" + (f", {len(t_errors)} failed" if t_errors else ""))
-        else:
-            _set(job, "translation", "skipped", "no flagged speech for non-English audiences")
 
         report = Report(
             video_id=job["video_id"],

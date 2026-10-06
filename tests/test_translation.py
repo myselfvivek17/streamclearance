@@ -29,15 +29,53 @@ def test_mock_drift_one_increased_and_english_skipped():
     CountryReport.model_validate(reps["IN"].model_dump())
 
 
-def test_only_flagged_or_idiom_segments_with_speech(monkeypatch):
+def test_segments_order_findings_then_idioms_then_rest(monkeypatch):
     inv, reps = _reports(["IN"])
     segs = pipeline.flagged_segments(inv, reps["IN"])
     flagged_starts = {f.start_s for f in reps["IN"].findings}
-    assert segs and all((s.start_s in flagged_starts or s.idioms) and s.transcript for s in segs)
-    assert any(s.idioms and s.start_s not in flagged_starts for s in segs)  # "a killer deal"
-    assert segs[0].start_s in flagged_starts  # flagged lines first
+    assert all(s.transcript for s in segs)
+    n_flagged = sum(s.start_s in flagged_starts for s in segs)
+    assert n_flagged and all(s.start_s in flagged_starts for s in segs[:n_flagged])  # findings first
+    nxt = segs[n_flagged]
+    assert nxt.idioms and nxt.start_s not in flagged_starts  # "a killer deal"
+    rest = segs[n_flagged + 1:]
+    assert rest and all(not s.idioms and s.start_s not in flagged_starts for s in rest)
+    assert [s.start_s for s in rest] == sorted(s.start_s for s in rest)  # no claims/leaves: in order
     monkeypatch.setattr(config, "MAX_DRIFT_SEGMENTS", 1)
     assert len(pipeline.flagged_segments(inv, reps["IN"])) == 1
+
+
+def test_clean_country_with_speech_still_gets_drift():
+    inv, reps = _reports(["MY", "SG"])
+    for rep in reps.values():
+        rep.findings, rep.overall_risk, rep.uncovered = [], "green", []
+    assert asyncio.run(pipeline.run_translation(inv, reps, mock=True)) == []
+    assert {d.language for d in reps["SG"].translation} == {"Mandarin Chinese", "Malay", "Tamil"}
+    assert reps["MY"].translation and reps["MY"].translation_note == ""
+    # the mock marks the first pair as riskier: a clean country turns amber
+    riskier = [cc for cc, r in reps.items() if any(d.drift == "increased" for d in r.translation)]
+    assert len(riskier) == 1
+    rep = reps[riskier[0]]
+    assert rep.overall_risk == "green" and rep.badge == "amber"
+    assert rep.model_dump(mode="json")["badge"] == "amber"
+
+
+def test_no_speech_gives_explicit_note():
+    inv, reps = _reports(["MY", "AU"])
+    for s in inv.segments:
+        s.transcript = ""
+    assert not pipeline.has_speech(inv)
+    assert asyncio.run(pipeline.run_translation(inv, reps, mock=True)) == []
+    assert reps["MY"].translation == [] and reps["MY"].translation_note == "No speech to translate."
+    assert reps["AU"].translation_note == ""  # English audience: not applicable
+
+
+def test_red_country_stays_red_with_increased_drift():
+    inv, reps = _reports(["MY"])
+    rep = reps["MY"]
+    assert rep.overall_risk == "red"
+    rep.translation = pipeline._mock_drift(inv.segments[1:2], "Malay", increase_first=True)
+    assert rep.badge == "red"
 
 
 def test_real_drift_translates_back_translates_blind_and_judges(monkeypatch):
