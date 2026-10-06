@@ -379,6 +379,12 @@ class _Text(BaseModel):
     text: str
 
 
+class _Translation(BaseModel):
+    index: int
+    language: str
+    text: str
+
+
 class _Judgement(BaseModel):
     index: int
     drift: Drift
@@ -388,12 +394,15 @@ class _Judgement(BaseModel):
 TRANSLATE_SYSTEM = """You are a professional subtitle translator. Translate each item \
 faithfully and naturally, the way a dubbing studio would, keeping tone, idioms and \
 jokes as a native speaker would render them. Do not soften or sharpen anything. \
-Return one output per input index."""
+Return one output per input index (and per requested language)."""
+# Translating is not where the judgement happens: low thinking is ~3x faster
+# (median 8.3s -> 2.5s per call, measured); the judge keeps the default.
+TRANSLATE_THINKING = "low"
 
 JUDGE_SYSTEM = """You review dubbed lines for a content-compliance tool. For each item \
-you get the original line, its translation and an independent back-translation, plus \
-the risk categories already flagged for that moment and any idioms in the line \
-(figures of speech that may have been rendered literally).
+you get the original line, its translation (language given) and an independent \
+back-translation, plus the risk categories already flagged for that moment and any idioms \
+in the line (figures of speech that may have been rendered literally).
 
 drift = "increased" if the translated version is likely to read as MORE offensive, \
 inflammatory, defamatory or otherwise riskier to that country's audience than the \
@@ -437,46 +446,67 @@ def _categories_at(report: CountryReport | None, seg: Segment) -> list[str]:
 
 
 def translation_check(
-    inventory: Inventory, report: CountryReport, language: str, *, mock: bool | None = None,
-    mock_increase: bool = False,
+    inventory: Inventory, country: str, languages: list[str] | tuple[str, ...] | str, *,
+    report: CountryReport | None = None, mock: bool | None = None, mock_increase: bool = False,
 ) -> list[DriftCheck]:
-    """Translate -> blind back-translate -> judge, for one country and language."""
+    """Translate -> blind back-translate -> judge, for one country and all its languages:
+    three calls whatever the number of languages. `report` (if known) orders the lines
+    by its findings; without it stage A's leaves stand in for them."""
     mock = config.mock_mode() if mock is None else mock
+    languages = [languages] if isinstance(languages, str) else list(languages)
     segs = flagged_segments(inventory, report)
-    if not segs:
+    if not segs or not languages:
         return []
     if mock:
-        return _mock_drift(segs, language, increase_first=mock_increase)
+        return [d for n, lang in enumerate(languages)
+                for d in _mock_drift(segs, lang, increase_first=mock_increase and n == 0)]
 
-    country = config.COUNTRIES[report.country]
+    law = config.COUNTRIES[country]
     items = [{"index": i, "text": s.transcript} for i, s in enumerate(segs)]
-    translated = _by_index(gemini.generate_json(
-        f"Translate into {language} for viewers in {country.name}.\n{json.dumps(items, ensure_ascii=False)}",
-        list[_Text], model=config.SC_MODEL_FAST, system_instruction=TRANSLATE_SYSTEM), _Text)
-    # Back-translate without the original in context so the model can't just copy it.
-    back_items = [{"index": i, "text": translated[i].text} for i in sorted(translated)]
+    raw = gemini.generate_json(
+        f"Translate every item into each of these languages for viewers in {law.name}: "
+        f"{', '.join(languages)}. Write each language name exactly as given.\n"
+        f"{json.dumps(items, ensure_ascii=False)}",
+        list[_Translation], model=config.SC_MODEL_FAST, system_instruction=TRANSLATE_SYSTEM,
+        thinking=TRANSLATE_THINKING)
+    wanted = {lang.casefold(): lang for lang in languages}
+    translated: dict[int, tuple[int, str, str]] = {}  # k -> (segment index, language, text)
+    seen: set[tuple[int, str]] = set()
+    for item in raw if isinstance(raw, list) else []:
+        try:
+            t = _Translation.model_validate(item)
+        except ValidationError:
+            continue
+        lang = wanted.get(t.language.strip().casefold())
+        if lang and 0 <= t.index < len(segs) and (t.index, lang) not in seen:
+            seen.add((t.index, lang))
+            translated[len(translated)] = (t.index, lang, t.text)
+    if not translated:
+        return []
+    # Back-translate without the original (or the language) in context so the model can't copy it.
     back = _by_index(gemini.generate_json(
-        f"Translate into English.\n{json.dumps(back_items, ensure_ascii=False)}",
-        list[_Text], model=config.SC_MODEL_FAST, system_instruction=TRANSLATE_SYSTEM), _Text)
+        "Translate into English.\n" + json.dumps(
+            [{"index": k, "text": text} for k, (_, _, text) in translated.items()], ensure_ascii=False),
+        list[_Text], model=config.SC_MODEL_FAST, system_instruction=TRANSLATE_SYSTEM,
+        thinking=TRANSLATE_THINKING), _Text)
     judge_items = [
-        {"index": i, "original": segs[i].transcript, "translation": translated[i].text,
-         "back_translation": back[i].text, "flagged_categories": _categories_at(report, segs[i]),
+        {"index": k, "language": lang, "original": segs[i].transcript, "translation": text,
+         "back_translation": back[k].text, "flagged_categories": _categories_at(report, segs[i]),
          "idioms": segs[i].idioms}
-        for i in sorted(translated) if i in back
+        for k, (i, lang, text) in translated.items() if k in back
     ]
     if not judge_items:
         return []
     judged = _by_index(gemini.generate_json(
-        f"Audience: {country.name}, language: {language}.\n"
-        f"{json.dumps(judge_items, ensure_ascii=False)}",
+        f"Audience: {law.name}.\n{json.dumps(judge_items, ensure_ascii=False)}",
         list[_Judgement], model=config.SC_MODEL_SMART, system_instruction=JUDGE_SYSTEM), _Judgement)
-    return [
-        DriftCheck(start_s=segs[i].start_s, end_s=segs[i].end_s, language=language,
-                   original=segs[i].transcript, translated=translated[i].text,
-                   back_translated=back[i].text, drift=judged[i].drift,
-                   explanation=judged[i].explanation)
-        for i in sorted(judged) if i in translated and i in back and 0 <= i < len(segs)
+    out = [
+        DriftCheck(start_s=segs[i].start_s, end_s=segs[i].end_s, language=lang,
+                   original=segs[i].transcript, translated=text, back_translated=back[k].text,
+                   drift=judged[k].drift, explanation=judged[k].explanation)
+        for k, (i, lang, text) in translated.items() if k in back and k in judged
     ]
+    return sorted(out, key=lambda d: (languages.index(d.language), d.start_s))
 
 
 def _by_index(raw, model: type[BaseModel]) -> dict[int, BaseModel]:
@@ -517,40 +547,56 @@ def _mock_drift(segs: list[Segment], language: str, *, increase_first: bool) -> 
 NO_SPEECH = "No speech to translate."
 
 
+async def run_drift(
+    inventory: Inventory, countries: list[str], *,
+    reports: dict[str, CountryReport] | None = None, mock: bool | None = None,
+) -> tuple[dict[str, list[DriftCheck]], dict[str, str], list[str]]:
+    """Drift checks for every country with a drift language, findings or not: a line
+    that is fine in English can become risky in translation. Needs only the
+    inventory, so it can run while the countries are being assessed (`reports`,
+    if given, orders the lines by findings). Returns (checks, notes, errors) per country."""
+    mock = config.mock_mode() if mock is None else mock
+    todo = [cc for cc in countries if config.COUNTRIES[cc].drift_languages]
+    if not has_speech(inventory):
+        return {}, {cc: NO_SPEECH for cc in todo}, []
+    rep = (lambda cc: (reports or {}).get(cc))
+    # Mock: exactly one deterministic "increased" example, on the first eligible country.
+    first = next((cc for cc in todo if flagged_segments(inventory, rep(cc))), None)
+    sem = asyncio.Semaphore(max(1, config.GEMINI_CONCURRENCY))
+
+    async def one(cc: str):
+        async with sem:
+            with metrics.stage(f"translation:{cc}"):
+                return await asyncio.to_thread(
+                    translation_check, inventory, cc, config.COUNTRIES[cc].drift_languages,
+                    report=rep(cc), mock=mock, mock_increase=cc == first)
+
+    results = await asyncio.gather(*(one(cc) for cc in todo), return_exceptions=True)
+    if mock and todo:
+        await asyncio.sleep(config.mock_delay_s())
+    checks, errors = {}, []
+    for cc, res in zip(todo, results):
+        if isinstance(res, BaseException):
+            log.error("translation check failed for %s: %s", cc, type(res).__name__)
+            errors.append(f"translation {cc}: {public_error(res)}")
+            continue
+        checks[cc] = res
+    return checks, {}, errors
+
+
+def attach_drift(reports: dict[str, CountryReport], checks: dict[str, list[DriftCheck]],
+                 notes: dict[str, str]) -> None:
+    for cc, rep in reports.items():
+        rep.translation.extend(checks.get(cc, []))
+        rep.translation_note = notes.get(cc, rep.translation_note)
+
+
 async def run_translation(
     inventory: Inventory, reports: dict[str, CountryReport], *, mock: bool | None = None,
 ) -> list[str]:
     """Fill report.translation for every country with a drift language. Returns errors."""
-    mock = config.mock_mode() if mock is None else mock
-    sem = asyncio.Semaphore(max(1, config.GEMINI_CONCURRENCY))
-    if not has_speech(inventory):
-        for cc, rep in reports.items():
-            if config.COUNTRIES[cc].drift_languages:
-                rep.translation_note = NO_SPEECH
-        return []
-    # Every country with a drift language, findings or not: a line that is fine in
-    # English can become risky in translation.
-    tasks = [(cc, lang) for cc in reports for lang in config.COUNTRIES[cc].drift_languages]
-    # Mock: exactly one deterministic "increased" example, on the first eligible pair.
-    first = next((t for t in tasks if flagged_segments(inventory, reports[t[0]])), None)
-
-    async def one(cc: str, lang: str):
-        async with sem:
-            with metrics.stage(f"translation:{cc}/{lang}"):
-                return await asyncio.to_thread(
-                    translation_check, inventory, reports[cc], lang, mock=mock,
-                    mock_increase=(cc, lang) == first)
-
-    results = await asyncio.gather(*(one(cc, lang) for cc, lang in tasks), return_exceptions=True)
-    if mock and tasks:
-        await asyncio.sleep(config.mock_delay_s())
-    errors = []
-    for (cc, lang), res in zip(tasks, results):
-        if isinstance(res, BaseException):
-            log.error("translation check failed for %s/%s: %s", cc, lang, type(res).__name__)
-            errors.append(f"translation {cc}/{lang}: {public_error(res)}")
-            continue
-        reports[cc].translation.extend(res)
+    checks, notes, errors = await run_drift(inventory, list(reports), reports=reports, mock=mock)
+    attach_drift(reports, checks, notes)
     return errors
 
 

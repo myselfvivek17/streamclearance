@@ -70,7 +70,7 @@ def test_job_lifecycle_end_to_end(tiny_video):
         # per-stage timings in the job JSON
         t = job["timings"]
         assert {"upload_probe", "stage_a", "translation", "total"} <= set(t)
-        assert {"assessor:PK", "assessor:SG", "translation:PK/Urdu"} <= set(t)
+        assert {"assessor:PK", "assessor:SG", "translation:PK"} <= set(t)
         assert all(v >= 0 for v in t.values()) and t["total"] >= t["stage_a"]
         assert "calls" in job  # mock makes no model calls
 
@@ -217,3 +217,28 @@ def test_no_speech_video_says_so(tiny_video, monkeypatch):
         assert (tr["status"], tr["detail"]) == ("skipped", "no speech to translate")
         by = {c["country"]: c for c in job["report"]["countries"]}
         assert by["MY"]["translation"] == [] and by["MY"]["translation_note"] == "No speech to translate."
+
+
+def test_drift_starts_before_the_countries_are_assessed(tiny_video, monkeypatch):
+    from app import pipeline
+
+    order = []
+    real_drift, real_b = pipeline.run_drift, pipeline.stage_b
+
+    async def drift(*a, **kw):
+        order.append("drift")
+        return await real_drift(*a, **kw)
+
+    def stage_b(*a, **kw):
+        order.append("country")
+        return real_b(*a, **kw)
+
+    monkeypatch.setattr(pipeline, "run_drift", drift)
+    monkeypatch.setattr(pipeline, "stage_b", stage_b)
+    with TestClient(app) as client:
+        video_id = _upload(client, tiny_video[0]).json()["video_id"]
+        job = _wait(client, client.post("/api/analyze", json={
+            "video_id": video_id, "countries": ["MY", "SG"]}).json()["job_id"])
+    assert job["status"] == "done"
+    assert order[0] == "drift" and order.count("country") == 2
+    assert all(c["translation"] for c in job["report"]["countries"])

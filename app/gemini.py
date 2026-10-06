@@ -186,7 +186,10 @@ def with_retry(fn: Callable[[], T], *, what: str, retries: int | None = None) ->
     raise AssertionError("unreachable")
 
 
-def _config(response_schema: Any, system_instruction: str | None, temperature: float):
+def _config(response_schema: Any, system_instruction: str | None, temperature: float,
+            thinking: str | None = None, media_resolution: str | None = None):
+    """thinking: "minimal"/"low"/"medium"/"high" (Gemini 3 thinking level; None = model
+    default). media_resolution: "low"/"medium"/"high" for video frames (None = default)."""
     from google.genai import types
 
     return types.GenerateContentConfig(
@@ -194,6 +197,8 @@ def _config(response_schema: Any, system_instruction: str | None, temperature: f
         response_schema=response_schema,
         system_instruction=system_instruction,
         temperature=temperature,
+        thinking_config=types.ThinkingConfig(thinking_level=thinking.upper()) if thinking else None,
+        media_resolution=f"MEDIA_RESOLUTION_{media_resolution.upper()}" if media_resolution else None,
     )
 
 
@@ -210,10 +215,11 @@ def generate_json(
     model: str | None = None,
     system_instruction: str | None = None,
     temperature: float = 0.2,
+    thinking: str | None = None,
 ) -> Any:
     """Call Gemini with structured JSON output and return the parsed JSON."""
     model = model or config.SC_MODEL_SMART
-    cfg = _config(response_schema, system_instruction, temperature)
+    cfg = _config(response_schema, system_instruction, temperature, thinking)
     log.info("gemini.generate_json model=%s prompt_chars=%d", model, len(prompt))
     resp = _generate(_get_client(), model, prompt, cfg, what="generate_json")
     return _parse(resp, model)
@@ -228,6 +234,8 @@ def generate_json_with_video(
     model: str | None = None,
     system_instruction: str | None = None,
     temperature: float = 0.2,
+    thinking: str | None = None,
+    media_resolution: str | None = None,
 ) -> Any:
     """One multimodal call over the whole video (frames and audio) -> JSON.
 
@@ -237,7 +245,7 @@ def generate_json_with_video(
     """
     model = model or config.SC_MODEL_FAST
     client = _get_client()
-    cfg = _config(response_schema, system_instruction, temperature)
+    cfg = _config(response_schema, system_instruction, temperature, thinking, media_resolution)
     if config.gemini_backend() == "vertex":
         size = video_path.stat().st_size
         if size <= config.VERTEX_INLINE_MAX_BYTES:

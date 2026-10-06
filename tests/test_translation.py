@@ -81,25 +81,63 @@ def test_red_country_stays_red_with_increased_drift():
 def test_real_drift_translates_back_translates_blind_and_judges(monkeypatch):
     inv, reps = _reports(["PK"])
     calls = []
+    n = len(pipeline.flagged_segments(inv, reps["PK"]))
+
+    def fake(prompt, schema, **kw):
+        calls.append((prompt, kw))
+        if len(calls) == 1:
+            return [{"index": i, "language": "Urdu", "text": f"URDU{i}"} for i in range(n)]
+        if len(calls) == 2:
+            return [{"index": k, "text": f"BACK{k}"} for k in range(n)]
+        return [{"index": 0, "drift": "increased", "explanation": "x"}] + \
+               [{"index": k, "drift": "none", "explanation": "y"} for k in range(1, n)]
+
+    monkeypatch.setattr(gemini, "generate_json", fake)
+    out = pipeline.translation_check(inv, "PK", ["Urdu"], report=reps["PK"], mock=False)
+    assert len(calls) == 3
+    assert "Urdu" in calls[0][0] and "fasting" in calls[0][0]
+    assert "fasting" not in calls[1][0] and "URDU0" in calls[1][0]  # blind back-translation
+    assert "Urdu" not in calls[1][0].split("\n", 1)[1]
+    assert "BACK0" in calls[2][0] and "religious_offence" in calls[2][0]
+    assert calls[0][1]["thinking"] == calls[1][1]["thinking"] == "low"
+    assert calls[2][1].get("thinking") is None  # the judge keeps the default
+    first = next(d for d in out if d.translated == "URDU0")
+    assert first.drift == "increased" and first.back_translated == "BACK0"
+    assert [d.start_s for d in out] == sorted(d.start_s for d in out)  # shown in video order
+
+
+def test_all_languages_of_a_country_in_three_calls(monkeypatch):
+    inv, reps = _reports(["SG"])
+    langs = list(config.COUNTRIES["SG"].drift_languages)
+    n = len(pipeline.flagged_segments(inv, reps["SG"]))
+    calls = []
 
     def fake(prompt, schema, **kw):
         calls.append(prompt)
-        n = len(pipeline.flagged_segments(inv, reps["PK"]))
-        if len(calls) == 1:
-            return [{"index": i, "text": f"URDU{i}"} for i in range(n)]
+        if len(calls) == 1:  # one bogus language and one duplicate are ignored
+            return ([{"index": i, "language": lang.lower(), "text": f"{lang}{i}"}
+                     for lang in langs for i in range(n)]
+                    + [{"index": 0, "language": "Klingon", "text": "x"},
+                       {"index": 0, "language": langs[0], "text": "dup"}])
         if len(calls) == 2:
-            return [{"index": i, "text": f"BACK{i}"} for i in range(n)]
-        return [{"index": 0, "drift": "increased", "explanation": "x"}] + \
-               [{"index": i, "drift": "none", "explanation": "y"} for i in range(1, n)]
+            return [{"index": k, "text": f"BACK{k}"} for k in range(len(langs) * n)]
+        return [{"index": k, "drift": "none", "explanation": "y"} for k in range(len(langs) * n)]
 
     monkeypatch.setattr(gemini, "generate_json", fake)
-    out = pipeline.translation_check(inv, reps["PK"], "Urdu", mock=False)
-    assert len(calls) == 3
-    assert "Urdu" in calls[0] and "fasting" in calls[0]
-    assert "fasting" not in calls[1] and "URDU0" in calls[1]  # blind back-translation
-    assert "BACK0" in calls[2] and "religious_offence" in calls[2]
-    assert out[0].drift == "increased" and out[0].translated == "URDU0"
-    assert out[0].back_translated == "BACK0"
+    out = pipeline.translation_check(inv, "SG", langs, mock=False)
+    assert len(calls) == 3 and all(lang in calls[0] for lang in langs)
+    assert len(out) == len(langs) * n
+    assert [d.language for d in out] == [lang for lang in langs for _ in range(n)]
+    assert "Klingon" not in calls[1] and "dup" not in calls[1]
+
+
+def test_drift_without_report_orders_by_stage_a_leaves():
+    inv, _ = _reports([])
+    segs = pipeline.flagged_segments(inv)
+    tagged = [s for s in segs if s.leaves]
+    assert tagged and segs[: len(tagged)] == tagged
+    checks, notes, errors = asyncio.run(pipeline.run_drift(inv, ["MY", "SG", "AU"], mock=True))
+    assert not errors and not notes and set(checks) == {"MY", "SG"}
 
 
 def test_drift_languages_in_hindi_my_malay():

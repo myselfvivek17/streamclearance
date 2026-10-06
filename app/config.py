@@ -36,8 +36,9 @@ MAX_UPLOAD_BYTES = int(os.getenv("SC_MAX_UPLOAD_MB", "200")) * 1024 * 1024
 MAX_DURATION_S = float(os.getenv("SC_MAX_DURATION_S", "600"))
 VIDEO_TYPES = {".mp4": "video/mp4", ".mov": "video/quicktime", ".webm": "video/webm"}
 
-# At most this many Gemini calls in flight per job.
-GEMINI_CONCURRENCY = int(os.getenv("SC_GEMINI_CONCURRENCY", "2"))
+# At most this many Gemini calls in flight per job stage (countries; drift checks).
+# 8 concurrent calls on gemini-3.8-flash (Vertex, global) gave no 429; retries cover the rest.
+GEMINI_CONCURRENCY = int(os.getenv("SC_GEMINI_CONCURRENCY", "8"))
 GEMINI_MAX_RETRIES = int(os.getenv("SC_GEMINI_MAX_RETRIES", "5"))
 # Cap translation-drift checks so a long video can't burn the quota.
 MAX_DRIFT_SEGMENTS = int(os.getenv("SC_MAX_DRIFT_SEGMENTS", "6"))

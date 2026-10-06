@@ -17,7 +17,7 @@ import uuid
 from typing import Any
 
 from app import config, gemini, metrics, pipeline, provenance, retention
-from app.schemas import CountryReport, Privacy, Report
+from app.schemas import CountryReport, Inventory, Privacy, Report
 from app.storage import get_storage
 
 log = logging.getLogger(__name__)
@@ -110,6 +110,7 @@ async def run_job(job: dict[str, Any]) -> None:
     gemini.job_budget(job["job_id"])  # cost guard: SC_MAX_CALLS_PER_JOB model calls per job
     meter = metrics.start(job["job_id"])  # per-stage timings and calls -> job["timings"/"calls"]
     t_job = time.perf_counter()
+    drift_task: asyncio.Task | None = None
     job["status"] = "running"
     current = "inventory"
     try:
@@ -131,6 +132,19 @@ async def run_job(job: dict[str, Any]) -> None:
                 _set(job, f"country:{cc}", "done",
                      f"{rep.badge} · {n} finding{'s' * (n != 1)}")
 
+        # The drift check needs only the inventory: start it as soon as stage A is
+        # done, so it runs while the countries are assessed instead of after them.
+        async def drift(inv: Inventory):
+            with metrics.timed("translation"):
+                return await pipeline.run_drift(inv, job["countries"], mock=mock)
+
+        async def on_inventory(inv: Inventory) -> None:
+            nonlocal drift_task
+            if any(config.COUNTRIES[cc].drift_languages for cc in job["countries"]) \
+                    and pipeline.has_speech(inv):
+                _set(job, "translation", "running")
+                drift_task = asyncio.create_task(drift(inv))
+
         if config.brain() == "adk":
             from app import brain
 
@@ -141,7 +155,7 @@ async def run_job(job: dict[str, Any]) -> None:
 
             inventory, results = await brain.run(
                 path, meta.get("duration_s"), job["countries"], mock=mock,
-                on_stage=on_stage, on_start=on_start, on_done=on_done)
+                on_stage=on_stage, on_start=on_start, on_done=on_done, on_inventory=on_inventory)
         else:
             _set(job, "inventory", "running")
             if mock:
@@ -151,6 +165,7 @@ async def run_job(job: dict[str, Any]) -> None:
                                                     mock=mock)
             _set(job, "inventory", "done", f"{len(inventory.segments)} segments")
             current = "countries"
+            await on_inventory(inventory)
             results = await pipeline.run_countries(
                 inventory, job["countries"], mock=mock, on_start=on_start, on_done=on_done)
         reports = {cc: r for cc, r in results.items() if isinstance(r, CountryReport)}
@@ -162,17 +177,17 @@ async def run_job(job: dict[str, Any]) -> None:
         current = "translation"
         if not any(config.COUNTRIES[cc].drift_languages for cc in reports):
             _set(job, "translation", "skipped", "English-speaking audiences only")
-        elif not pipeline.has_speech(inventory):
-            await pipeline.run_translation(inventory, reports, mock=mock)  # sets the per-country note
+        elif drift_task is None:  # no speech
+            pipeline.attach_drift(reports, {}, {cc: pipeline.NO_SPEECH for cc in reports
+                                                if config.COUNTRIES[cc].drift_languages})
             _set(job, "translation", "skipped", "no speech to translate")
         else:
-            _set(job, "translation", "running")
-            with metrics.timed("translation"):
-                t_errors = await pipeline.run_translation(inventory, reports, mock=mock)
+            checks, notes, t_errors = await drift_task
+            pipeline.attach_drift(reports, checks, notes)
             errors += t_errors
-            checks = sum(len(r.translation) for r in reports.values())
-            _set(job, "translation", "error" if t_errors and not checks else "done",
-                 f"{checks} line checks" + (f", {len(t_errors)} failed" if t_errors else ""))
+            n = sum(len(r.translation) for r in reports.values())
+            _set(job, "translation", "error" if t_errors and not n else "done",
+                 f"{n} line checks" + (f", {len(t_errors)} failed" if t_errors else ""))
 
         report = Report(
             video_id=job["video_id"],
@@ -201,6 +216,8 @@ async def run_job(job: dict[str, Any]) -> None:
             if st["status"] == "running" or (current == "inventory" and st["key"] == "inventory"):
                 st["status"], st["detail"] = "error", job["error"]
     finally:
+        if drift_task is not None and not drift_task.done():
+            drift_task.cancel()
         # The video is not needed any more, whatever happened: delete it before
         # the client sees the final status.
         deleted_at = retention.purge_video(job["video_id"])

@@ -125,6 +125,7 @@ async def run(
     on_stage: StageHook | None = None,
     on_start: Callable[[str], Awaitable[None]] | None = None,
     on_done: Callable[[str, CountryReport | None, str | None], Awaitable[None]] | None = None,
+    on_inventory: Callable[[Inventory], Awaitable[None]] | None = None,
 ) -> tuple[Inventory, dict[str, CountryReport | Exception]]:
     """Run the brain Workflow. Per-country failures are returned, not raised."""
     from google.adk import Workflow
@@ -143,6 +144,8 @@ async def run(
         tagged = sum(1 for s in inv.segments if s.leaves)
         if on_stage:
             await on_stage("inventory", "done", f"{len(inv.segments)} segments, {tagged} sensitive")
+        if on_inventory:
+            await on_inventory(inv)
         return {"segments": len(inv.segments)}
 
     def chain(cc: str) -> tuple[FunctionNode, FunctionNode, FunctionNode]:
