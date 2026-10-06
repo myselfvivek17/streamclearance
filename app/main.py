@@ -45,8 +45,35 @@ async def _sweeper() -> None:
         await asyncio.sleep(SWEEP_EVERY_S)
 
 
+def warm_up() -> None:
+    """Load what the first job would otherwise pay for (Cloud Run scales to zero):
+    provisions and the lookup index, taxonomy, the ADK and genai libraries, the
+    Gemini client and, on Vertex, the auth session used by law search. No model calls."""
+    t0 = time.perf_counter()
+    provisions.all_provisions()
+    from app import retrieval
+
+    retrieval.lookup(next(iter(config.COUNTRIES)), [])
+    taxonomy.prompt_list()
+    import google.adk.runners  # noqa: F401 - import cost (~1s) paid here
+    import google.adk.workflow  # noqa: F401
+    if not config.mock_mode():
+        from app import gemini
+
+        gemini._get_client()
+        if config.law_search() == "rag":
+            from app import law_search
+
+            law_search._get_session()
+    log.info("warm-up done in %.1fs", time.perf_counter() - t0)
+
+
 @contextlib.asynccontextmanager
 async def lifespan(_: FastAPI):
+    try:
+        await asyncio.to_thread(warm_up)
+    except Exception as e:  # noqa: BLE001 - the first job will load it instead
+        log.warning("warm-up failed (%s)", type(e).__name__)
     task = asyncio.create_task(_sweeper())  # runs once on startup, then every 30 min
     yield
     task.cancel()

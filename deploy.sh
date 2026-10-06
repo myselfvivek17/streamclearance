@@ -37,7 +37,7 @@ PY=python3; [[ -x .venv/bin/python ]] && PY=.venv/bin/python
 "$GCLOUD" run deploy "$SERVICE" --project "$PROJECT" --region "$REGION" --image "$IMAGE" \
   --service-account "$SA" \
   --set-env-vars "GOOGLE_CLOUD_PROJECT=${PROJECT},GOOGLE_CLOUD_LOCATION=global,GOOGLE_GENAI_USE_VERTEXAI=TRUE,SC_APP_REGION=${REGION},SC_REPORT_TTL_DAYS=${SC_REPORT_TTL_DAYS:-7},SC_ACCESS_CODE=${ACCESS_CODE}" \
-  --memory 2Gi --cpu 2 --no-cpu-throttling --timeout 900 \
+  --memory 2Gi --cpu 2 --no-cpu-throttling --cpu-boost --timeout 900 \
   --min-instances 0 --max-instances 1 --concurrency 20 \
   --allow-unauthenticated --quiet
 

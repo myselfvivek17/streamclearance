@@ -169,6 +169,10 @@ async def run(
                     if not provisions.has_provisions(cc):
                         ctx["report"] = await asyncio.to_thread(_legacy_country, inv, cc, mock)
                         return {"country": cc, "legacy": True}
+                    if on_stage:
+                        n = sum(1 for s in inv.segments if s.leaves)
+                        await on_stage(f"country:{cc}", "running",
+                                       f"assess: {n} sensitive moment(s)")
                     ctx["assessments"], ctx["notes"] = await agents.assess(inv, cc, mock=mock)
                 return {"country": cc, "assessments": len(ctx["assessments"])}
             except Exception as e:  # noqa: BLE001 - reported per country
@@ -187,6 +191,9 @@ async def run(
             try:
                 if "report" not in ctx:
                     v = ctx["verified"]
+                    if on_stage and v.covered:
+                        await on_stage(f"country:{cc}", "running",
+                                       f"critic: re-checking {len(v.covered)} finding(s)")
                     with metrics.stage(f"critic:{cc}"):
                         verdicts, notes = await agents.critique(v.covered, state["inventory"], cc,
                                                                 mock=mock)

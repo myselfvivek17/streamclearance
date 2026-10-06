@@ -140,3 +140,14 @@ def test_assessor_prompt_carries_the_lookup_provisions(real_provisions):
     assert set(want) <= set(provs) and provs[want[0]]["verbatim_text"]
     prompt = agents._assess_prompt("MY", items, provs)
     assert "PROVISIONS" in prompt and want[0] in prompt
+
+
+def test_country_progress_reports_assess_and_critic_steps(real_provisions):
+    seen = []
+
+    async def on_stage(key, status, detail):
+        seen.append((key, status, detail))
+
+    inv, results = asyncio.run(brain.run(None, 60, ["MY"], mock=True, on_stage=on_stage))
+    steps = [d.split(":")[0] for k, st, d in seen if k == "country:MY" and st == "running"]
+    assert steps == ["assess", "critic"]

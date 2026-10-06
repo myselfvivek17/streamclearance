@@ -557,7 +557,12 @@ function buildStages(job) {
       const m = riskMeta(badge);
       detail = [m.word || badge, rest].filter(Boolean).join(" · ");
       dot = m.dot;
-    } else if (s.status === "running") detail = `Checking ${plural(info.laws_count || 1, "law")}…`;
+    } else if (s.status === "running") {
+      const [step, n] = [(s.detail || "").split(":")[0], ((s.detail || "").match(/\d+/) || [])[0]];
+      detail = step === "assess" ? `Matching ${plural(Number(n), "sensitive moment")} to ${plural(info.laws_count || 1, "law")}…`
+        : step === "critic" ? `Double-checking ${plural(Number(n), "finding")}…`
+          : `Checking ${plural(info.laws_count || 1, "law")}…`;
+    }
     else if (s.status === "pending") detail = "Waiting";
     rows.push({ label: info.name, cc, sub: true, status: s.status, detail, dot });
   }
@@ -567,7 +572,7 @@ function buildStages(job) {
   rows.push({ label: `Translation check${langs.length ? ` (${langs.join(", ")})` : ""}`, status: st("translation"),
     detail: !langs.length ? "Not needed: English only"
       : tr.status === "skipped" ? `Not needed: ${tr.detail}`
-        : tr.status === "running" ? "Translating and back-translating the spoken lines…"
+        : tr.status === "running" ? "Translating and back-translating the spoken lines (runs alongside the country checks)…"
           : tr.status === "done" ? (tr.detail || "").replace(/^(\d+) line checks/, (_, n) => plural(Number(n), "spoken line") + " checked") : tr.detail });
   rows.push({ label: "Report ready", status: st("done"), detail: st("done") === "done" ? "Opening results…" : "" });
   return rows;
