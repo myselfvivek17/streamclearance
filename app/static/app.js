@@ -488,6 +488,9 @@ async function screenCountries(stale) {
     el("fieldset", { style: "border: 0; padding: 0; margin: 0" },
       el("legend", { class: "sr-only" }, "Countries to check"),
       el("div", { class: "country-grid" }, cards)),
+    el("div", { class: "sources" }, disclosure("Sources", "file", S.countries.map((c) =>
+      el("div", { class: "sources-country" }, el("b", {}, c.name),
+        el("ul", { class: "made-list" }, c.laws.map((l) => el("li", {}, el("span", {}, l.title), lawSource(l)))))))),
     el("div", { class: "card selection-bar" },
       el("div", { class: "stack", style: "gap: 2px" }, countLabel, names),
       el("div", { class: "row wrap" },
@@ -917,7 +920,8 @@ function howMade(r) {
       el("b", {}, `${l.country} · ${l.title}: `),
       el("span", { class: `badge ${l.status === "reviewed" ? "risk-green" : "risk-grey"}` }, l.status === "reviewed" ? "Reviewed" : "Draft, not yet reviewed by a person"),
       ` · ${plural(l.provisions, "provision")}, built ${when(l.provisions_built)} · source `,
-      el("span", { class: "mono", title: l.source_sha256 || "" }, `${l.source_file} sha256 ${short(l.source_sha256)}`))),
+      el("span", { class: "mono", title: l.source_sha256 || "" }, `${l.source_file} sha256 ${short(l.source_sha256)}`),
+      lawSource(l))),
   ];
   if (r.privacy && r.privacy.report_expires_at) {
     rows.push(el("li", {}, el("b", {}, "Video deleted: "), r.privacy.video_deleted_at ? when(r.privacy.video_deleted_at) : "not yet",
@@ -970,10 +974,20 @@ function disclosure(label, iconName, content, { open = false, style } = {}) {
   return [btn, body];
 }
 
+// Where a law's text comes from: publisher, version and the official file it was taken from.
+function lawSource(l) {
+  if (!l || !l.source_url) return null;
+  return el("span", { class: "law-source" },
+    l.source_verified ? null : el("span", { class: "tag tag-draft" }, icon("info"), "Source not verified: not used in checks"),
+    `Source: ${[l.publisher, l.version].filter(Boolean).join(", ")} · `,
+    el("a", { href: l.source_url, target: "_blank", rel: "noopener noreferrer" }, "official file"),
+    el("span", { class: "sr-only" }, ` of ${l.title}`));
+}
+
 const pdfLink = (href, text, srText) => el("a", { class: "pdf-link", href, target: "_blank", rel: "noopener" },
   icon("file"), text, srText ? el("span", { class: "sr-only" }, srText) : null);
 
-function provisionCard(cc, p) {
+function provisionCard(cc, p, law) {
   const [st, stCls] = lawStatus(p.law_status);
   const k = p.consequence || {};
   const href = `/api/laws/${encodeURIComponent(cc)}/${encodeURIComponent(p.law_id)}/pdf#page=${encodeURIComponent(p.page)}`;
@@ -993,10 +1007,11 @@ function provisionCard(cc, p) {
       specified(k.penalty) ? [el("dt", {}, "Penalty"), el("dd", {}, k.penalty)] : null,
       specified(k.kind) || specified(k.timeframe) ? [el("dt", {}, "Consequence"), el("dd", {}, [k.kind, k.timeframe].filter(specified).map((x) => x.replace(/_/g, " ")).join(", "))] : null,
       [el("dt", {}, "Applies to"), el("dd", {}, DUTY_TEXT[p.duty_holder] || p.duty_holder)],
-      ex.length ? [el("dt", {}, "Exceptions"), el("dd", {}, ex.length === 1 ? ex[0] : el("ul", { style: "margin: 0; padding-left: 18px" }, ex.map((x) => el("li", {}, x))))] : null));
+      ex.length ? [el("dt", {}, "Exceptions"), el("dd", {}, ex.length === 1 ? ex[0] : el("ul", { style: "margin: 0; padding-left: 18px" }, ex.map((x) => el("li", {}, x))))] : null),
+    lawSource(law));
 }
 
-function ruleCardCard(cc, card) {
+function ruleCardCard(cc, card, law) {
   const href = `/api/laws/${encodeURIComponent(cc)}/pdf#page=${encodeURIComponent(card.page)}`;
   return el("div", { class: "prov" },
     el("div", { class: "prov-head" },
@@ -1012,7 +1027,8 @@ function ruleCardCard(cc, card) {
       el("dt", {}, "In short"), el("dd", {}, card.conduct),
       specified(card.platform_duty) ? [el("dt", {}, "Platform duty"), el("dd", {}, card.platform_duty)] : null,
       specified(card.penalty) ? [el("dt", {}, "Penalty"), el("dd", {}, card.penalty)] : null,
-      el("dt", {}, "Applies to"), el("dd", {}, DUTY_TEXT[card.applies_to] || card.applies_to)));
+      el("dt", {}, "Applies to"), el("dd", {}, DUTY_TEXT[card.applies_to] || card.applies_to)),
+    lawSource(law));
 }
 
 function liableOf(f, provs, cards) {
@@ -1037,7 +1053,9 @@ function issueCard(job, c, f, p, provs, cards) {
     chev);
   const preview = el("div", { class: "fix-preview" }, icon("wrench", "color: var(--accent)"), el("b", {}, "Fix:"), el("span", {}, f.suggested_fix));
 
-  const legal = f.rule_card_ids.map((id) => (provs[id] ? provisionCard(c.country, provs[id]) : cards[id] ? ruleCardCard(c.country, cards[id]) : null)).filter(Boolean);
+  const laws = Object.fromEntries([...countryInfo(c.country).laws.map((l) => [l.id, l]), ...(c.laws || []).map((l) => [l.law_id, l])]);
+  const legal = f.rule_card_ids.map((id) => (provs[id] ? provisionCard(c.country, provs[id], laws[provs[id].law_id])
+    : cards[id] ? ruleCardCard(c.country, cards[id], (c.laws || [])[0]) : null)).filter(Boolean);
   const liable = liableOf(f, provs, cards);
   const ownDuties = (c.platform_obligations || []).filter((o) => (f.obligation_ids || []).includes(o.id));
   const body = el("div", { class: "issue-body", hidden: true },
@@ -1131,7 +1149,8 @@ async function screenCountry(jobId, cc, stale) {
     return el("li", { class: "law" },
       el("span", { class: "law-title" }, l.title),
       el("span", { class: "law-meta" }, el("span", { class: `status-pill ${stCls}` }, st), pdfLink(l.pdf_url, "PDF", ` of ${l.title}`)),
-      l.label ? el("span", { class: "law-note" }, l.label) : null);
+      l.label ? el("span", { class: "law-note" }, l.label) : null,
+      lawSource(l));
   }));
 
   const notes = [

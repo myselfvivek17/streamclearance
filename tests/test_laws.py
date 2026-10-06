@@ -73,3 +73,8 @@ def test_every_provision_quote_is_on_its_page(law, real_provisions):
     for p in json.loads(law.provisions_path.read_text(encoding="utf-8")):
         assert p["source_pdf"] == law.pdf, p["id"]
         assert quote_on_page(p["verbatim_text"], pages.get(p["page"], "")), p["id"]
+
+
+def test_sources_md_matches_registry():
+    from tools import sources_md
+    assert sources_md.PATH.read_text(encoding="utf-8") == sources_md.render(), "run python -m tools.sources_md"
