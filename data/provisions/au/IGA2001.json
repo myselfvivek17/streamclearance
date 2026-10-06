@@ -1,0 +1,630 @@
+[
+ {
+  "id": "AU/IGA2001/s5",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 18,
+  "section": "Section 5(1) and (3)",
+  "verbatim_text": "5 Prohibited interactive gambling services (1) For the purposes of this Act, a prohibited interactive gambling service is a gambling service, where: (a) the service is provided in the course of carrying on a business; and (b) the service is provided to customers using any of the following: (i) an internet carriage service; (ii) any other listed carriage service; (iii) a broadcasting service; (iv) any other content service; (v) a datacasting service.",
+  "summary": "Defines a prohibited interactive gambling service: a gambling service run as a business and offered to customers over the internet, another listed carriage service, broadcasting, another content service or datacasting. A video that promotes or shows such a service (for example an online casino or online pokies site) may be covered.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "a telephone betting service (s8AA): dealings with customers are wholly by live voice calls, and it is not betting on a lottery. If a customer can select, choose the type of, set the amount of or confirm a bet other than by voice call, it is not a telephone betting service",
+   "an excluded wagering service (s8A): betting on horse, harness or greyhound races; betting on sporting events that is not in-play betting; or betting on other events or contingencies that is not in-play betting and is not scratch or instant lotteries, betting on lottery outcomes or contingencies, games covered by para (e) of the gambling service definition, or betting on games of chance or mixed chance and skill",
+   "an excluded gaming service (s8B): gaming on electronic equipment at a particular place, by a provider licensed by a State or Territory for that place",
+   "a place-based betting service (s8BA): betting on electronic equipment at a particular place, by a provider licensed by a State or Territory for that place",
+   "a service that has a designated broadcasting link or designated datacasting link (s8C): a service expressly and exclusively associated with a particular broadcast program or datacast content, or whose sole purpose is to promote non-gambling goods or services advertised on that service",
+   "an excluded lottery service (s8D)",
+   "a service to the extent it relates to entering into contracts that are financial products under Division 3 of Part 7.1 of the Corporations Act 2001",
+   "a wholesale gambling service: provided to another gambling provider that holds a State or Territory licence",
+   "a trade promotion gambling service (s8BB): a lottery or game of chance (or mixed chance and skill) run in connection with a competition to promote trade other than gambling",
+   "an exempt service (s10)"
+  ],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "not specified on this page (the offences and civil penalties are in section 15 and Part 7A)",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s8F",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 27,
+  "section": "Section 8F",
+  "verbatim_text": "an ordinary reasonable person would conclude that the sole or primary purpose of particular internet content is to enable a person to enter into dealings in the capacity of customer of either or both of the following: (i) one or more illegal interactive gambling services; (ii) one or more unlicensed regulated interactive gambling services; and (b) end-users in Australia can access the internet content;",
+  "summary": "Internet content that end-users in Australia can access is 'prohibited internet gambling content' if its sole or primary purpose is to let people become customers of illegal or unlicensed interactive gambling services. This includes content that links viewers to such services or gets them signed up.",
+  "targets": [
+   "gambling.promotion",
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s15(1)",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 32,
+  "section": "Section 15(1)",
+  "verbatim_text": "(1) A person commits an offence if: (a) the person intentionally provides a prohibited interactive gambling service; and (b) the service has an Australian-customer link (see section 8). Penalty: 5,000 penalty units. (2) A person who contravenes subsection (1) commits a separate offence in respect of each day (including a day of a conviction for the offence or any later day) during which the contravention continues.",
+  "summary": "It is a criminal offence to intentionally provide a prohibited interactive gambling service (for example, an online casino) to customers in Australia. Videos that promote or link to such a service involve illegal gambling.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "Does not apply if the person did not know, and could not with reasonable diligence have ascertained, that the service had an Australian-customer link (s15(3)); the person relying on this bears an evidential burden."
+  ],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "separate offence for each day the contravention continues",
+   "penalty": "5,000 penalty units"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s15(2A)",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 32,
+  "section": "Section 15(2A)",
+  "verbatim_text": "(2A) A person must not provide a prohibited interactive gambling service that has an Australian-customer link (see section 8). Civil penalty: 7,500 penalty units. (2B) A person who contravenes subsection (2A) commits a separate contravention of that provision in respect of each day during which the contravention occurs",
+  "summary": "A civil penalty applies to anyone who provides a prohibited interactive gambling service to customers in Australia. Videos that promote or link to such a service involve illegal gambling.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "Does not apply if the person did not know, and could not with reasonable diligence have ascertained, that the service had an Australian-customer link (s15(3))."
+  ],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "civil penalty",
+   "timeframe": "separate contravention for each day the contravention occurs",
+   "penalty": "7,500 penalty units"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s15AA(1)",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 33,
+  "section": "Section 15AA(1)",
+  "verbatim_text": "15AA Unlicensed regulated interactive gambling services not to be provided to customers in Australia (1) A person commits an offence if: (a) the person intentionally provides a particular kind of regulated interactive gambling service; and (b) the service has an Australian-customer link (see section 8); and",
+  "summary": "It is an offence to intentionally provide a regulated interactive gambling service to customers in Australia without the required licence. Such services include online wagering, lotteries and telephone betting. Promoting an unlicensed betting or lottery service involves an unlicensed gambling service.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "offence",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s15AA(1)-2",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 34,
+  "section": "Section 15AA(1)-(2)",
+  "verbatim_text": "(c) the person does not hold a licence (however described) under a law of a State or Territory that authorises the provision of that kind of service in the State or Territory. Penalty: 5,000 penalty units. (2) A person who contravenes subsection (1) commits a separate offence in respect of each day (including a day of conviction for the offence or any later day) during which the contravention continues.",
+  "summary": "It is a criminal offence to provide a regulated interactive gambling service (such as online wagering) to customers in Australia without a State or Territory licence for that kind of service. A video promoting such an unlicensed service may fall under this rule.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "Does not apply if the person did not know, and could not with reasonable diligence have found out, that the service had an Australian-customer link (s15AA(5)). Relevant factors include whether customers were told that Australian law prohibits the service, contract conditions, customers' personal details and network location data (s15AA(6)).",
+   "A person holding a State or Territory licence for that kind of regulated interactive gambling service does not contravene the rule by providing it inside or outside that State or Territory (s15AA(7))."
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "a separate offence for each day the contravention continues",
+   "penalty": "5,000 penalty units"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s15AA(3)",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 34,
+  "section": "Section 15AA(3)-(4)",
+  "verbatim_text": "(3) A person must not provide a particular kind of regulated interactive gambling service if: (a) the service has an Australian-customer link (see section 8); and (b) the person does not hold a licence (however described) under a law of a State or Territory that authorises the provision of that kind of service in the State or Territory. Civil penalty: 7,500 penalty units.",
+  "summary": "A civil penalty applies to anyone who provides a regulated interactive gambling service to customers in Australia without a State or Territory licence for that kind of service. A video promoting such an unlicensed service may fall under this rule.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "Does not apply if the person did not know, and could not with reasonable diligence have found out, that the service had an Australian-customer link (s15AA(5)). Relevant factors include whether customers were told that Australian law prohibits the service, contract conditions, customers' personal details and network location data (s15AA(6)).",
+   "A person holding a State or Territory licence for that kind of regulated interactive gambling service does not contravene the rule by providing it inside or outside that State or Territory (s15AA(7))."
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "civil_penalty",
+   "timeframe": "a separate contravention for each day the contravention occurs",
+   "penalty": "7,500 penalty units"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s61BA(1)",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 76,
+  "section": "Section 61BA(1)",
+  "verbatim_text": "any writing, still or moving picture, sign, symbol or other visual image, or any audible message, or any combination of 2 or more of those things, that gives publicity to, or otherwise promotes or is intended to promote: (a) a designated interactive gambling service; or (b) designated interactive gambling services in general; or (c) the whole or part of a trade mark in respect of a designated interactive gambling service; or (d) a domain name or URL that relates to a designated interactive gambling service; or",
+  "summary": "Defines a banned designated interactive gambling service advertisement under Part 7A. It covers any text, picture, video, sign, symbol or audio that promotes or publicises a designated interactive gambling service, these services in general, or their trade marks, domain names or URLs, or words closely associated with them. This includes a creator's video or a paid promotion.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "s61BB: content that does not promote any particular designated interactive gambling service and relates solely to government or political matters is not an advertisement; use of a provider's whole name does not, of itself, constitute promotion for that purpose (unless used in a way prohibited by regulations); s61BA does not apply to the extent it would infringe the implied freedom of political communication",
+   "s61BC: words, signs or symbols on the gambling service's own website or in standard business documents (invoices, letterheads, etc.) are not advertisements when so appearing (but a still or moving screen shot or image of them can be)",
+   "s61BD: words, signs or symbols in or on land or buildings occupied by a provider are not advertisements when so appearing (but a still or moving picture of them can be)",
+   "s61BE: anything required by other Commonwealth, State or Territory law; internal-management ads (e.g. staff or tenders) that do not promote a service; and action to prevent people becoming victims of fraud or other dishonest or unethical conduct",
+   "s61BF: ads for an unrelated product or service whose name is the same as, or substantially similar to, that of a gambling service or provider, where the maker, distributor, retailer or provider is not associated with the gambling provider (related bodies corporate are taken to be associated)",
+   "s61BG: an advertisement whose sole or principal purpose is clearly to discourage the use of gambling services or particular kinds of gambling services",
+   "s61BGA: advertisements of a kind specified in the regulations"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s61BC",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 77,
+  "section": "Section 61BC",
+  "verbatim_text": "do not, when so appearing, constitute a designated interactive gambling service advertisement (but this does not prevent a still or moving screen shot of a website or equivalent point of provision referred to in paragraph (a), or a still or moving picture or other visual image of a document referred to in paragraph (b), from being a designated interactive gambling service advertisement).",
+  "summary": "Words, signs or symbols that appear on a designated interactive gambling service's own website or in its ordinary business documents are not advertisements in that place. But a still or moving screenshot of the site, or an image of such a document, shown in a video can count as a designated interactive gambling service advertisement.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "Words, signs or symbols as they appear on the gambling service's own website or point of provision, or in the standard wording of its business documents, are not advertisements"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s61CA(1)",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 81,
+  "section": "Section 61CA(1)(a)-(c)",
+  "verbatim_text": "(a) the person includes the advertisement, or something that contains the advertisement, on a website; (b) the person includes the advertisement in a document (including, for example, a newspaper, magazine, program, leaflet or ticket) that is available, or distributed, to the public or a section of the public; (c) the person includes the advertisement in a film, video, television program or radio program that is, or is intended to be, seen or heard by the public or a section of the public;",
+  "summary": "Under Part 7A, a person 'publishes' an ad for a designated interactive gambling service if they put it on a website or in a video, film or program meant for the public, or spread it to the public by any means, including electronic media.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "s61CB: broadcasting or datacasting an ad is not 'publication' (it is covered separately by Division 4)",
+   "s61CC: passing on information only to people who all provide designated interactive gambling services is not, of itself, publication",
+   "s61CD: listing a provider's name in a telephone directory is not publication, unless the directory is online and the entry links to the provider's gambling website",
+   "s61CE: anything done for the ordinary activities of an exempt library is not publication",
+   "s61CF: an acknowledgment of assistance or support is not publication if it complies with regulations made for that section"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page (offences and civil penalties are in s61EA)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s61DA(1)-(1A)",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 84,
+  "section": "Section 61DA(1) and (1A)",
+  "verbatim_text": "(1) A person commits an offence if: (a) the person broadcasts or datacasts a designated interactive gambling service advertisement in Australia; and (b) the broadcast or datacast is not permitted by section 61DB; and (c) the broadcast or datacast is not permitted by section 61DC. Penalty: 120 penalty units. (1A) A person must not broadcast or datacast a designated interactive gambling service advertisement in Australia if: (a) the broadcast or datacast is not permitted by section 61DB; and (b) the broadcast or datacast is not permitted by section 61DC. Civil penalty: 180 penalty units.",
+  "summary": "Broadcasting or datacasting an ad for a designated interactive gambling service in Australia is an offence and also a civil penalty contravention, unless an exception applies.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "s61DB: accidental or incidental broadcast alongside other matter, where no extra benefit is received for the ad",
+   "s61DC: broadcast in an aircraft during a flight, unless the flight starts and is meant to end in Australia (each sector counts as a separate flight)"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "not specified on this page",
+   "penalty": "Offence: 120 penalty units; civil penalty: 180 penalty units"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s61DA(2)-(3)",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 84,
+  "section": "Section 61DA(2) and (3)",
+  "verbatim_text": "(2) A person commits an offence if: (a) the person authorises or causes a designated interactive gambling service advertisement to be broadcast or datacast in Australia; and (b) the broadcast or datacast is not permitted by section 61DB; and (c) the broadcast or datacast is not permitted by section 61DC. Penalty: 120 penalty units.",
+  "summary": "Authorising or causing an ad for a designated interactive gambling service to be broadcast or datacast in Australia is an offence, and under s61DA(3) also a civil penalty contravention, unless an exception applies.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "s61DB: accidental or incidental broadcast alongside other matter, where no extra benefit is received for the ad",
+   "s61DC: broadcast in an aircraft during a flight, unless the flight starts and is meant to end in Australia"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "not specified on this page",
+   "penalty": "Offence: 120 penalty units; civil penalty under s61DA(3): 180 penalty units"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s61DB",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 85,
+  "section": "Section 61DB(1)",
+  "verbatim_text": "(1) A person may broadcast or datacast a designated interactive gambling service advertisement if: (a) the person broadcasts or datacasts the advertisement as an accidental or incidental accompaniment to the broadcasting or datacasting of other matter; and (b) the person does not receive any direct or indirect benefit (whether financial or not) for broadcasting or datacasting the advertisement (in addition to any direct or indirect benefit that the person receives for broadcasting or datacasting the other matter).",
+  "summary": "Exception: a gambling-service ad may be broadcast or datacast if it only appears by accident or incidentally alongside other matter, and the broadcaster gets no extra benefit for the ad.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "Accidental or incidental broadcast with no additional direct or indirect benefit for the ad"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "exception",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s61EA(1)-(1A)",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 86,
+  "section": "Section 61EA(1) and (1A)",
+  "verbatim_text": "(1) A person commits an offence if: (a) the person publishes a designated interactive gambling service advertisement in Australia; and (b) the publication is not permitted by section 61EB; and (d) the publication is not permitted by section 61ED; and (e) the publication is not permitted by section 61EE; and (f) the publication is not permitted by section 61EF. Penalty: 120 penalty units.",
+  "summary": "Publishing an ad for a designated interactive gambling service in Australia, including on a website or in an online video, is an offence and also a civil penalty contravention under s61EA(1A), unless an exception applies.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "s61EA(3): an ad on a website only counts as published in Australia if Australian end-users can access the site and, given its content and how it is promoted, most people who access it are likely to be physically in Australia",
+   "s61EB: periodicals not mainly meant for distribution or use in Australia",
+   "s61ED: accidental or incidental publication alongside other matter, where no extra benefit is received for the ad",
+   "s61EE: publication on the person's own initiative, not in the course of providing designated interactive gambling services, and with no direct or indirect benefit",
+   "s61EF: publication in an aircraft during a flight, unless the flight starts and is meant to end in Australia"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "not specified on this page",
+   "penalty": "Offence: 120 penalty units; civil penalty under s61EA(1A): 180 penalty units"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s61EA(2)-(2A)",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 86,
+  "section": "Section 61EA(2) and (2A)",
+  "verbatim_text": "(2) A person commits an offence if: (a) the person authorises or causes a designated interactive gambling service advertisement to be published in Australia; and (b) the publication is not permitted by section 61EB; and (d) the publication is not permitted by section 61ED; and (e) the publication is not permitted by section 61EE; and (f) the publication is not permitted by section 61EF. Penalty: 120 penalty units.",
+  "summary": "Authorising or causing an ad for a designated interactive gambling service to be published in Australia, for example by commissioning a sponsored creator video, is an offence and also a civil penalty contravention under s61EA(2A), unless an exception applies.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "s61EA(3): an ad on a website only counts as published in Australia if Australian end-users can access the site and most people who access it are likely to be physically in Australia",
+   "s61EB: periodicals not mainly meant for distribution or use in Australia",
+   "s61ED: accidental or incidental publication with no extra benefit for the ad",
+   "s61EE: publication on the person's own initiative, not in the course of providing designated interactive gambling services, and with no benefit",
+   "s61EF: publication in an aircraft during a flight, unless the flight starts and is meant to end in Australia"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "not specified on this page",
+   "penalty": "Offence: 120 penalty units; civil penalty under s61EA(2A): 180 penalty units"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s61ED",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 88,
+  "section": "Section 61ED(1)",
+  "verbatim_text": "(a) the person publishes the advertisement as an accidental or incidental accompaniment to the publication of other matter; and (b) the person does not receive any direct or indirect benefit (whether financial or not) for publishing the advertisement (in addition to any direct or indirect benefit that the person receives for publishing the other matter).",
+  "summary": "Exception: a gambling-service ad may be published if it only appears by accident or incidentally alongside other content, such as a betting logo seen in the background of footage, and the publisher gets no extra benefit for the ad.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "Accidental or incidental publication with no additional direct or indirect benefit for the ad"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "exception",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s61EE",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 88,
+  "section": "Section 61EE(1)",
+  "verbatim_text": "(1) A person may publish a designated interactive gambling service advertisement if: (a) the publication is not in the course of the provision of designated interactive gambling services; and (b) the person publishes the advertisement on the person’s own initiative; and (c) the person does not receive any direct or indirect benefit (whether financial or not) for publishing the advertisement.",
+  "summary": "Exception: a person who is not a gambling-service provider may publish a gambling-service ad on their own initiative if they get no direct or indirect benefit for it. Paid or sponsored promotions do not qualify.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "Unpaid publication on the person's own initiative, outside the provision of designated interactive gambling services"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "exception",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/IGA2001/s61FD",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 89,
+  "section": "Section 61FD(1)-(6)",
+  "verbatim_text": "Each commercial television broadcasting licence is subject to the condition that the licensee will not, in contravention of this Part, broadcast a designated interactive gambling service advertisement.",
+  "summary": "Every Australian broadcasting licence (commercial TV and radio, community, subscription TV, class-licensed services and datacasting) carries a condition that the licensee must not broadcast or datacast an advertisement for a designated interactive gambling service in breach of Part 7A.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "Applies only where the broadcast or datacast would contravene Part 7A, so the Part's own exceptions also apply here"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "licence condition breach",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/IGA2001/s24(1)(b)",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 50,
+  "section": "Section 24(1)(b)",
+  "verbatim_text": "(b) if a code registered, and/or a standard determined, under Part 4 deals exclusively with the designated internet gambling matters—notify the content to internet service providers under the designated notification scheme set out in the code or standard, as the case may be.",
+  "summary": "When the ACMA is satisfied that internet content is prohibited internet gambling content, it must notify that content to internet service providers under the notification scheme in the registered Part 4 code or standard, so that providers act on it as that code or standard requires. The content may also be referred to police.",
+  "targets": [
+   "gambling.unlawful_game",
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "Under section 25, the ACMA may defer this action until the end of a set period if an Australian police member satisfies it that the action would prejudice a criminal investigation."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "notification to internet service providers for action under the Part 4 code/standard; possible referral to law enforcement",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/IGA2001/s26",
+  "country": "AU",
+  "law_id": "IGA2001",
+  "law_title": "Interactive Gambling Act 2001 (Compilation No. 24, 14 Oct 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_interactive_gambling_act_2001_comp2024-10-14.pdf",
+  "page": 51,
+  "section": "Section 26",
+  "verbatim_text": "(b) the ACMA is satisfied that there is internet content (the similar internet content) that is the same as, or substantially similar to, the first-mentioned internet content; and (c) the ACMA is satisfied that the similar internet content is prohibited internet gambling content; and (d) a code registered, and/or standard determined, under Part 4 deals exclusively with the designated internet gambling matters; the ACMA must notify the similar internet content to internet service providers under the designated notification scheme set out in the code or standard, as the case may be.",
+  "summary": "Anti-avoidance rule: if content that is the same as, or substantially similar to, already-notified prohibited internet gambling content (for example a mirror or re-upload) appears, the ACMA must also notify it to internet service providers under the Part 4 code or standard.",
+  "targets": [
+   "gambling.unlawful_game",
+   "gambling.promotion"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "notification to internet service providers for action under the Part 4 code/standard",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ }
+]

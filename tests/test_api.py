@@ -130,11 +130,13 @@ def test_law_pdf_per_registry_law():
 def test_countries_coverage_fields(real_provisions):
     with TestClient(app) as client:
         cs = {c["code"]: c for c in client.get("/api/countries").json()}
-    my, sg, au = cs["MY"], cs["SG"], cs["AU"]
-    assert my["coverage"] == "deep" and au["coverage"] == "basic"
+    my, sg, au, pk = cs["MY"], cs["SG"], cs["AU"], cs["PK"]
+    assert my["coverage"] == au["coverage"] == sg["coverage"] == "deep" and pk["coverage"] == "basic"
     assert my["laws_count"] == len(my["laws"]) == 5
     assert my["provisions_count"] == sum(law["provisions"] for law in my["laws"]) > 0
-    assert au["provisions_count"] == 0 and au["laws_count"] == 3
+    assert au["laws_count"] == 3 and sg["laws_count"] == 2
+    assert au["provisions_count"] == sum(law["provisions"] for law in au["laws"]) > 0
+    assert pk["provisions_count"] == 0 and pk["laws_count"] == 1
     assert sg["bill"] is False and my["bill"] is False
     assert all(c["draft"] == (c["rules_status"] != "reviewed") for c in cs.values())
     assert my["laws"][0]["pdf_url"].startswith("/api/laws/MY/")

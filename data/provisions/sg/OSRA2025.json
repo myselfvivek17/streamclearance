@@ -1,0 +1,1571 @@
+[
+ {
+  "id": "SG/OSRA2025/s9(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 23,
+  "section": "Section 9(1)",
+  "verbatim_text": "“onlineharassment”meansthecommunication of online material that a reasonable person would conclude is — (a) threatening, abusive, insulting, sexual or indecent; and (b) likely to cause a person (called in this section the victim) harassment, alarm, distress or humiliation.",
+  "summary": "Online harassment is posting online material that is threatening, abusive, insulting, sexual or indecent and is likely to cause someone harassment, alarm, distress or humiliation. This includes a series of posts that only meet the test when taken together. The victim can be someone close to the person targeted, such as a parent.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane"
+  ],
+  "exceptions": [
+   "s9(2): Online harassment does not include sexual or indecent material that has a legitimate purpose related to science, medicine, education or art. Art means material a reasonable person would regard as art.",
+   "Illustration: a photo-journalist's photo of naked tribespeople preparing a meal is not material a reasonable person would conclude is sexual or indecent.",
+   "s9(3) illustration: a stranger who reads threats aimed at someone they have no relationship with is not a victim."
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s10(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 24,
+  "section": "Section 10(1)",
+  "verbatim_text": "“doxxing” means the publication of any identity information of a person that a reasonable person would conclude was likely to have been intended to cause harassment, alarm, distress or humiliation to that person or any related person (each called in this section the victim).",
+  "summary": "Doxxing is publishing someone's identity information with the likely intent of causing them or a related person harassment, alarm, distress or humiliation. Identity information includes their name, address, email, phone number, date of birth, NRIC or passport number, photos or videos of them, and details about their family, job or education.",
+  "targets": [
+   "privacy.doxxing"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s11(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 25,
+  "section": "Section 11(1)",
+  "verbatim_text": "“non‑consensual disclosure of private information” means the publication of any private information of a person (called in this section the victim), where — (a) the publication was done without the victim’s consent; and (b) a reasonable person would conclude that the publication was likely to cause the victim harassment, alarm, distress or humiliation.",
+  "summary": "This covers publishing a person's private information without their consent when it is likely to cause them harassment, alarm, distress or humiliation. Private information is information that was not widely available to the public before it was published, such as an undisclosed medical condition.",
+  "targets": [
+   "privacy.doxxing"
+  ],
+  "exceptions": [
+   "s11(3): The section does not apply to private information obtained by observing the person in public or from publicly available information, such as (a) the person's physical appearance or (b) the person's conduct or activities.",
+   "s11(2): Information that was already widely available to the public before publication is not private information."
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s12(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 25,
+  "section": "Section 12(1)",
+  "verbatim_text": "“online stalking” means a course of online conduct engaged in by one person (called in this section the online stalker) in respect of another person (called in this section the victim) —",
+  "summary": "Online stalking is a course of online conduct linked to stalking that is likely to cause the victim harassment, alarm, distress or humiliation. Examples include repeatedly contacting the victim or people close to them, posting about them, impersonating them, or showing up in online spaces the victim visits.",
+  "targets": [
+   "harassment.bullying",
+   "harassment.threats"
+  ],
+  "exceptions": [
+   "s12(4): A course of online conduct needs 2 or more occasions. A single occasion counts only if the conduct is protracted or the stalker has a previous conviction under s7 of the Protection from Harassment Act 2014 for the same victim.",
+   "Illustration (d): Following someone's public social media page and regularly checking it for updates is not stalking where that person has not taken steps to stop it."
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s13(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 28,
+  "section": "Section 13(1)",
+  "verbatim_text": "“intimate image abuse” means the communication of online material — (a) that contains, without a person’s (called in this section the victim) consent — (i) an intimate image or recording of the victim; (ii) an offer to sell or distribute an intimate image or recording of the victim; or (iii) an advertisement of an intimate image or recording of the victim; and (b) that a reasonable person would conclude is likely to cause the victim harassment, alarm, distress or humiliation.",
+  "summary": "Intimate image abuse is posting, offering to sell or distribute, or advertising an intimate image or recording of someone without their consent when it is likely to cause them harassment, alarm, distress or humiliation. This includes images that are altered or AI-generated (deepfakes), and recordings of people doing private acts such as showering or using the toilet.",
+  "targets": [
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording"
+  ],
+  "exceptions": [
+   "s13(2): An intimate image or recording excludes an image or recording that no reasonable person would believe depicts that person. For example, a face pasted onto a cartoon is not an intimate image, although sharing it may still be online harassment."
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s14(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 29,
+  "section": "Section 14(1)",
+  "verbatim_text": "“image‑based child abuse” means the communicationofonlinematerialthatcontainsanyofthefollowing: (a) achildabuseimageorrecordingofaperson(calledinthis section the victim); (b) an offer to sell or distribute a child abuse image or recording of the victim;",
+  "summary": "Image-based child abuse is posting a child abuse image or recording, an offer to sell or distribute one, or an advertisement for one. It also covers material designed to lead people to such images, including keywords, hints or hyperlinks.",
+  "targets": [
+   "child.csam",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s14(2)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 30,
+  "section": "Section 14(2)",
+  "verbatim_text": "“child abuse image or recording” means an image or a recording (including an image or a recording that has been altered or generated by any means) of a person who is, or appears to a reasonable person to be, or who is impliedtobe,below16yearsofage(calledinthissectionachild)— (a) that depicts the child — (i) as a victim of torture, cruelty or physical abuse (whether or not the torture, cruelty or abuse is sexual); (ii) as a victim of sexual abuse; (iii) engagingin,orapparentlyengagingin,asexualpose or sexual activity",
+  "summary": "A child abuse image or recording, including an altered or AI-generated one, shows a person who is, appears to be or is implied to be under 16 in any of these ways: as a victim of torture, cruelty or physical abuse (sexual or not), or of sexual abuse; in a sexual pose or sexual activity, or present while someone else is; or with their genital or anal region or breasts shown in a sexual and offensive way.",
+  "targets": [
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s14(3)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 31,
+  "section": "Section 14(3)",
+  "verbatim_text": "Despite subsection (1), “image‑based child abuse” does not include the communication of material that — (a) has a legitimate purpose related to science, medicine, education or art; and (b) does not pose an undue risk of harm to any person below 16 years of age.",
+  "summary": "Exception: sharing material involving children is not image-based child abuse if it has a legitimate scientific, medical, educational or artistic purpose and does not pose an undue risk of harm to anyone under 16.",
+  "targets": [
+   "child.csam",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "Material with a legitimate purpose related to science, medicine, education or art that does not pose an undue risk of harm to any person below 16 years of age",
+   "Material has a legitimate purpose related to art if a reasonable person would regard it as art",
+   "Illustration: a photo-journalist's photo of a child victim of torture in a war zone, shared as part of their work, has a legitimate purpose related to education"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s15",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 31,
+  "section": "Section 15",
+  "verbatim_text": "In this Act, “online impersonation” means online activity conducted by one person (called in this section X) in respect of another person (called in this section the victim) which — (a) involves X pretending to be the victim without the victim’s consent; and (b) would lead a reasonable person to believe that the online activity was conducted by the victim when this was not in fact the case.",
+  "summary": "Online impersonation is a harmful online activity: a creator pretending to be another person without consent in a way that would make a reasonable person believe the victim did it.",
+  "targets": [
+   "impersonation.identity"
+  ],
+  "exceptions": [
+   "Parody, satire or commentary which no reasonable person would believe is made by a person is not online impersonation of that person",
+   "Illustration: a comedian impersonating a public figure for entertainment and satire, which no reasonable person would believe is performed by that public figure, is not online impersonation"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s16",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 32,
+  "section": "Section 16(1)-(2)",
+  "verbatim_text": "In this Act, “inauthentic material abuse” means the communication of inauthentic material of a person (called in this section the victim) that a reasonable person would conclude is likely to cause the victim harassment, alarm, distress or humiliation because it is false or misleading.",
+  "summary": "Inauthentic material abuse is a harmful online activity: sharing realistic digitally altered or AI-generated audio, images or video that falsely depicts a person's words or conduct and is likely to cause them harassment, alarm, distress or humiliation.",
+  "targets": [
+   "misinfo.synthetic_media",
+   "harassment.bullying"
+  ],
+  "exceptions": [
+   "Material is not 'inauthentic material' unless it is realistic enough that a reasonable person would believe the victim said or did what is depicted",
+   "Illustration: material with a prominent label saying it was generated using generative AI is not realistic enough for a reasonable person to believe it, so it is not inauthentic material",
+   "Illustration: an image with a superimposed text bubble that is not realistic enough for a reasonable person to believe the victim spoke those words is not inauthentic material"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s17",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 33,
+  "section": "Section 17(1)",
+  "verbatim_text": "In this Act, “publication of false material” means — (a) the publication of online material that contains or consists of a false statement of fact about a person (called in this section the victim); and (b) that a reasonable person would conclude is likely to cause harm to the victim.",
+  "summary": "Publication of false material is a harmful online activity: posting online material with a false statement of fact about a person that is likely to cause them harm.",
+  "targets": [
+   "defamation.false_statement"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s18",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 33,
+  "section": "Section 18(1)",
+  "verbatim_text": "In this Act, “publication of statement harmful to reputation” means the publication of online material that contains or consists of a statement that a reasonable person would conclude is likely to cause to a person (called in this section the victim) — (a) harm to the reputation of the victim; and (b) any other additional harm to the victim.",
+  "summary": "Publication of a statement harmful to reputation is a harmful online activity: posting a statement, whether fact or opinion and even if true, that is likely to harm a person's reputation and cause them additional harm.",
+  "targets": [
+   "defamation.false_statement"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s19",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 34,
+  "section": "Section 19(1)",
+  "verbatim_text": "“online instigation of disproportionate harm” means the communication of online material that contains or consists of a statement where the following requirements are met: (a) the statement tends to instigate the public or a section of the public to act or omit to act in response to an alleged speech or conduct of a person (called in this section the victim) or a person associated with the victim (called in this section the victim’s associate); (b) the act or omission that the statement tends to instigate would increase the risk of the victim suffering harm;",
+  "summary": "Online instigation of disproportionate harm is a harmful online activity: content urging the public to act against a person (or their associate) over alleged speech or conduct, where the response would increase the risk of harm to them and is out of proportion to any wrongdoing.",
+  "targets": [
+   "harassment.bullying",
+   "harassment.threats"
+  ],
+  "exceptions": [
+   "Section does not apply where the instigated act is voting for a candidate in a Presidential or Parliamentary election",
+   "Section does not apply where the instigated act is conducting, participating in or attending a political activity",
+   "Section does not apply to calling for the removal or suspension of a political office holder or Member of Parliament from office",
+   "Section does not apply to communicating a statement to a political office holder, Member of Parliament or public body on a matter of public interest or public controversy",
+   "Disproportionality is assessed considering, among other things, whether the victim did in fact engage in the alleged conduct and whether it was a reasonable expression of opinion on a matter of public interest or controversy"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s20",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 37,
+  "section": "Section 20(1)",
+  "verbatim_text": "In this Act, “incitement of enmity” means the communication of online material that a reasonable person would conclude incites, or is likely to incite, feelings of enmity, hatred or hostility against any group in Singapore.",
+  "summary": "Incitement of enmity is a harmful online activity: posting material likely to incite enmity, hatred or hostility against any group of people in Singapore, including by dehumanising them.",
+  "targets": [
+   "hate.group_hostility",
+   "hate.discrimination"
+  ],
+  "exceptions": [
+   "Does not apply to communication that is private or domestic in nature, having regard to the number of people likely to perceive it, the relationship between the people involved and all other relevant circumstances",
+   "Does not apply to communication made where the parties reasonably appear to want it perceived only by themselves",
+   "Not satisfied solely because one or more persons feel offended by or uncomfortable with the material"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s21",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 38,
+  "section": "Section 21(1)",
+  "verbatim_text": "In this Act, “incitement of violence” means the communication of online material that a reasonable person would conclude incites or is likely to incite one or more persons to use unlawful force or unlawful violence against any group in Singapore.",
+  "summary": "Incitement of violence is a harmful online activity: posting material likely to incite anyone to use unlawful force or violence against any group of people in Singapore.",
+  "targets": [
+   "violence.incitement"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s26(3)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 42,
+  "section": "Section 26(3)",
+  "verbatim_text": "(3) A Part 5 direction may be given to — (a) any individual whether or not a resident or citizen of Singapore, whether physically present in Singapore or outside Singapore, and whether carrying on a business or operating in Singapore or outside Singapore; or (b) any entity whether formed, constituted or registered in SingaporeoroutsideSingapore,andwhethercarryingona business or operating in Singapore or outside Singapore.",
+  "summary": "After a victim reports online harmful activity, the Commissioner may give Part 5 directions to any individual or entity, in Singapore or abroad, including creators, administrators of online locations and online service providers.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "Section 26(5): for false material (s17), only a right-of-reply (user) or right-of-reply (online service) direction may be given, unless the false statement of fact says the victim approved, endorsed, promoted, provided a testimonial for, invested in, or is affiliated or associated with a genuine or purported trade, investment, business, commercial activity or online location soliciting funding, donations or financial support",
+   "Section 26(6): for a statement harmful to reputation (s18), only a right-of-reply (user) or right-of-reply (online service) direction may be given"
+  ],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "direction (act or refrain from act, in or outside Singapore)",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s29(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 46,
+  "section": "Section 29(1)-(2)",
+  "verbatim_text": "A stop communication direction is a direction requiring the recipient to do one or more of the following, and by the time specified in the direction, such that the relevant material or the relevant location(as the case may be)cannot be accessed bypersons in Singapore: (a) to remove the relevant material; (b) to stop storing, posting, providing or transmitting the relevant material; (c) to suspend, remove, delete or terminate the relevant location.",
+  "summary": "The communicator of the material or the administrator of the online location (e.g. a channel or group) can be directed to remove the material, stop posting it, or take down the location so it cannot be accessed in Singapore. The direction may also cover similar material.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "Not available for false material (s17) unless it falsely links the victim to a trade, investment, business, commercial activity or fundraising location (s26(5)); not available for statements harmful to reputation (s18), where only right-of-reply directions may be given (s26(6))"
+  ],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "by the time specified in the direction",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s30(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 46,
+  "section": "Section 30(1)-(4)",
+  "verbatim_text": "A stop communication (class of material) direction is a direction requiring the recipient to do one or more of the following, andbythetimespecifiedinthedirection,suchthattherelevantclass of material cannot be accessed by persons in Singapore: (a) to remove the relevant class of material; (b) to stop storing, posting, providing or transmitting the relevant class of material.",
+  "summary": "Communicators or administrators of online locations can be directed to remove or stop posting a whole class of material identified by specific identifiers (e.g. a username tag, a term or a location). This can include material first posted after the direction is given.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "Not available for false material (s17) unless it falsely links the victim to a trade, investment, business, commercial activity or fundraising location (s26(5)); not available for statements harmful to reputation (s18) (s26(6))"
+  ],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "by the time specified in the direction",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s31",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 47,
+  "section": "Section 31",
+  "verbatim_text": "A restraining direction is a direction requiring the recipient to refrain, for a specified period or indefinitely, from all or any of the following: (a) where the recipient had communicated the relevant material — communicating any online material similar or identical to the relevant material;",
+  "summary": "A person who posted harmful material, carried out the harmful activity, or administered the online location can be ordered not to post similar or identical material, repeat the activity, or run a location that allows it, for a set period or indefinitely.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "Not available for false material (s17) unless it falsely links the victim to a trade, investment, business, commercial activity or fundraising location (s26(5)); not available for statements harmful to reputation (s18) (s26(6))"
+  ],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "restraining order on future posting",
+   "timeframe": "for a specified period or indefinitely",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s32(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 48,
+  "section": "Section 32(1)-(4)",
+  "verbatim_text": "An access disabling direction is a direction requiring the recipient to disable access by end‑users in Singapore to one or more of the following, and by the time specified in the direction: (a) any relevant material stored, posted, provided or transmitted on or through the relevant service; (b) any relevant location on the relevant service.",
+  "summary": "An online service provider can be directed to block access in Singapore to the harmful material or location on its service. Prescribed providers can also be required to block identical material and other locations carrying it, the latter for up to 2 years.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "Not available for false material (s17) unless it falsely links the victim to a trade, investment, business, commercial activity or fundraising location (s26(5)); not available for statements harmful to reputation (s18) (s26(6))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "geo-block (disable access in Singapore)",
+   "timeframe": "by the time specified in the direction; any requirement to block other locations with identical material lasts no more than 2 years",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s33(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 48,
+  "section": "Section 33(1)-(4)",
+  "verbatim_text": "An access disabling (class of material) direction is a direction requiring the recipient to disable access by end‑users in Singaporetoanyrelevantclassofmaterialstored,posted,providedor transmitted on or through the relevant service.",
+  "summary": "A prescribed online service provider can be directed to block access in Singapore to a whole class of material identified by specific identifiers (e.g. a username tag, a term or a location). This includes material first posted after the direction is given.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "Not available for false material (s17) unless it falsely links the victim to a trade, investment, business, commercial activity or fundraising location (s26(5)); not available for statements harmful to reputation (s18) (s26(6))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "geo-block (disable access in Singapore)",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s34(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 49,
+  "section": "Section 34(1)-(2)",
+  "verbatim_text": "A right‑of‑reply (user) direction is a direction requiring the recipient to communicate in Singapore a reply notice, in relation to relevant material communicated in Singapore, within a specified time — (a) to any specified person or description of persons; and (b) in a specified form and manner.",
+  "summary": "The communicator of the material or the administrator of the online location can be directed to publish the victim's reply notice in a specified form, location or placement near the material. This is the only remedy (with the online-service version) for false material and statements harmful to reputation.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "publish reply notice",
+   "timeframe": "within a specified time",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s34(3)-(4)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 50,
+  "section": "Section 34(3)-(4)",
+  "verbatim_text": "manner may also include a requirement to communicate the reply notice in specified proximity to every copy of any material substantially similar to the relevant material that is communicated by the recipient in Singapore. (4) A right‑of‑reply (user) direction may only be given in respect of a publication of false material as defined in section 17, a publication of statement harmful to reputation as defined in section 18, and an online instigation of disproportionate harm as defined in section 19.",
+  "summary": "The Commissioner can direct the person who posted false material, a statement harmful to reputation or an online instigation of disproportionate harm to post a reply notice. The notice may have to appear next to every substantially similar copy they communicate in Singapore, including copies first posted after the direction.",
+  "targets": [
+   "defamation.false_statement",
+   "harassment.bullying",
+   "harassment.threats"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "reply notice",
+   "timeframe": "as specified in the direction",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s35(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 50,
+  "section": "Section 35(1)",
+  "verbatim_text": "35.—(1) A right‑of‑reply (online service) direction is a direction requiring the recipient to communicate a reply notice, by means of the online service provided by the recipient, to all end‑users in Singapore who access the relevant material provided on or through the online service from any specified time.",
+  "summary": "An online service provider can be directed to show a reply notice to all users in Singapore who access the material. Prescribed providers may also have to show it on identical copies and send it to users who saw the material earlier. The direction is limited to false material, statements harmful to reputation and online instigation of disproportionate harm (ss 17-19).",
+  "targets": [
+   "defamation.false_statement",
+   "harassment.bullying",
+   "harassment.threats"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "reply notice",
+   "timeframe": "from the time specified in the direction",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s36(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 51,
+  "section": "Section 36(1)",
+  "verbatim_text": "(1) A person who is required by a right‑of‑reply (online service) direction to communicate a reply notice must ensure that the notice is easily perceived.",
+  "summary": "An online service provider that must show a reply notice has to make it easy to see. It must be conspicuous, not easy to miss, placed near the material and understandable without clicking through to somewhere else.",
+  "targets": [
+   "defamation.false_statement",
+   "harassment.bullying",
+   "harassment.threats"
+  ],
+  "exceptions": [
+   "A notice published in accordance with the prescribed measures set by regulations is taken to be easily perceived (s36(3))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "remedial notice",
+   "timeframe": "within the time specified in the Commissioner's written notice (s36(5))",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s37(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 53,
+  "section": "Section 37(1)",
+  "verbatim_text": "(a) at the relevant location; and (b) in the form and manner specified in the direction, to all persons in Singapore who access the relevant location, for a period specified in the direction, not exceeding 18 months after the date the labelling direction is given.",
+  "summary": "The recipient of a labelling direction must publish a label at the online location saying that it was subject to Part 5 directions, or that online harmful activity happened there. The label must be shown to everyone in Singapore who visits the location.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "label",
+   "timeframe": "for the period specified, not exceeding 18 months after the direction",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s38(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 53,
+  "section": "Section 38(1)",
+  "verbatim_text": "38.—(1) An account restriction (administrator) direction is a direction requiring the recipient to disallow or restrict, by the specified time, a relevant Singapore account from accessing the relevant location — (a) for a specified period; or (b) indefinitely.",
+  "summary": "The administrator of an online location (such as a group or channel) can be directed to block or restrict a Singapore account from that location. This can also cover new accounts the same owner creates, for up to 2 years.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "account restriction",
+   "timeframe": "by the specified time; for a specified period or indefinitely (restrictions on new accounts up to 2 years)",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s39(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 54,
+  "section": "Section 39(1)",
+  "verbatim_text": "39.—(1) An account restriction (online service) direction is a directionrequiringtherecipienttodooneormoreofthefollowingby the specified time: (a) disallow or restrict interaction between any relevant account on the relevant service and end‑users in Singapore — (i) for a specified period; or (ii) indefinitely; (b) disable any relevant Singapore account on the relevant service — (i) for a specified period; or (ii) indefinitely.",
+  "summary": "An online service provider can be directed to restrict an account's interaction with users in Singapore, or to disable a Singapore account. Prescribed providers may also have to act on new accounts the same owner creates, for up to 2 years.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "account restriction or disabling",
+   "timeframe": "by the specified time; for a specified period or indefinitely (restrictions on new accounts up to 2 years)",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s40(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 55,
+  "section": "Section 40(1)",
+  "verbatim_text": "40.—(1) Anengagementreductiondirectionisadirectionrequiring therecipienttoreducetheengagementofend‑usersinSingaporewith the relevant class of material that is stored, posted, provided or transmitted on or through the relevant service.",
+  "summary": "An online service provider can be directed to reduce how much users in Singapore view, comment on or react to a class of material. The material is identified by things like a tag, username, term or location, and the direction covers material posted before or after it is given.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "engagement reduction (demotion)",
+   "timeframe": "for a specified period not exceeding 3 months after the direction",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s41(6)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 57,
+  "section": "Section 41(6)",
+  "verbatim_text": "(6) The recipient of a Part 5 direction must comply with the Part 5 direction until the earlier of the following occurs: (a) the expiry date and time (if any) stated in the direction is reached; (b) the Part 5 direction is cancelled, revoked or substituted under section 42(1), 59(1) or 64.",
+  "summary": "Anyone given a Part 5 direction (communicator, administrator or online service provider) must keep complying until it expires or is cancelled, revoked or substituted. The direction can be given without a hearing, and failing to comply is an offence.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "offence",
+   "timeframe": "until expiry, cancellation, revocation or substitution of the direction",
+   "penalty": "offence under this Act (s41(4)(b)); penalty not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s44",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 58,
+  "section": "Section 44(1)-(2)",
+  "verbatim_text": "(1) An access blocking order is an order requiring the provider of an internet access service to disable access by end‑users in Singapore to the relevant location by means of that internet access service, by the time specified in the access blocking order. (2) The relevant location specified in the access blocking order must be — (a) an online location of an administrator whodid not comply with a Part 5 direction in respect of —",
+  "summary": "If an administrator of an online location or an online service provider does not comply with a Part 5 direction about online harmful material or activity, internet access service providers can be ordered to block access from Singapore to that location or service.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "An order following non-compliance cannot be given for failing to comply with a right-of-reply (user) direction or a right-of-reply (online service) direction"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block",
+   "timeframe": "by the time specified in the access blocking order",
+   "penalty": "failing to comply with the order is an offence under the Act (s46(3)(b)); the penalty is not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s45",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 59,
+  "section": "Section 45(1)-(2)",
+  "verbatim_text": "(1) Anappremovalorderisanorderrequiringtheproviderof an app distribution service to stop distributing the relevant app to persons in Singapore and stop enabling persons in Singapore to download the relevant app by means of that service, by the time specified in the app removal order. (2) The relevant app specified in the app removal order must be an app used exclusively to access an online service provided by an online service provider which did not comply with a Part 5 direction in respect of —",
+  "summary": "If an online service provider does not comply with a Part 5 direction about its service, or about accounts, material or activity on it, app stores can be ordered to stop distributing that service's app in Singapore.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "Applies only to an app used exclusively to access the non-compliant online service",
+   "An order following non-compliance cannot be given for failing to comply with a right-of-reply (user) direction or a right-of-reply (online service) direction"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "app_removal",
+   "timeframe": "by the time specified in the app removal order",
+   "penalty": "failing to comply with the order is an offence under the Act (s46(3)(b)); the penalty is not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s46(5)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 60,
+  "section": "Section 46(5)",
+  "verbatim_text": "(5) The recipient of an order following non‑compliance must comply with the order until the earlier of the following occurs: (a) the expiry date and time (if any) stated in the order is reached; (b) the order is cancelled, revoked or substituted under section 47(1), 59(1) or 64(2).",
+  "summary": "Internet access and app distribution providers who receive an access blocking or app removal order about non-compliant harmful online content or services must keep complying until the order expires or is cancelled, revoked or substituted.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block",
+   "timeframe": "continuing until the order's stated expiry or until it is cancelled, revoked or substituted",
+   "penalty": "failing to comply with the order is an offence under the Act (s46(3)(b)); the penalty is not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s71",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 82,
+  "section": "Section 71(1)-(2)",
+  "verbatim_text": "(b) without reasonable excuse, fails to comply with any requirement of the Part 5 direction, whether in Singapore or outside Singapore. (2) A person who is guilty of an offence under subsection (1) shall be liable on conviction — (a) if the person is an individual, to a fine not exceeding $20,000 or to imprisonment for a term not exceeding 12 months or to both",
+  "summary": "Anyone given a Part 5 direction by the Online Safety Commissioner about an online harm commits an offence if they fail to comply without reasonable excuse, whether in or outside Singapore. This covers both the person who posted the content and the platform hosting it.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "Reasonable excuse for not complying (s71(1)(b))",
+   "Defence if the accused proves, on a balance of probabilities, that it was not reasonably practicable to do more than what was in fact done to comply, or that there was no better practicable means than what was in fact used (s73(3))",
+   "Not a defence: a duty of confidentiality or privacy under law, contract or professional rules, or having applied for reconsideration of or appealed against the direction (s73(1))"
+  ],
+  "duty_holder": "both",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "as required by the Part 5 direction; continuing-offence fines accrue for each day the offence continues after conviction",
+   "penalty": "Individual: fine up to $20,000 or up to 12 months' imprisonment or both, plus up to $2,000 per day for a continuing offence. Any other person: fine up to $500,000, plus up to $50,000 per day for a continuing offence. The Commissioner may also publish a statement of non-compliance on the Commissioner's official website (s70)."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s72(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 82,
+  "section": "Section 72(1)-(2)",
+  "verbatim_text": "(1) A person shall be guilty of an offence if the person — (a) is given an access blocking order; and (b) without reasonable excuse, fails to comply with any requirement of the access blocking order, whether in Singapore or outside Singapore. (2) A person who is guilty of an offence under subsection (1) shall be liable on conviction to a fine not exceeding $250,000 and, in the case of a continuing offence, to a further fine not exceeding $20,000 foreverydayorpartofadayduringwhichtheoffencecontinuesafter conviction.",
+  "summary": "A service provider given an access blocking order, which blocks access from Singapore to an online location carrying online harm, commits an offence if it fails to comply without reasonable excuse.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "Reasonable excuse for not complying (s72(1)(b))",
+   "Defence if the accused proves, on a balance of probabilities, that it was not reasonably practicable to do more than what was in fact done to comply, or that there was no better practicable means than what was in fact used (s73(3))",
+   "Not a defence: a duty of confidentiality or privacy under law, contract or professional rules, or having applied for reconsideration of or appealed against the order (s73(1))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "as required by the access blocking order; continuing-offence fines accrue for each day the offence continues after conviction",
+   "penalty": "Fine up to $250,000, plus up to $20,000 per day for a continuing offence. The Commissioner may also publish a statement of non-compliance (s70)."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s72(3)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 82,
+  "section": "Section 72(3)-(4)",
+  "verbatim_text": "(3) A person shall be guilty of an offence if the person — (a) is given an app removal order; and (b) without reasonable excuse, fails to comply with any requirement of the app removal order, whether in Singapore or outside Singapore.",
+  "summary": "An app distribution service given an app removal order, which removes an app linked to online harm from availability in Singapore, commits an offence if it fails to comply without reasonable excuse.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "Reasonable excuse for not complying (s72(3)(b))",
+   "Defence if the accused proves, on a balance of probabilities, that it was not reasonably practicable to do more than what was in fact done to comply, or that there was no better practicable means than what was in fact used (s73(3))",
+   "Not a defence: a duty of confidentiality or privacy under law, contract or professional rules, or having applied for reconsideration of or appealed against the order (s73(1))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "as required by the app removal order; continuing-offence fines accrue for each day the offence continues after conviction",
+   "penalty": "Fine up to $500,000, plus up to $50,000 per day for a continuing offence (s72(4), page 83). The Commissioner may also publish a statement of non-compliance (s70)."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s88",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 98,
+  "section": "Section 88(1)-(2)",
+  "verbatim_text": "Tort of incitement of violence 88.—(1) A person (X) must not make any communication that constitutes incitement of violence. (2) If X contravenes subsection (1), a victim of incitement of violence may bring civil proceedings in a court against X.",
+  "summary": "A person who posts or makes a communication that incites violence commits a civil wrong, and any member of the targeted group can sue them.",
+  "targets": [
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "It is a defence for X to prove that X's conduct was reasonable (s88(3))."
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "civil_liability",
+   "timeframe": "not specified on this page",
+   "penalty": "civil proceedings by a victim (each member of the group against which violence is incited); remedies not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/OSRA2025/s90(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 99,
+  "section": "Section 90(1)",
+  "verbatim_text": "A person must not develop and maintain, or otherwise or administer an online location — (a) inamannerthatfacilitatesorpermitsanyapplicableonline harmful activity to be conducted at that location; and (b) intending for any applicable online harmful activity to be conducted or with the knowledge that any applicable online harmful activity is likely to be conducted, at that location.",
+  "summary": "Administrators of an online location such as a website, forum or chat group must not run it in a way that facilitates or permits online harassment, doxxing, stalking, intimate image abuse, image-based child abuse, impersonation, inauthentic material abuse or incitement of violence when they intend this or know it is likely; victims can sue them.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "It is a defence for the respondent to prove that the respondent's conduct was reasonable in the circumstances (s90(4)).",
+   "Promptly taking down offending material, banning accounts that post it and warning users means the administrator has not facilitated or permitted the activity (illustration (d))."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "civil_liability",
+   "timeframe": "not specified on this page",
+   "penalty": "civil proceedings by a victim of the applicable online harmful activity conducted at the location (s90(3)); remedies not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s91(3)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 101,
+  "section": "Section 91(3)",
+  "verbatim_text": "(3) Where an administrator is sent an online harm notice in accordancewithsubsections(1)and(2),theadministratorhasaduty to the victim to do the following within a reasonable time: (a) take reasonable care to assess whether the applicable online harmful activity identified in the notice has occurred; (b) ifso,takereasonablestepstoaddressthatapplicableonline harmful activity.",
+  "summary": "When a victim sends an administrator of an online location an online harm notice, the administrator must, within a reasonable time, assess whether the reported harmful activity happened and, if it did, take reasonable steps such as removing the post or suspending the account.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "It is a defence for the respondent to prove that, through no fault of the respondent, it did not receive the online harm notice (s91(7)).",
+   "Failure to take reasonable steps is presumed if the notice was properly sent, the activity occurred at the location, it involved online material, and that material was not removed after a reasonable period; the respondent can rebut this presumption (s91(6))."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "civil_liability",
+   "timeframe": "within a reasonable time of receiving the online harm notice",
+   "penalty": "civil proceedings by the victim who sent the notice (s91(5)); remedies not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s94(3)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 104,
+  "section": "Section 94(3)",
+  "verbatim_text": "Where an online service provider is sent an online harm notice in accordance with subsections (1) and (2), the online service provider has a duty to the victim to do the following within a reasonable time: (a) take reasonable care in assessing whether the applicable online harmful activity identified in the notice has occurred; (b) ifso,takereasonablestepstoaddressthatapplicableonline harmful activity.",
+  "summary": "An online service provider that gets a valid online harm notice from a victim must, within a reasonable time, carefully check whether the harmful activity happened on its service and, if it did, take reasonable steps to deal with it (for example disabling access to the post or page, or suspending the account). The victim can sue the provider if it fails to do so.",
+  "targets": [
+   "sexual.non_consensual_imagery",
+   "harassment.bullying",
+   "harassment.threats",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "Defence (s94(7)): the provider proves that, through no fault of its own, it did not receive the online harm notice",
+   "Deemed compliance (s94(9)): a provider that responded to the notice in line with prescribed requirements is deemed to have fulfilled its duty",
+   "Not responding in the prescribed way does not, without more, mean the provider breached its duty (s94(10))",
+   "Prescribed online service providers (s94(8)): 'reasonable time' means the prescribed period, and failing to act within it is a breach unless the provider shows that acting was not reasonable",
+   "The notice must identify the activity well enough for the provider to address it, and be in the prescribed manner and form (s94(2))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "civil liability (tort); court orders to disable access",
+   "timeframe": "within a reasonable time of the online harm notice (the prescribed period for prescribed online service providers)",
+   "penalty": "The victim may bring civil proceedings (s94(5)). Failure to take reasonable steps is presumed if the material stayed accessible after a reasonable period (s94(6)). The court may award damages it thinks just and equitable, subject to prescribed minimums and maximums (s96), and enhanced damages if a written request was ignored without reasonable excuse (s98). It may also make the orders in s99(4)."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s99(4)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 111,
+  "section": "Section 99(4)",
+  "verbatim_text": "(4) The court may order the respondent in any civil proceedings brought under section 94(5) to do all or any combination of the following: (a) todisableaccessbyend‑usersinSingaporetothespecified materialoranyonlinematerialidenticaltoitthatisstored, posted, provided or transmitted on or through the online service provider’s online service; (b) to disable access by end‑users in Singapore to a specified online location on the online service provider’s online service;",
+  "summary": "In a lawsuit over a failure to act on an online harm notice, a court can order the online service provider to block Singapore users from the material, any identical copies and specified online locations. It can also order the provider to restrict or bar the specified accounts or persons responsible.",
+  "targets": [
+   "sexual.non_consensual_imagery",
+   "harassment.bullying",
+   "harassment.threats",
+   "violence.incitement"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block",
+   "timeframe": "not specified on this page",
+   "penalty": "Court orders to disable access in Singapore to the material, identical copies or online locations; to restrict a specified account's interactions with users in Singapore or a Singapore account's access to a location; and to bar a specified person from keeping an account that can interact with users in Singapore"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/OSRA2025/s100(1)",
+  "country": "SG",
+  "law_id": "OSRA2025",
+  "law_title": "Online Safety (Relief and Accountability) Act 2025 (No. 23 of 2025)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_online_safety_relief_accountability_act_2025.pdf",
+  "page": 112,
+  "section": "Section 100(1)",
+  "verbatim_text": "(a) that relate to online harmful activity involving the communication of online material (called in this section the offending material); and (b) where it is likely that the offending material will continue tobecommunicatedoranyonlinematerialthatissimilarto the offending material (called in this section the similar material) will be likely to be communicated, thecourtmay,ifitisjustandequitableinthecircumstancestodoso, makeanorderspecifiedinsubsection(2)totheindividualsorentities specified in that subsection.",
+  "summary": "In civil proceedings under Parts 10, 11 or 12 about online harmful activity, a court may order third parties, including online services, that are likely to communicate the offending material or similar material to act on it. The order's specific terms are in section 100(2), which continues on the next page.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying",
+   "sexual.indecent_profane",
+   "privacy.doxxing",
+   "sexual.non_consensual_imagery",
+   "misinfo.synthetic_media",
+   "privacy.covert_recording",
+   "child.csam",
+   "child.harmful_to_minors",
+   "violence.gore",
+   "impersonation.identity",
+   "defamation.false_statement",
+   "hate.group_hostility",
+   "hate.discrimination",
+   "violence.incitement"
+  ],
+  "exceptions": [
+   "The court makes the order only if it is just and equitable in the circumstances to do so"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "court order against a third party",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ }
+]

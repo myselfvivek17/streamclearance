@@ -1,0 +1,1320 @@
+[
+ {
+  "id": "AU/OSA2021/s6(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 28,
+  "section": "Section 6(1)",
+  "verbatim_text": "(b) an ordinary reasonable person would conclude that: (i) it is likely that the material was intended to have an effect on a particular Australian child; and (ii) the material would be likely to have the effect on the Australian child of seriously threatening, seriously intimidating, seriously harassing or seriously humiliating the Australian child;",
+  "summary": "Material on a social media service, relevant electronic service or designated internet service is cyber-bullying material if it is likely intended to affect a particular Australian child and would likely seriously threaten, intimidate, harass or humiliate that child.",
+  "targets": [
+   "harassment.bullying",
+   "harassment.threats",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "Material posted by a person in a position of authority over the Australian child, in the lawful exercise of that authority, where the posting is reasonable action taken in a reasonable manner, is taken not to be cyber-bullying material targeted at the child (s6(4))"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/OSA2021/s7(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 30,
+  "section": "Section 7(1)",
+  "verbatim_text": "(c) an ordinary reasonable person in the position of the Australian adult would regard the material as being, in all the circumstances, menacing, harassing or offensive; (d) such other conditions (if any) as are set out in the legislative rules; then: (e) the material is cyber-abuse material targeted at the Australian adult; and (f) the Australian adult is the target of the material.",
+  "summary": "Material on a social media service, relevant electronic service or designated internet service is cyber-abuse material if it is likely intended to cause serious harm to a particular Australian adult, and a reasonable person in that adult's position would find it menacing, harassing or offensive.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying"
+  ],
+  "exceptions": [
+   "When deciding whether material is offensive, account is taken of the standards of morality, decency and propriety generally accepted by reasonable adults, the literary, artistic or educational merit (if any) of the material, and its general character, including whether it is of a medical, legal or scientific character (s8(1))"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/OSA2021/s8(2)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 31,
+  "section": "Section 8(2)",
+  "verbatim_text": "then, in deciding for the purposes of this Act whether an ordinary reasonable person in the position of a particular Australian adult would regard the material as being, in all the circumstances, offensive, regard must be had to whether the subject, or each of the subjects, of the private sexual material gave consent to the material being provided on the service.",
+  "summary": "When private sexual material is provided on an online service, whether each person shown in it consented to it being provided is relevant to whether it counts as offensive cyber-abuse material targeting an Australian adult.",
+  "targets": [
+   "sexual.non_consensual_imagery"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/OSA2021/s9",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 31,
+  "section": "Section 9",
+  "verbatim_text": "(1) For the purposes of this Act, material that depicts abhorrent violent conduct means material that is: (a) audio material; or (b) visual material; or (c) audio-visual material; that records or streams abhorrent violent conduct. (2) For the purposes of subsection (1), it is immaterial whether the material has been altered.",
+  "summary": "Audio, visual or audio-visual material that records or streams abhorrent violent conduct, including altered versions, is material that depicts abhorrent violent conduct under the Act.",
+  "targets": [
+   "violence.gore"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/OSA2021/s15(2)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 34,
+  "section": "Section 15(2)",
+  "verbatim_text": "(2) Material is an intimate image of a person if: (a) the material consists of a still visual image or moving visual images; and (b) the material depicts, or appears to depict: (i) the person’s genital area or anal area (whether bare or covered by underwear); or",
+  "summary": "A still or moving image that depicts, or appears to depict, a person's genital or anal area (bare or in underwear), or a female, transgender or intersex person's breasts, where privacy would reasonably be expected, is an intimate image of that person.",
+  "targets": [
+   "sexual.non_consensual_imagery",
+   "sexual.nudity"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/OSA2021/s15(3)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 35,
+  "section": "Section 15(3)",
+  "verbatim_text": "(3) Material is an intimate image of a person if: (a) the material consists of a still visual image or moving visual images; and (b) the material depicts, or appears to depict, the person: (i) in a state of undress; or (ii) using the toilet; or (iii) showering; or (iv) having a bath; or (v) engaged in a sexual act of a kind not ordinarily done in public; or (vi) engaged in any other like activity; in circumstances in which an ordinary reasonable person would reasonably expect to be afforded privacy.",
+  "summary": "A still or moving image that depicts, or appears to depict, a person undressed, using the toilet, showering, bathing, or engaged in a private sexual act or similar activity, where privacy would reasonably be expected, is an intimate image of that person.",
+  "targets": [
+   "sexual.non_consensual_imagery",
+   "privacy.covert_recording"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/OSA2021/s15(4)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 35,
+  "section": "Section 15(4)",
+  "verbatim_text": "(4) Material is an intimate image of a person if: (a) the material consists of a still visual image or moving visual images; and (b) because of the person’s religious or cultural background, the person consistently wears particular attire of religious or cultural significance whenever the person is in public; and (c) the material depicts, or appears to depict, the person: (i) without that attire; and (ii) in circumstances in which an ordinary reasonable person would reasonably expect to be afforded privacy.",
+  "summary": "A still or moving image that depicts, or appears to depict, a person without the religious or cultural attire they always wear in public, where privacy would reasonably be expected, is an intimate image of that person.",
+  "targets": [
+   "sexual.non_consensual_imagery",
+   "privacy.covert_recording"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/OSA2021/s16",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 36,
+  "section": "Section 16",
+  "verbatim_text": "16 Non-consensual intimate image of a person For the purposes of this Act, if: (a) an intimate image of a person is provided on: (i) a social media service; or (ii) a relevant electronic service; or (iii) a designated internet service; and (b) the person did not consent to the provision of the intimate image on the service; and (c) the provision of the intimate image on the service is not an exempt provision of the intimate image; the intimate image is a non-consensual intimate image of the person.",
+  "summary": "An intimate image of a person posted on a social media service, relevant electronic service or designated internet service without that person's consent is a non-consensual intimate image regulated by the Act. Under section 21, consent must be express, voluntary and informed, and consent given by a child does not count.",
+  "targets": [
+   "sexual.non_consensual_imagery"
+  ],
+  "exceptions": [
+   "The image is not non-consensual where its provision on the service is an exempt provision of the intimate image",
+   "The image is not non-consensual where the person depicted gave express, voluntary and informed consent (s21); consent given by a child, or by an adult incapable of consenting or substantially impaired in their capacity to consent, does not count"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/OSA2021/s106(1)(b)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 119,
+  "section": "Section 106(1)(b)",
+  "verbatim_text": "(b) material where the following conditions are satisfied: (i) the material is a film or the contents of a film; (ii) the film has not been classified by the Classification Board under the Classification (Publications, Films and Computer Games) Act 1995; (iii) if the film were to be classified by the Classification Board under that Act—the film would be likely to be classified as RC;",
+  "summary": "Class 1 material is any film or video, including an unclassified one, that has been or would likely be classified RC (Refused Classification), such as child sexual abuse material, extreme sexual violence, terrorist advocacy or instruction, gratuitous high-impact violence, or detailed instruction in crime or drug use; online service providers can be required to remove it.",
+  "targets": [
+   "child.csam",
+   "sexual.obscene",
+   "terrorism.support",
+   "terrorism.instruction",
+   "violence.gore",
+   "violence.incitement",
+   "drugs.promotion"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/OSA2021/s107(1)(b)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 121,
+  "section": "Section 107(1)(b)",
+  "verbatim_text": "(ii) the film has not been classified by the Classification Board under the Classification (Publications, Films and Computer Games) Act 1995; (iii) if the film were to be classified by the Classification Board under that Act—the film would be likely to be classified as X 18+;",
+  "summary": "Class 2 material includes any film or video, including an unclassified one, that has been or would likely be classified X 18+, meaning real, explicit sexual activity between adults; online service providers can be required to remove it.",
+  "targets": [
+   "sexual.obscene"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/OSA2021/s107(1)(g)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 122,
+  "section": "Section 107(1)(g)",
+  "verbatim_text": "(g) material where the following conditions are satisfied: (i) the material is a film or the contents of a film; (ii) the film has not been classified by the Classification Board under the Classification (Publications, Films and Computer Games) Act 1995; (iii) if the film were to be classified by the Classification Board under that Act—the film would be likely to be classified as R 18+;",
+  "summary": "Class 2 material also includes any film or video, including an unclassified one, that has been or would likely be classified R 18+, such as high-impact violence, simulated sex, nudity or other adult-only themes unsuitable for minors; it must be placed behind an age-restricted access system or it can be restricted or removed.",
+  "targets": [
+   "violence.gore",
+   "sexual.nudity",
+   "sexual.indecent_profane",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/OSA2021/s46(1)(c)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 63,
+  "section": "Section 46(1)(c)",
+  "verbatim_text": "(c) the expectation that the provider of the service will take reasonable steps to minimise the extent to which the following material is provided on the service: (i) cyber-bullying material targeted at an Australian child; (ii) cyber-abuse material targeted at an Australian adult; (iii) a non-consensual intimate image of a person; (iv) class 1 material; (v) material that promotes abhorrent violent conduct; (vi) material that incites abhorrent violent conduct; (vii) material that instructs in abhorrent violent conduct; (viii) material that depicts abhorrent violent conduct;",
+  "summary": "Under the basic online safety expectations, social media, relevant electronic and designated internet services are expected to take reasonable steps to minimise cyber-bullying of Australian children, cyber-abuse of Australian adults, non-consensual intimate images, class 1 material and material that promotes, incites, instructs in or depicts abhorrent violent conduct.",
+  "targets": [
+   "harassment.bullying",
+   "harassment.threats",
+   "child.harmful_to_minors",
+   "sexual.non_consensual_imagery",
+   "child.csam",
+   "sexual.obscene",
+   "terrorism.support",
+   "terrorism.instruction",
+   "violence.gore",
+   "violence.incitement",
+   "drugs.promotion"
+  ],
+  "exceptions": [
+   "A determination of basic online safety expectations does not impose a duty that is enforceable by proceedings in a court (s45(4))",
+   "Section 104 provides exemptions for material that promotes, incites, instructs in or depicts abhorrent violent conduct (s46 Note 2)"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not enforceable in court; Commissioner may issue and publish a statement that the provider contravened the expectations (s48(2))",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s46(1)(d)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 63,
+  "section": "Section 46(1)(d)",
+  "verbatim_text": "(d) the expectation that the provider of the service will take reasonable steps to ensure that technological or other measures are in effect to prevent access by children to class 2 material provided on the service;",
+  "summary": "Under the basic online safety expectations, services are expected to take reasonable steps to have technological or other measures that stop children from accessing class 2 material (e.g. sexual, nude, violent or adult content) on the service.",
+  "targets": [
+   "sexual.obscene",
+   "violence.gore",
+   "sexual.nudity",
+   "sexual.indecent_profane",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "A determination of basic online safety expectations does not impose a duty that is enforceable by proceedings in a court (s45(4))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not enforceable in court; Commissioner may issue and publish a statement that the provider contravened the expectations (s48(2))",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s46(1)(e)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 63,
+  "section": "Section 46(1)(e)",
+  "verbatim_text": "(e) the expectation that the provider of the service will ensure that the service has clear and readily identifiable mechanisms that enable end-users to report, and make complaints about, any of the following material provided on the service: (i) cyber-bullying material targeted at an Australian child; (ii) cyber-abuse material targeted at an Australian adult; (iii) a non-consensual intimate image of a person; (iv) class 1 material; (v) class 2 material;",
+  "summary": "Under the basic online safety expectations, services are expected to give users clear, easy-to-find ways to report and complain about cyber-bullying, cyber-abuse, non-consensual intimate images, class 1 and class 2 material, and abhorrent violent conduct material.",
+  "targets": [
+   "harassment.bullying",
+   "harassment.threats",
+   "child.harmful_to_minors",
+   "sexual.non_consensual_imagery",
+   "child.csam",
+   "sexual.obscene",
+   "terrorism.support",
+   "terrorism.instruction",
+   "violence.gore",
+   "violence.incitement",
+   "drugs.promotion",
+   "sexual.nudity",
+   "sexual.indecent_profane"
+  ],
+  "exceptions": [
+   "A determination of basic online safety expectations does not impose a duty that is enforceable by proceedings in a court (s45(4))",
+   "Section 104 provides exemptions for abhorrent violent conduct material (s46 Note 2)"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not enforceable in court; Commissioner may issue and publish a statement that the provider contravened the expectations (s48(2))",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s63A",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 77,
+  "section": "Section 63A (Part 4A—Social media minimum age)",
+  "verbatim_text": "Providers of certain kinds of social media platforms must take reasonable steps to prevent children who have not reached a minimum age from having accounts. This requirement takes effect on a day specified by the Minister.",
+  "summary": "Providers of age-restricted social media platforms must take reasonable steps to stop children under the minimum age from having accounts, to reduce the risk of harm to them.",
+  "targets": [
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "Services listed in s63C(6) are not age-restricted social media platforms"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "takes effect on a day specified by the Minister",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s63D",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 80,
+  "section": "Section 63D",
+  "verbatim_text": "63D Civil penalty for failing to take reasonable steps to prevent age-restricted users having accounts A provider of an age-restricted social media platform must take reasonable steps to prevent age-restricted users having accounts with the age-restricted social media platform. Civil penalty: 30,000 penalty units.",
+  "summary": "Providers of age-restricted social media platforms must take reasonable steps to stop age-restricted (under-minimum-age) users from having accounts, so children cannot hold accounts on these platforms.",
+  "targets": [
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "Section 63D does not apply to the provider if, because of legislative rules made for the purposes of section 63DA(1), there are no reasonable steps that the provider could take in order to comply with section 63D (s63DA(3))",
+   "Services are excluded if none of the material on the service is accessible to, or delivered to, end-users in Australia, or if the service is specified in the legislative rules (s63C(6))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "civil_penalty",
+   "timeframe": "Takes effect on a day the Minister specifies by notifiable instrument, no later than 12 months after section 63E commences; applies to all accounts existing on or after that day, including accounts created earlier (s63E)",
+   "penalty": "30,000 penalty units"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s65(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 88,
+  "section": "Section 65(1)",
+  "verbatim_text": "(e) the Commissioner is satisfied that the material is or was cyber-bullying material targeted at an Australian child; the Commissioner may give the provider of the service a written notice (a removal notice) requiring the provider to: (f) remove the material from the service; and (g) do so within: (i) 24 hours after the removal notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "If a social media service, relevant electronic service or designated internet service gets a complaint about cyber-bullying material targeted at an Australian child and does not remove it within 48 hours, the eSafety Commissioner can order the service to remove it within 24 hours.",
+  "targets": [
+   "harassment.bullying",
+   "harassment.threats",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "The Commissioner can only give the notice if the material was first reported to the provider and not removed within 48 hours after the complaint (or a longer period the Commissioner allows), and a complaint was also made to the Commissioner under section 30."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within 24 hours after the removal notice was given, or such longer period as the Commissioner allows",
+   "penalty": "civil penalty under ss67 and 162 (500 penalty units for non-compliance under s67); infringement notices, enforceable undertakings and injunctions also available"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s66(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 89,
+  "section": "Section 66(1)",
+  "verbatim_text": "(f) the material is hosted by a hosting service provider; the Commissioner may give the hosting service provider a written notice, to be known as a removal notice, requiring the provider to: (g) take all reasonable steps to cease hosting the material; and (h) do so within: (i) 24 hours after the notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "A hosting service provider that hosts cyber-bullying material targeted at an Australian child can be ordered by the eSafety Commissioner to stop hosting it within 24 hours, once the platform has failed to remove it within 48 hours of a complaint.",
+  "targets": [
+   "harassment.bullying",
+   "harassment.threats",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "The notice can only be given if the material was reported to the service provider and not removed within 48 hours after the complaint (or a longer period the Commissioner allows), and a complaint was also made to the Commissioner under section 30."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within 24 hours after the notice was given, or such longer period as the Commissioner allows",
+   "penalty": "civil penalty of 500 penalty units for non-compliance under s67"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s67",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 89,
+  "section": "Section 67",
+  "verbatim_text": "67 Compliance with removal notice A person must comply with a requirement under a removal notice given under section 65 or 66 to the extent that the person is capable of doing so.",
+  "summary": "Online service providers and hosting providers must comply with eSafety removal notices about cyber-bullying material targeted at an Australian child, to the extent they are capable of doing so.",
+  "targets": [
+   "harassment.bullying",
+   "harassment.threats",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "The duty applies only to the extent that the person is capable of complying."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "within the period set by the removal notice (24 hours or a longer period the Commissioner allows)",
+   "penalty": "Civil penalty: 500 penalty units; the Commissioner may also issue a formal warning (s68)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s77(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 96,
+  "section": "Section 77(1)",
+  "verbatim_text": "(d) the provision of the intimate image on the service is not an exempt provision of the intimate image; the Commissioner may give the provider of the service a written notice, to be known as a removal notice, requiring the provider to: (e) take all reasonable steps to ensure the removal of the intimate image from the service; and (f) do so within: (i) 24 hours after the notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "The eSafety Commissioner can order a social media service, relevant electronic service or designated internet service to take all reasonable steps to remove an intimate image of a person posted without consent within 24 hours.",
+  "targets": [
+   "sexual.non_consensual_imagery",
+   "sexual.nudity",
+   "privacy.covert_recording"
+  ],
+  "exceptions": [
+   "The notice cannot be given if posting the intimate image on the service is an exempt provision of the intimate image.",
+   "When the notice follows a section 32 complaint, the Commissioner must be satisfied that the person did not consent to the image being posted on the service."
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within 24 hours after the notice was given, or such longer period as the Commissioner allows",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s79(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 99,
+  "section": "Section 79(1)",
+  "verbatim_text": "(f) take all reasonable steps to cease hosting the intimate image; and (g) do so within: (i) 24 hours after the notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "The eSafety Commissioner may give a hosting service provider a removal notice requiring it to stop hosting a non-consensual intimate image that was posted on a social media, relevant electronic or designated internet service.",
+  "targets": [
+   "sexual.non_consensual_imagery",
+   "sexual.nudity",
+   "privacy.covert_recording"
+  ],
+  "exceptions": [
+   "Applies only if the provision of the intimate image on the service is not an exempt provision of the intimate image",
+   "Where based on a complaint, the Commissioner must be satisfied that the person did not consent to the provision of the image"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within 24 hours after the notice was given to the provider, or such longer period as the Commissioner allows",
+   "penalty": "see section 80: civil penalty of 500 penalty units for non-compliance"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s80",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 99,
+  "section": "Section 80",
+  "verbatim_text": "80 Compliance with removal notice A person must comply with a requirement under a removal notice given under section 77, 78 or 79 to the extent that the person is capable of doing so. Civil penalty: 500 penalty units.",
+  "summary": "Service providers, hosting providers and end-users must comply with an intimate-image removal notice as far as they are capable of doing so, or face a civil penalty.",
+  "targets": [
+   "sexual.non_consensual_imagery",
+   "sexual.nudity",
+   "privacy.covert_recording"
+  ],
+  "exceptions": [
+   "Only to the extent that the person is capable of doing so"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "not specified on this page",
+   "penalty": "Civil penalty: 500 penalty units; the Commissioner may also issue a formal warning (s81)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s88(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 105,
+  "section": "Section 88(1)",
+  "verbatim_text": "(i) 48 hours after the complaint was made; or (ii) such longer period as the Commissioner allows; and (e) a complaint has been made to the Commissioner under section 36 about the material; the Commissioner may give the provider of the service a written notice, to be known as a removal notice, requiring the provider to: (f) take all reasonable steps to ensure the removal of the material from the service; and (g) do so within: (i) 24 hours after the notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "If a social media, relevant electronic or designated internet service does not remove cyber-abuse material targeting an Australian adult within 48 hours of a complaint, the Commissioner may order the provider to remove it within 24 hours.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within 24 hours after the notice was given to the provider, or such longer period as the Commissioner allows",
+   "penalty": "see section 91: civil penalty of 500 penalty units for non-compliance"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s90(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 107,
+  "section": "Section 90(1)",
+  "verbatim_text": "(f) the material is hosted by a hosting service provider; the Commissioner may give the hosting service provider a written notice, to be known as a removal notice, requiring the provider to: (g) take all reasonable steps to cease hosting the material; and (h) do so within: (i) 24 hours after the notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "The Commissioner may require a hosting service provider to stop hosting cyber-abuse material targeting an Australian adult that the service did not remove within 48 hours of a complaint.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within 24 hours after the notice was given to the provider, or such longer period as the Commissioner allows",
+   "penalty": "see section 91: civil penalty of 500 penalty units for non-compliance"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s91",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 107,
+  "section": "Section 91",
+  "verbatim_text": "91 Compliance with removal notice A person must comply with a requirement under a removal notice given under section 88, 89 or 90 to the extent that the person is capable of doing so. Civil penalty: 500 penalty units.",
+  "summary": "Service providers, hosting providers and end-users must comply with a removal notice for adult cyber-abuse material as far as they are capable of doing so, or face a civil penalty.",
+  "targets": [
+   "harassment.threats",
+   "harassment.bullying"
+  ],
+  "exceptions": [
+   "Only to the extent that the person is capable of doing so"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "not specified on this page",
+   "penalty": "Civil penalty: 500 penalty units; the Commissioner may also issue a formal warning (s92)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s95(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 110,
+  "section": "Section 95(1)",
+  "verbatim_text": "(b) the Commissioner is satisfied that the material: (i) promotes abhorrent violent conduct; or (ii) incites abhorrent violent conduct; or (iii) instructs in abhorrent violent conduct; or (iv) is material that depicts abhorrent violent conduct; and (c) the Commissioner is satisfied that the availability of the material online is likely to cause significant harm to the Australian community; the Commissioner may give the provider a written request, to be known as a blocking request, requesting the provider to take one or more specified steps to disable access to the material.",
+  "summary": "The eSafety Commissioner may send an internet service provider a blocking request. The request asks the provider to disable access to material that promotes, incites, instructs in or depicts abhorrent violent conduct, where the material is likely to cause significant harm to the Australian community. Steps can include blocking domain names, URLs or IP addresses.",
+  "targets": [
+   "violence.gore",
+   "violence.incitement",
+   "terrorism.support",
+   "terrorism.instruction"
+  ],
+  "exceptions": [
+   "Section 104: does not apply where access to the material is necessary for enforcing a law, monitoring compliance or investigating a contravention, or court or tribunal proceedings",
+   "Section 104: does not apply where access is necessary for, and reasonable for, scientific, medical, academic or historical research",
+   "Section 104: does not apply to a public-interest news or current affairs report made by a professional journalist",
+   "Section 104: does not apply where access is reasonably connected with a public official's duties, or with someone assisting a public official",
+   "Section 104: does not apply where access is reasonable for advocating a lawful change to law, policy or practice",
+   "Section 104: does not apply where access relates to the good-faith development, performance, exhibition or distribution of an artistic work"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block (request)",
+   "timeframe": "request stays in force for the period it specifies, no longer than 3 months (s96); a fresh request may follow",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s99(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 113,
+  "section": "Section 99(1)",
+  "verbatim_text": "(b) the Commissioner is satisfied that the material: (i) promotes abhorrent violent conduct; or (ii) incites abhorrent violent conduct; or (iii) instructs in abhorrent violent conduct; or (iv) is material that depicts abhorrent violent conduct; and (c) the Commissioner is satisfied that the availability of the material online is likely to cause significant harm to the Australian community; the Commissioner may give the provider a written notice, to be known as a blocking notice, requiring the provider to take one or more specified steps to disable access to the material.",
+  "summary": "The eSafety Commissioner may give an internet service provider a blocking notice. The notice requires the provider to disable access to material that promotes, incites, instructs in or depicts abhorrent violent conduct, where the material is likely to cause significant harm to the Australian community. Steps can include blocking domain names, URLs or IP addresses.",
+  "targets": [
+   "violence.gore",
+   "violence.incitement",
+   "terrorism.support",
+   "terrorism.instruction"
+  ],
+  "exceptions": [
+   "Section 104: does not apply where access to the material is necessary for enforcing a law, monitoring compliance or investigating a contravention, or court or tribunal proceedings",
+   "Section 104: does not apply where access is necessary for, and reasonable for, scientific, medical, academic or historical research",
+   "Section 104: does not apply to a public-interest news or current affairs report made by a professional journalist",
+   "Section 104: does not apply where access is reasonably connected with a public official's duties, or with someone assisting a public official",
+   "Section 104: does not apply where access is reasonable for advocating a lawful change to law, policy or practice",
+   "Section 104: does not apply where access relates to the good-faith development, performance, exhibition or distribution of an artistic work"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block",
+   "timeframe": "notice stays in force for the period it specifies, no longer than 3 months (s100); a fresh notice may follow",
+   "penalty": "civil penalty of 500 penalty units for non-compliance (s103)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s103",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 115,
+  "section": "Section 103",
+  "verbatim_text": "103 Compliance with blocking notice A person must comply with a requirement under a blocking notice. Civil penalty: 500 penalty units.",
+  "summary": "An internet service provider that gets a blocking notice for abhorrent violent conduct material must comply with it. Failing to comply carries a civil penalty.",
+  "targets": [
+   "violence.gore",
+   "violence.incitement",
+   "terrorism.support",
+   "terrorism.instruction"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "while the blocking notice is in force (no longer than 3 months)",
+   "penalty": "Civil penalty: 500 penalty units"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s109",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 125,
+  "section": "Section 109(1)",
+  "verbatim_text": "the Commissioner may give the provider of the service a written notice, to be known as a removal notice, requiring the provider to: (e) take all reasonable steps to ensure the removal of the material from the service; and (f) do so within: (i) 24 hours after the notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "If the eSafety Commissioner is satisfied that material on a social media service, relevant electronic service or designated internet service is class 1 material and can be accessed by end-users in Australia, the Commissioner can give the service provider a removal notice requiring it to remove the material within 24 hours.",
+  "targets": [
+   "child.csam",
+   "sexual.obscene",
+   "terrorism.support",
+   "terrorism.instruction",
+   "violence.gore",
+   "violence.incitement",
+   "drugs.promotion"
+  ],
+  "exceptions": [
+   "Does not apply to an exempt Parliamentary content service, exempt court/tribunal content service or exempt official-inquiry content service",
+   "The Commissioner may allow a longer period than 24 hours"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within 24 hours after the notice was given, or such longer period as the Commissioner allows",
+   "penalty": "Civil penalty of 500 penalty units for failing to comply (section 111); the Commissioner may also issue a formal warning (section 112)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s110",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 126,
+  "section": "Section 110(1)",
+  "verbatim_text": "the Commissioner may give the hosting service provider a written notice, to be known as a removal notice, requiring the provider to: (f) take all reasonable steps to cease hosting the material; and (g) do so within: (i) 24 hours after the notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "If class 1 material on a social media, relevant electronic or designated internet service can be accessed in Australia, the Commissioner can give the hosting service provider a removal notice requiring it to stop hosting the material within 24 hours.",
+  "targets": [
+   "child.csam",
+   "sexual.obscene",
+   "terrorism.support",
+   "terrorism.instruction",
+   "violence.gore",
+   "violence.incitement",
+   "drugs.promotion"
+  ],
+  "exceptions": [
+   "Does not apply to an exempt Parliamentary content service, exempt court/tribunal content service or exempt official-inquiry content service",
+   "The Commissioner may allow a longer period than 24 hours"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within 24 hours after the notice was given, or such longer period as the Commissioner allows",
+   "penalty": "Civil penalty of 500 penalty units for failing to comply (section 111); the Commissioner may also issue a formal warning (section 112)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s114",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 128,
+  "section": "Section 114(1)",
+  "verbatim_text": "the Commissioner may give the provider of the service a written notice, to be known as a removal notice, requiring the provider to: (f) take all reasonable steps to ensure the removal of the material from the service; and (g) do so within: (i) 24 hours after the notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "If the Commissioner is satisfied that material on a social media, relevant electronic or designated internet service provided from Australia is class 2 material under paragraphs 107(1)(a) to (e) (e.g. X 18+ sexual content) and can be accessed in Australia, the Commissioner can give the provider a removal notice requiring removal within 24 hours.",
+  "targets": [
+   "sexual.obscene"
+  ],
+  "exceptions": [
+   "Applies only where the service is provided from Australia",
+   "Does not apply to an exempt Parliamentary content service, exempt court/tribunal content service or exempt official-inquiry content service",
+   "The Commissioner may allow a longer period than 24 hours"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within 24 hours after the notice was given, or such longer period as the Commissioner allows",
+   "penalty": "Civil penalty of 500 penalty units for failing to comply (section 116); the Commissioner may also issue a formal warning (section 117)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s115",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 129,
+  "section": "Section 115(1)",
+  "verbatim_text": "the Commissioner may give the hosting service provider a written notice, to be known as a removal notice, requiring the provider to: (g) take all reasonable steps to cease hosting the material; and (h) do so within: (i) 24 hours after the notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "If class 2 material under paragraphs 107(1)(a) to (e) is hosted in Australia by a hosting service provider and can be accessed in Australia, the Commissioner can give the host a removal notice requiring it to stop hosting the material within 24 hours.",
+  "targets": [
+   "sexual.obscene"
+  ],
+  "exceptions": [
+   "Applies only where the material is hosted in Australia",
+   "Does not apply to an exempt Parliamentary content service, exempt court/tribunal content service or exempt official-inquiry content service",
+   "The Commissioner may allow a longer period than 24 hours"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "within 24 hours after the notice was given, or such longer period as the Commissioner allows",
+   "penalty": "Civil penalty of 500 penalty units for failing to comply (section 116); the Commissioner may also issue a formal warning (section 117)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s119",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 132,
+  "section": "Section 119(1)",
+  "verbatim_text": "the Commissioner may give the provider of the service a written notice, to be known as a remedial notice, requiring the provider to: (f) take all reasonable steps to ensure either of the following situations exist in relation to the material: (i) the material is removed from the service; (ii) access to the material is subject to a restricted access system; and (g) do so within: (i) 24 hours after the notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "If class 2 material under paragraphs 107(1)(f) to (l) (e.g. R 18+ content) is on a social media, relevant electronic or designated internet service provided from Australia and can be accessed in Australia, the Commissioner can give the provider a remedial notice requiring it to remove the material or put it behind a restricted access system within 24 hours.",
+  "targets": [
+   "violence.gore",
+   "sexual.nudity",
+   "sexual.indecent_profane",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "Applies only where the service is provided from Australia",
+   "Does not apply to an exempt Parliamentary content service, exempt court/tribunal content service or exempt official-inquiry content service",
+   "The provider may comply by placing the material behind a restricted access system instead of removing it",
+   "The Commissioner may allow a longer period than 24 hours"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown_or_age_restriction",
+   "timeframe": "within 24 hours after the notice was given, or such longer period as the Commissioner allows",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s120(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 133,
+  "section": "Section 120(1)",
+  "verbatim_text": "the Commissioner may give the hosting service provider a written notice, to be known as a remedial notice, requiring the provider to: (g) take all reasonable steps to ensure either of the following situations exist in relation to the material: (i) the service ceases to host the material; (ii) access to the material is subject to a restricted access system; and (h) do so within: (i) 24 hours after the notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "A hosting service provider that hosts class 2 material (paragraphs 107(1)(f)-(l)) in Australia must, on a remedial notice from the eSafety Commissioner, stop hosting the material or put it behind a restricted access system.",
+  "targets": [
+   "violence.gore",
+   "sexual.nudity",
+   "sexual.indecent_profane",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "Does not apply to an exempt Parliamentary content service, exempt court/tribunal content service or exempt official-inquiry content service",
+   "Applies only where the material is hosted in Australia and can be accessed by end-users in Australia",
+   "Putting the material behind a restricted access system is an alternative to removing it"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "takedown_or_restrict_access",
+   "timeframe": "within 24 hours after the notice was given, or such longer period as the Commissioner allows",
+   "penalty": "not specified on this page (see s121: 500 penalty units)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s121",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 134,
+  "section": "Section 121",
+  "verbatim_text": "121 Compliance with remedial notice A person must comply with a requirement under a remedial notice given under section 119 or 120 to the extent that the person is capable of doing so. Civil penalty: 500 penalty units.",
+  "summary": "Service providers and hosting providers must comply with a remedial notice about class 2 material, to the extent they can; failing to do so attracts a civil penalty.",
+  "targets": [
+   "violence.gore",
+   "sexual.nudity",
+   "sexual.indecent_profane",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "Compliance is required only to the extent that the person is capable of doing so"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "civil_penalty",
+   "timeframe": "as set in the remedial notice (24 hours or longer period allowed)",
+   "penalty": "Civil penalty: 500 penalty units; the Commissioner may also issue a formal warning (s122)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s124(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 136,
+  "section": "Section 124(1)",
+  "verbatim_text": "(1) If: (a) a person provides an internet search engine service; and (b) end-users in Australia can access class 1 material using a link provided by the service; the Commissioner may give the provider of the service a written notice, to be known as a link deletion notice, requiring the provider to: (c) cease providing a link to the material using the service; and (d) do so within: (i) 24 hours after the notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "An internet search engine provider must, on a link deletion notice from the eSafety Commissioner, stop providing links to class 1 material that end-users in Australia can access.",
+  "targets": [
+   "child.csam",
+   "sexual.obscene",
+   "terrorism.support",
+   "terrorism.instruction",
+   "violence.gore",
+   "violence.incitement",
+   "drugs.promotion"
+  ],
+  "exceptions": [
+   "The notice may only be given if end-users in Australia could access class 1 material via the service's links 2 or more times in the previous 12 months, and removal notices under section 109 or 110 about that material were given and not complied with (s124(4))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "delist",
+   "timeframe": "within 24 hours after the notice was given, or such longer period as the Commissioner allows",
+   "penalty": "not specified on this page (see s125: 500 penalty units)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s125",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 137,
+  "section": "Section 125",
+  "verbatim_text": "125 Compliance with link deletion notice A person must comply with a requirement under a link deletion notice to the extent that the person is capable of doing so. Civil penalty: 500 penalty units.",
+  "summary": "Search engine providers must comply with a link deletion notice about class 1 material, to the extent they can; failing to do so attracts a civil penalty.",
+  "targets": [
+   "child.csam",
+   "sexual.obscene",
+   "terrorism.support",
+   "terrorism.instruction",
+   "violence.gore",
+   "violence.incitement",
+   "drugs.promotion"
+  ],
+  "exceptions": [
+   "Compliance is required only to the extent that the person is capable of doing so"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "civil_penalty",
+   "timeframe": "as set in the link deletion notice (24 hours or longer period allowed)",
+   "penalty": "Civil penalty: 500 penalty units; the Commissioner may also issue a formal warning (s126)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s128(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 138,
+  "section": "Section 128(1)",
+  "verbatim_text": "the Commissioner may give the provider of the app distribution service a written notice, to be known as an app removal notice, requiring the provider to: (c) cease enabling end-users in Australia to download the app using the service; and (d) do so within: (i) 24 hours after the notice was given to the provider; or (ii) such longer period as the Commissioner allows.",
+  "summary": "An app distribution service must, on an app removal notice from the eSafety Commissioner, stop letting end-users in Australia download an app that facilitates posting class 1 material on social media, electronic or designated internet services.",
+  "targets": [
+   "child.csam",
+   "sexual.obscene",
+   "terrorism.support",
+   "terrorism.instruction",
+   "violence.gore",
+   "violence.incitement",
+   "drugs.promotion"
+  ],
+  "exceptions": [
+   "The notice may only be given if the app could be downloaded to facilitate posting class 1 material 2 or more times in the previous 12 months, and removal notices under section 109 or 110 about that material were given and not complied with (s128(4))"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block",
+   "timeframe": "within 24 hours after the notice was given, or such longer period as the Commissioner allows",
+   "penalty": "not specified on this page (see s129: 500 penalty units)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s129",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 139,
+  "section": "Section 129",
+  "verbatim_text": "129 Compliance with app removal notice A person must comply with a requirement under an app removal notice to the extent that the person is capable of doing so. Civil penalty: 500 penalty units.",
+  "summary": "App distribution service providers must comply with an app removal notice about apps that facilitate posting class 1 material, to the extent they can; failing to do so attracts a civil penalty.",
+  "targets": [
+   "child.csam",
+   "sexual.obscene",
+   "terrorism.support",
+   "terrorism.instruction",
+   "violence.gore",
+   "violence.incitement",
+   "drugs.promotion"
+  ],
+  "exceptions": [
+   "Compliance is required only to the extent that the person is capable of doing so"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "civil_penalty",
+   "timeframe": "as set in the app removal notice (24 hours or longer period allowed)",
+   "penalty": "Civil penalty: 500 penalty units; the Commissioner may also issue a formal warning (s130)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "AU/OSA2021/s75(1)",
+  "country": "AU",
+  "law_id": "OSA2021",
+  "law_title": "Online Safety Act 2021 (Compilation, 11 Dec 2024)",
+  "law_status": "in_force",
+  "source_pdf": "australia_online_safety_act_2021_comp2024-12-11.pdf",
+  "page": 94,
+  "section": "Section 75(1)",
+  "verbatim_text": "A person (the first person) who is an end-user of: (a) a social media service; or (b) a relevant electronic service; or (c) a designated internet service; must not post, or make a threat to post, an intimate image of another person (the second person) on the service if: (d) the first person is ordinarily resident in Australia; or (e) the second person is ordinarily resident in Australia. Civil penalty: 500 penalty units.",
+  "summary": "An end-user of a social media service, relevant electronic service or designated internet service must not post, or threaten to post, an intimate image of another person without that person's consent, where either person is ordinarily resident in Australia.",
+  "targets": [
+   "sexual.non_consensual_imagery",
+   "harassment.threats"
+  ],
+  "exceptions": [
+   "Subsection (1) does not apply if the second person consented to the posting of the intimate image by the first person (s75(2)); the poster bears an evidential burden.",
+   "Subsection (1) does not apply if the image is an intimate image only because it depicts the second person without particular attire of religious or cultural significance, and the poster did not know that the second person consistently wears that attire whenever in public because of their religious or cultural background (s75(3)).",
+   "Subsection (1) does not apply if the resulting provision of the intimate image on the service is (or, for a threat, would be) an exempt provision of the intimate image (s75(4))."
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "civil_penalty",
+   "timeframe": "not specified on this page",
+   "penalty": "500 penalty units (civil penalty); the Commissioner may also issue a formal warning (s76)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ }
+]

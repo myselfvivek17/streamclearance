@@ -1,0 +1,995 @@
+[
+ {
+  "id": "AU/TGACODE2021/s8(1)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 12,
+  "section": "Section 8(1)",
+  "verbatim_text": "(1) An advertisement about therapeutic goods must: (a) be accurate, balanced and not misleading or likely to be misleading; and (b) only contain information that is substantiated by the advertiser prior to publication or dissemination.",
+  "summary": "Anyone advertising therapeutic goods (medicines, devices, supplements), including influencers doing paid promotions, must keep the ad accurate, balanced and not misleading, and must only make claims they have substantiated before publishing.",
+  "targets": [
+   "fraud.deceptive_advertising",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Code does not apply to advertisements directed exclusively to persons mentioned in section 42AA of the Act (e.g. health professionals) (s6(1)(a))",
+   "Code does not apply to an advertisement that is part of, or comprises, a public health campaign (s6(1)(b))",
+   "Code does not apply to genuine news broadcast or published by a broadcaster, datacaster, the SBS or a prescribed newspaper/magazine publisher (s6(3))"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s8(2)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 12,
+  "section": "Section 8(2)",
+  "verbatim_text": "(2) An advertisement about therapeutic goods included in the Register must not be inconsistent with any indication or intended purpose accepted in relation to the inclusion of the goods in the Register.",
+  "summary": "Ads for registered or listed therapeutic goods must not promote uses that go beyond, or differ from, the indications or intended purpose accepted on the Australian Register of Therapeutic Goods.",
+  "targets": [
+   "health.medicine_advertising",
+   "health.cure_claim"
+  ],
+  "exceptions": [
+   "Code does not apply to advertisements directed exclusively to persons mentioned in section 42AA of the Act (s6(1)(a))",
+   "Code does not apply to an advertisement that is part of, or comprises, a public health campaign (s6(1)(b))",
+   "Code does not apply to genuine news broadcast or published by a broadcaster, datacaster, the SBS or a prescribed newspaper/magazine publisher (s6(3))"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s9(1)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 12,
+  "section": "Section 9(1)",
+  "verbatim_text": "(1) An advertisement about therapeutic goods must not contain any statement, pictorial representation or design that, expressly or by implication, represents the goods to be: (a) safe, or without harm or side-effects; or (b) effective in all cases, or a guaranteed cure; or (c) infallible, unfailing, magical or miraculous.",
+  "summary": "Ads for therapeutic goods must not say or imply, in words or images, that the product is safe or has no side effects, works for everyone, is a guaranteed cure, or is miraculous or magical.",
+  "targets": [
+   "health.cure_claim",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "Code does not apply to advertisements directed exclusively to persons mentioned in section 42AA of the Act (s6(1)(a))",
+   "Code does not apply to an advertisement that is part of, or comprises, a public health campaign (s6(1)(b))",
+   "Code does not apply to genuine news broadcast or published by a broadcaster, datacaster, the SBS or a prescribed newspaper/magazine publisher (s6(3))"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s9(2)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 12,
+  "section": "Section 9(2)",
+  "verbatim_text": "(2) An advertisement about therapeutic goods must not: (a) cause, or be likely to cause, undue alarm, fear or distress; or (b) contain a representation to the effect that harmful consequences may result from the therapeutic goods not being used, unless the representation is the subject of an approval given under section 42DF of the Act or a permission made under section 42DK of the Act.",
+  "summary": "Ads for therapeutic goods must not use fear tactics: they must not cause undue alarm or distress, and must not suggest that harm will follow if the viewer does not use the product.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "A representation that harmful consequences may result from not using the goods is allowed if it is the subject of an approval given under section 42DF of the Act or a permission made under section 42DK of the Act",
+   "Code does not apply to an advertisement that is part of, or comprises, a public health campaign (s6(1)(b))",
+   "Code does not apply to genuine news broadcast or published by a broadcaster, datacaster, the SBS or a prescribed newspaper/magazine publisher (s6(3))"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s9(3)(a)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 12,
+  "section": "Section 9(3)(a)",
+  "verbatim_text": "(3) An advertisement about therapeutic goods must not contain any statement, pictorial representation or design that, expressly or by implication: (a) is inconsistent with the label, directions for use, consumer medicine information, instructions for use, or patient information leaflet (as relevant) of the goods; or",
+  "summary": "Ads for therapeutic goods must not show or say anything, directly or by implication, that conflicts with the product's label, directions for use, consumer medicine information, instructions for use or patient leaflet, such as demonstrating off-label use or a different dose.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "Code does not apply to advertisements directed exclusively to persons mentioned in section 42AA of the Act (s6(1)(a))",
+   "Code does not apply to an advertisement that is part of, or comprises, a public health campaign (s6(1)(b))",
+   "Code does not apply to genuine news broadcast or published by a broadcaster, datacaster, the SBS or a prescribed newspaper/magazine publisher (s6(3))"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s9(3)(b)-(e)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 13,
+  "section": "Section 9(3)(b)-(e)",
+  "verbatim_text": "(b) delays or discourages, or is likely to delay or discourage, persons from seeking necessary medical attention; or (c) delays or discourages, or is likely to delay or discourage, persons from undertaking treatment prescribed by a medical practitioner; or (d) exaggerates, or is likely to exaggerate, the efficacy or performance of the goods; or (e) encourages, or is likely to encourage, inappropriate or excessive use of the goods;",
+  "summary": "A therapeutic goods ad, including a paid influencer promotion, must not discourage people from seeking medical attention or prescribed treatment, exaggerate how well the product works, encourage overuse, or compare it with other treatments in a way that suggests those treatments are harmful or ineffective (s9(f)). The opening words of section 9 are on the previous page.",
+  "targets": [
+   "health.medicine_advertising",
+   "health.cure_claim",
+   "fraud.deceptive_advertising",
+   "health.misinformation"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s10",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 13,
+  "section": "Section 10",
+  "verbatim_text": "An advertisement about therapeutic goods must not be inconsistent with a current public health campaign.",
+  "summary": "Ads for medicines, devices, supplements or other therapeutic goods must not contradict a current public health campaign.",
+  "targets": [
+   "health.medicine_advertising",
+   "health.misinformation"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s11(2)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 13,
+  "section": "Section 11(2)",
+  "verbatim_text": "(2) An advertisement about therapeutic goods that makes a scientific or clinical representation must: (a) only contain scientific or clinical terminology that is clearly communicated and able to be readily understood by the audience to whom it is directed; and (b) be consistent with the body of scientific or clinical evidence applicable to the goods.",
+  "summary": "Any scientific or clinical claim in a therapeutic goods ad must be easy for the audience to understand and consistent with the scientific evidence for the product.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "Does not apply to labels, consumer medicine information, instructions for use or patient information leaflets (s11(1))"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s11(3)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 13,
+  "section": "Section 11(3)",
+  "verbatim_text": "(3) An advertisement about therapeutic goods that refers to scientific or clinical research, expressly or by implication, must: (a) identify the researcher; and (b) identify the financial sponsor of the research where the advertiser knows, or ought reasonably to have known, that information; and (c) sufficiently identify the research by proper citation to enable consumers to access that research.",
+  "summary": "A therapeutic goods ad that cites or implies research (e.g. 'clinically proven') must name the researcher, name the sponsor where known, and give a proper citation.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "Does not apply to labels, consumer medicine information, instructions for use or patient information leaflets (s11(1))"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s12(2)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 13,
+  "section": "Section 12(2)",
+  "verbatim_text": "(2) An advertisement about therapeutic goods must not be directed to children aged under 12 years.",
+  "summary": "Ads for therapeutic goods must not be aimed at children under 12.",
+  "targets": [
+   "health.medicine_advertising",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "Does not apply to labels of therapeutic goods (s12(1))"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s12(3)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 14,
+  "section": "Section 12(3)",
+  "verbatim_text": "(3) An advertisement about therapeutic goods may only be directed to children aged 12 years and over if: (a) both of the following are satisfied: (i) the goods are mentioned in an item in Annexure 1; and (ii) the conditions (if any) for that item are met; and (b) the goods do not contain a substance included in Schedule 2, 3, 4 or 8 to the current Poisons Standard.",
+  "summary": "Therapeutic goods ads aimed at children aged 12 and over are allowed only for goods listed in Annexure 1 (with its conditions met) and only if the goods contain no Schedule 2, 3, 4 or 8 poison.",
+  "targets": [
+   "health.medicine_advertising",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "Does not apply to labels of therapeutic goods (s12(1))"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s15",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 15,
+  "section": "Section 15",
+  "verbatim_text": "An advertisement about therapeutic goods consisting of, or containing, a substance included in Schedule 3 and Appendix H of the current Poisons Standard, must contain the following statement, prominently displayed or communicated: ASK YOUR PHARMACIST ABOUT THIS PRODUCT",
+  "summary": "Ads for pharmacist-only medicines (Schedule 3 and Appendix H) must prominently show or say 'ASK YOUR PHARMACIST ABOUT THIS PRODUCT'.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Part 4 does not apply to labels, consumer medicine information, instructions for use, patient information leaflets, or ads consisting only of the name, picture, price or point of sale of the goods that make no therapeutic claim (s14)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s16",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 15,
+  "section": "Section 16",
+  "verbatim_text": "(a) an advertisement about therapeutic goods is published or disseminated to the general public; and (b) the goods are only available for supply through a health professional; then the advertisement must contain the following statement, prominently displayed or communicated: THIS PRODUCT IS NOT AVAILABLE FOR PURCHASE BY THE GENERAL PUBLIC",
+  "summary": "Public ads for therapeutic goods that are only supplied through a health professional must prominently show or say 'THIS PRODUCT IS NOT AVAILABLE FOR PURCHASE BY THE GENERAL PUBLIC'.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Part 4 does not apply to labels, consumer medicine information, instructions for use, patient information leaflets, or ads consisting only of the name, picture, price or point of sale of the goods that make no therapeutic claim (s14)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s17",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 15,
+  "section": "Section 17",
+  "verbatim_text": "An advertisement about therapeutic goods that is a short form advertisement must contain the following statement, prominently displayed or communicated: ALWAYS FOLLOW THE DIRECTIONS FOR USE",
+  "summary": "Short-form ads for therapeutic goods must prominently show or say 'ALWAYS FOLLOW THE DIRECTIONS FOR USE'.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Part 4 does not apply to labels, consumer medicine information, instructions for use, patient information leaflets, or ads consisting only of the name, picture, price or point of sale of the goods that make no therapeutic claim (s14)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s19(1)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 15,
+  "section": "Section 19(1)",
+  "verbatim_text": "An advertisement about a medicine must contain: (a) the name of the medicine within the meaning of TGO 92; and (b) one or more accepted indications for the medicine; and (c) the following statement, prominently displayed or communicated:",
+  "summary": "A medicine ad must state the medicine's name and at least one accepted indication, and must prominently show or say 'ALWAYS READ THE LABEL AND FOLLOW THE DIRECTIONS FOR USE' (the statement itself is on page 16).",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Does not apply to ads covered by Division 2 (ss15-17) (s18)",
+   "Part 4 does not apply to labels, consumer medicine information, instructions for use, patient information leaflets, or ads consisting only of the name, picture, price or point of sale of the goods that make no therapeutic claim (s14)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s19(2)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 16,
+  "section": "Section 19(2)",
+  "verbatim_text": "Note: For paragraphs (a) and (b), an advertisement that facilitates directly the purchase or other supply of a medicine without prior physical inspection includes an advertisement that is published on a website, social media, or a software application, through which a transaction for the medicine may be conducted. then the advertisement must also include: (c) the name of the dosage form within the meaning of TGO 92; and (d) the quantity of the medicine within the meaning of TGO 92; and (e) each active ingredient;",
+  "summary": "A medicine ad through which viewers can buy the product directly (e.g. on social media or a website) must also give the dosage form, quantity, each active ingredient, and the health warnings or a direct link to them.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Does not apply to ads covered by Division 2 (ss15-17) (s18)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s20(1)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 17,
+  "section": "Section 20(1)",
+  "verbatim_text": "(1) An advertisement about a medical device must contain: (a) the trade name of the device; and (b) an accurate description of the device; and (c) one or more accepted intended purposes for the device; and (d) either of the following statements, prominently displayed or communicated: ALWAYS FOLLOW THE DIRECTIONS FOR USE ALWAYS READ THE LABEL AND FOLLOW THE DIRECTIONS FOR USE",
+  "summary": "A medical device ad must give the trade name, an accurate description, at least one accepted intended purpose, and a prominent 'follow the directions for use' statement. Under s20(2), ads where the device can be bought directly must also list any scheduled-poison ingredients and the health warnings or a link to them.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Does not apply to ads covered by Division 2 (ss15-17) (s18)",
+   "Part 4 exclusions in s14"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s21(1)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 18,
+  "section": "Section 21(1)",
+  "verbatim_text": "(1) An advertisement about other therapeutic goods must contain: (a) the trade name of the goods; and (b) an accurate description of the goods; and (c) one or more accepted indications for the goods; and (d) where there is a label on or attached to the goods—the following statement, prominently displayed or communicated:",
+  "summary": "An ad for other therapeutic goods must give the trade name, an accurate description, at least one accepted indication, and the required 'directions for use' statement. Under s21(2), ads where the goods can be bought directly must also list any scheduled-poison ingredients and the health warnings or a link to them.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Does not apply to ads covered by Division 2 (ss15-17) (s18)",
+   "Part 4 exclusions in s14"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s23(1)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 20,
+  "section": "Section 23(1)",
+  "verbatim_text": "An advertisement about an analgesic must contain the following warning statement, prominently displayed or communicated: INCORRECT USE COULD BE HARMFUL",
+  "summary": "Painkiller (analgesic) ads must prominently show or say 'INCORRECT USE COULD BE HARMFUL'.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Part 5 does not apply to labels, consumer medicine information, instructions for use or patient information leaflets (s22)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s23(2)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 20,
+  "section": "Section 23(2)",
+  "verbatim_text": "(2) If an advertisement about a complementary medicine includes one or more claims based on evidence of traditional use, then a statement about the reliance on the traditional use must be prominently displayed or communicated in the advertisement.",
+  "summary": "Ads for complementary medicines such as herbal remedies or supplements that make traditional-use claims must prominently state that the claims rely on traditional use.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "Part 5 does not apply to labels, consumer medicine information, instructions for use or patient information leaflets (s22)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s23(3)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 20,
+  "section": "Section 23(3)",
+  "verbatim_text": "(3) An advertisement about a therapeutic good that is, or contains, a sunscreen and that claims or implies that the sunscreen will prevent sunburn or skin cancer, must: (a) depict sunscreen as being only one component of sun protection; and (b) include statements or visual representations, that are prominently displayed or communicated, to the effect that: (i) prolonged high-risk sun exposure should be avoided; and",
+  "summary": "Sunscreen ads that claim or imply prevention of sunburn or skin cancer must present sunscreen as only one part of sun protection and must prominently say that prolonged high-risk sun exposure should be avoided, among other statements that continue on the next page.",
+  "targets": [
+   "health.medicine_advertising",
+   "health.cure_claim"
+  ],
+  "exceptions": [
+   "Part 5 does not apply to labels, consumer medicine information, instructions for use or patient information leaflets (s22)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s23(4)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 21,
+  "section": "Section 23(4)",
+  "verbatim_text": "(b) must not include any reference or depiction suggesting that the therapeutic goods will correct or reverse the effects of overeating or over-consumption of food or drink; and (c) must not contain visual representations, statistics or testimonials of individuals that are not consistent with the results that would be expected to be achieved on average by consumers of the goods.",
+  "summary": "Ads for weight-management therapeutic goods (weight loss, appetite suppression, size reduction, etc.) must prominently promote a healthy energy-controlled diet and physical activity, must not suggest the product undoes the effects of overeating, and must not show atypical results, statistics or testimonials such as dramatic before/after transformations.",
+  "targets": [
+   "health.medicine_advertising",
+   "health.cure_claim",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s24(2)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 21,
+  "section": "Section 24(2)",
+  "verbatim_text": "(2) A testimonial or endorsement about therapeutic goods must not be inconsistent with: (a) the label for the goods; and (b) the directions for use or the instructions for use for the goods;",
+  "summary": "A testimonial or endorsement of a therapeutic good must not contradict its label, its directions for use, or its accepted indication or intended purpose, for example by claiming uses the product is not approved for.",
+  "targets": [
+   "health.medicine_advertising",
+   "health.cure_claim",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s24(3)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 22,
+  "section": "Section 24(3)",
+  "verbatim_text": "(3) If a testimonial or endorsement about therapeutic goods refers, expressly or by implication, to a health benefit, then the health benefit must be typical of the benefit expected from the goods when used in accordance with the label, the directions for use or instructions for use, and the indication or intended purpose accepted in relation to the inclusion of the goods in the Register (where applicable).",
+  "summary": "Any health benefit described in a testimonial or endorsement of a therapeutic good must be typical of what users can expect, so exaggerated or exceptional personal results are not allowed.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s24(4)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 22,
+  "section": "Section 24(4)",
+  "verbatim_text": "(4) An advertisement about therapeutic goods must not contain a testimonial if the testimonial is made by any of the following: (a) a person who is engaged in the production, marketing or supply of the goods (a relevant person);",
+  "summary": "Ads for therapeutic goods must not include testimonials from anyone involved in producing, marketing or supplying the goods. The Code's note says this includes influencers, direct sellers and anyone paid or otherwise rewarded for the testimonial. The ban also covers testimonials from undisclosed family members of such people, from health professionals and the other bodies listed in s24(6), and from corporations.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "A testimonial by an immediate family member of a relevant person is allowed if the advertisement discloses that relationship"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s24(5)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 22,
+  "section": "Section 24(5)",
+  "verbatim_text": "(5) An advertisement about therapeutic goods must not contain a testimonial, unless the advertiser has verified the content of, and identity of the person making, the testimonial.",
+  "summary": "Ads for therapeutic goods may only use testimonials whose content and author identity the advertiser has verified, so unverified or fabricated reviews are not allowed.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s24(6)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 22,
+  "section": "Section 24(6)",
+  "verbatim_text": "(6) An endorsement about therapeutic goods must not be given, whether expressly or by implication, by any of the following: (a) a government or government authority, unless otherwise permitted by the Act or Regulations; (b) a hospital, or healthcare facility, other than a community pharmacy; (c) employees or contractors of a body mentioned in paragraphs (a) or (b); (d) a current or former health practitioner, health professional or medical researcher;",
+  "summary": "Therapeutic goods must not be endorsed, expressly or by implication, by government bodies, hospitals or healthcare facilities (other than community pharmacies) or their staff, current or former health practitioners, professionals or medical researchers, or anyone presenting themselves as qualified to diagnose, treat or prevent disease. This covers doctor, nurse and 'expert' endorsements in influencer content.",
+  "targets": [
+   "health.medicine_advertising",
+   "fraud.deceptive_advertising"
+  ],
+  "exceptions": [
+   "Government endorsement where otherwise permitted by the Act or Regulations",
+   "Community pharmacies are not covered by the healthcare-facility ban",
+   "An organisation representing healthcare consumers or health practitioners may endorse if the ad discloses its name and whether it has received, or will receive, valuable consideration"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s25(1)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 23,
+  "section": "Section 25(1)",
+  "verbatim_text": "(1) An advertisement about therapeutic goods must not contain or consist of a sample, or an offer of a sample, of therapeutic goods, unless: (a) the goods are mentioned in an item in Annexure 2; and (b) the conditions (if any) for that item are met; and (c) the goods do not contain a substance included in Schedule 2, 3, 4 or 8 to the current Poisons Standard; and (d) in relation to goods included in the Register—the goods are supplied in a pack accepted in relation to the inclusion of the goods.",
+  "summary": "Ads for therapeutic goods must not give away or offer free samples, such as freebies or giveaways of medicines or supplements, unless the goods are listed in Annexure 2, its conditions are met, the goods contain no Schedule 2, 3, 4 or 8 poisons, and registered goods come in their accepted pack.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "A 'buy one, get one free' offer is not a sample if the free goods are the same as the purchased goods",
+   "Samples allowed for goods in Annexure 2 that meet the listed conditions"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s32(1)",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 25,
+  "section": "Section 32(1)",
+  "verbatim_text": "(1) Price information may only be published or disseminated by a retail pharmacy, an agent acting on behalf of a retail pharmacy (including a pharmacy marketing group), or a medical practitioner approved under section 92 of the National Health Act 1953.",
+  "summary": "Only retail pharmacies, their agents and approved medical practitioners may publish prices for registered prescription and pharmacist-only medicines (Schedule 3, 4 or 8). Under s32(3), even they must not publish such prices via radio, TV, pay or streaming services, public displays, billboards or cinema.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Price information published in accordance with Part 9 is authorised for the purposes of subsections 42DL(10) and 42DLB(7) of the Act"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/Annex1",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 29,
+  "section": "Annexure 1—Advertising to children (see section 12)",
+  "verbatim_text": "Therapeutic goods that may be advertised to children aged 12 years and over Column 1 Column 2 Column 3 Item Therapeutic goods Conditions 1 acne preparations 2 anti-dandruff preparations 3 Class I medical devices for the management of chronic conditions under medical supervision 4 cold sore preparations 5 condoms and personal lubricants 6 face masks and gloves for preventing the transmission of diseases between persons 7 hand sanitisers 8 lip balm 9 oral hygiene products, including toothpaste, mouthwash and interdental brushes 10 oral rehydration products",
+  "summary": "This is an exception to the section 12 limits on advertising therapeutic goods to children. Only the listed goods may be advertised to children aged 12 and over. The list covers acne and cold sore preparations, anti-dandruff products, condoms and lubricants, masks and gloves, hand sanitisers, lip balm, oral hygiene and rehydration products, sunscreens above SPF 15, tampons and menstrual cups, and superficial wound dressings.",
+  "targets": [
+   "health.medicine_advertising",
+   "child.harmful_to_minors"
+  ],
+  "exceptions": [
+   "Only the listed goods may be advertised to children aged 12 years and over. The full list also includes item 11, sunscreens with an SPF of more than 15; item 12, tampons and menstrual cups; and item 13, wound care dressings for superficial wounds, including first aid items and antiseptics."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/Annex2",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 30,
+  "section": "Annexure 2—Samples (see section 25)",
+  "verbatim_text": "Therapeutic goods that may be offered as samples Column 1 Column 2 Column 3 Item Therapeutic goods Conditions 1 condoms and personal lubricants 2 continence catheter devices for self-management 3 COVID-19 rapid antigen tests for self-testing 4 disinfectants 5 face masks and gloves for preventing the transmission of disease in persons 6 hand sanitisers 7 lancets and blood glucose strips for use in connection with measuring blood glucose",
+  "summary": "This is an exception to the section 25 limits on offering samples of therapeutic goods in advertising, such as influencer giveaways. Only the listed goods may be offered as samples. The list covers condoms and lubricants, continence and stoma devices, COVID-19 rapid antigen self-tests, disinfectants, masks and gloves, hand sanitisers, blood glucose lancets and strips, oromucosal or transdermal nicotine replacement therapies, oral hygiene and rehydration products, sunscreens, tampons and menstrual cups, and superficial wound dressings.",
+  "targets": [
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "Only the listed goods may be offered as samples. The full list also includes item 8, nicotine replacement therapies given by oromucosal or transdermal means; item 9, oral hygiene products; item 10, oral rehydration products; item 11, stoma devices for self-management; item 12, sunscreens and other goods containing sunscreen; item 13, tampons and menstrual cups; and item 14, wound care dressings for superficial wounds, including first aid items and antiseptics."
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "AU/TGACODE2021/s28",
+  "country": "AU",
+  "law_id": "TGACODE2021",
+  "law_title": "Therapeutic Goods (Therapeutic Goods Advertising Code) Instrument 2021 (Compilation No. 1, 20 Dec 2022)",
+  "law_status": "in_force",
+  "source_pdf": "australia_therapeutic_goods_advertising_code_2021.pdf",
+  "page": 23,
+  "section": "Section 28",
+  "verbatim_text": "28 Restricted representations—serious form of disease, condition, ailment or defect For the purposes of section 42DD of the Act, a form of a disease, condition, ailment or defect is a serious form if: (a) it is medically accepted that the form requires diagnosis or treatment or supervision by a health practitioner who is suitably qualified, except where",
+  "summary": "An advertisement for therapeutic goods that refers to a serious form of a disease, condition, ailment or defect (for example, claims to treat, cure or prevent diabetes or cancer) makes a restricted representation, which the advertiser cannot use without prior approval or permission from the Secretary. A form is serious if it needs diagnosis, treatment or supervision by a qualified health practitioner, or if it has a test that needs medical interpretation or follow-up.",
+  "targets": [
+   "health.cure_claim",
+   "health.medicine_advertising"
+  ],
+  "exceptions": [
+   "A form that has been medically diagnosed and medically accepted as being suitable for self-treatment and management is not a serious form (s28(a))",
+   "Pregnancy is not a serious form, unless it has a medical, obstetric or surgical complication (s28(c))",
+   "The Secretary may approve or permit the use of a restricted representation under sections 42DF and 42DK of the Act (Note 1)",
+   "A restricted representation in the form of a warning or contra-indication that a legislative instrument requires in an advertisement may be used without prior approval, permission or authorisation (Note 3)"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Offences and a civil penalty under sections 42DL and 42DLB of the Therapeutic Goods Act 1989 for advertising therapeutic goods where the advertisement contains a restricted representation; penalty amounts not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ }
+]

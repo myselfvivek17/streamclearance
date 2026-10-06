@@ -1,0 +1,450 @@
+[
+ {
+  "id": "SG/GCA2022/s18(1)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 64,
+  "section": "Section 18(1)",
+  "verbatim_text": "18.—(1) A person must not conduct any betting operation, or conduct gaming or any lottery, unless the person is one of the following: (a) apersongrantedalicenceauthorisingthepersontoprovide a gambling service involving, as the case may be — (i) conducting that betting operation or a betting operation of that kind; (ii) conducting gaming or gaming of that kind; or (iii) conducting that lottery or a lottery of that kind;",
+  "summary": "In Singapore, no one may run a betting operation, gaming or lottery, including a remote or online one, unless they hold a licence, class licence or exemption, or act for such a licensee. A video that runs or facilitates an unlicensed online casino or betting service may fall under this rule.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "A person granted a licence authorising the gambling service involving that betting operation, gaming or lottery",
+   "A class licensee authorised under a class licence to provide that gambling service",
+   "An employee of a licensee or class licensee acting on the employer's behalf in connection with the authorised gambling service",
+   "A gambling service agent (or its employee) of a licensee or class licensee acting on its behalf in connection with the authorised gambling service",
+   "A person exempt from this section for that betting operation, gaming or lottery",
+   "A casino licensee (or an individual on its behalf) conducting the betting operation, gaming or lottery within the casino"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "s18(2)-(6), pages 65-66: fine of up to $500,000 and imprisonment of up to 7 years. A repeat offender faces a fine of up to $700,000 and imprisonment of up to 10 years. Where the conduct is described in s6(2), 8(3) or 10(2), the penalty is a fine of up to $200,000 and imprisonment of up to 5 years (repeat offender: up to $300,000 and 7 years). The offence is arrestable and strict liability applies."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/GCA2022/s19(1)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 66,
+  "section": "Section 19(1)",
+  "verbatim_text": "19.—(1) A person must not conduct any betting operation, or conductanygamingoranylotteryinorfromanyplaceorpremisesin Singaporethat isnot an approvedgambling venue for the conductof that betting operation, gaming or lottery (as the case may be) if the person knows, or ought reasonably to have known, that the place or premises is not an approved gambling venue for the conduct of that betting operation, gaming or lottery.",
+  "summary": "No one may knowingly run a betting operation, gaming or lottery in or from a place or premises in Singapore that is not an approved gambling venue for it.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "This section does not extend to engaging in conduct within a casino or conduct authorised by a class licence (s19(6))."
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "s19(2)-(5), pages 66-67: fine of up to $500,000 and imprisonment of up to 7 years. A repeat offender faces a fine of up to $700,000 and imprisonment of up to 10 years. Where the conduct is described in s6(2), 8(3) or 10(2), the penalty is a fine of up to $200,000 and imprisonment of up to 5 years (repeat offender: up to $300,000 and 7 years). The offence is arrestable."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/GCA2022/s20(1)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 67,
+  "section": "Section 20(1)",
+  "verbatim_text": "20.—(1) An individual (A) commits an offence if — (a) A gambles with another person (B) using a gambling service provided by B; (b) B is providing the gambling service in contravention of section 18(1); and (c) A knows, or ought reasonably to have known, that B is providing the gambling service in contravention of section 18(1).",
+  "summary": "An individual commits an offence by knowingly gambling with an unlicensed gambling service provider, for example by playing on an unlicensed online casino. A video showing the creator gambling on such a service may fall under this rule.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "s20(3)-(4), page 68: fine of up to $10,000, or imprisonment of up to 6 months, or both. The offence is arrestable."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/GCA2022/s20(2)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 68,
+  "section": "Section 20(2)",
+  "verbatim_text": "(2) An individual commits an offence if — (a) the individual gambles withanother person in or from any place or premises in Singapore; and (b) the individual knows, or ought reasonably to have known, that the place or premises is an unlawful gambling place.",
+  "summary": "An individual commits an offence by gambling in or from a place or premises in Singapore that they know, or ought reasonably to know, is an unlawful gambling place.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "Fine of up to $10,000, or imprisonment of up to 6 months, or both (s20(3)). The offence is arrestable (s20(4))."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/GCA2022/s21(1)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 68,
+  "section": "Section 21(1)",
+  "verbatim_text": "21.—(1) A person commits an offence if — (a) the person has a financial interest in a gambling service; and (b) thegamblingserviceisbeingprovidedincontraventionof section 18(1) or 19(1).",
+  "summary": "A person commits an offence by having a financial interest in an unlawful gambling service. A financial interest means an entitlement to receive any of the service's income, which could include an income share earned by promoting an unlicensed gambling service.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "Not guilty if the person proves, on a balance of probabilities, that when acquiring the financial interest they did not know, and had no reasonable cause to suspect, that the gambling service was being or would be provided in contravention of section 18(1) or 19(1), and that as soon as practicable after becoming aware they took all reasonable steps to divest the financial interest (s21(2))."
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "not specified on this page",
+   "timeframe": "not specified on this page",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/GCA2022/s22(1)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 69,
+  "section": "Section 22(1)",
+  "verbatim_text": "22.—(1) A person must not conduct a betting operation involving — (a) theplacing,making,receiving,acceptingornegotiatingof anybetsontheoutcomeofanyrace,competition,sporting eventorothereventorprocesstakingplaceinSingaporeor",
+  "summary": "Prohibits anyone from conducting a betting operation on a race, competition, sporting or other event that is not approved under section 70, or conducting bet-taking, betting exchanges, betting information centres, totalisators or pool betting otherwise than under approved betting rules.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "Section 22(4) is subject to section 22(5), which applies different treatment to a person who contravenes subsection (1) by engaging in conduct described in section 6(2); the rest of subsection (5) continues on the next page"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "On conviction, a fine not exceeding $500,000 and imprisonment for a term not exceeding 7 years. A repeat offender faces a fine not exceeding $700,000 and imprisonment for a term not exceeding 10 years (s22(4))"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/GCA2022/s22(2)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 70,
+  "section": "Section 22(2)",
+  "verbatim_text": "(2) Apersonmustnotconductgaminginvolvingagameofchance (but not a gaming machine game in a gaming machine) — (a) that is not approved under section 70 for that person; or (b) in a manner that is not in conformity with the rules of the game of chance approved under section 70 for that game.",
+  "summary": "Prohibits anyone from conducting gaming on a game of chance, such as casino-style games, that is not approved for them under section 70 or that is run against the approved rules.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [
+   "Does not apply to a gaming machine game in a gaming machine"
+  ],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "On conviction, a fine not exceeding $500,000 and imprisonment for a term not exceeding 7 years. A repeat offender faces a fine not exceeding $700,000 and imprisonment for a term not exceeding 10 years (s22(4))"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/GCA2022/s22(3)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 70,
+  "section": "Section 22(3)",
+  "verbatim_text": "(3) A person must not conduct a lottery — (a) that is not approved under section 70 for that person; or (b) in a manner that is not in conformity with the rules of the lottery approved under section 70 for that lottery.",
+  "summary": "Prohibits anyone from conducting a lottery, including a giveaway-style draw, that is not approved for them under section 70 or that is run against the approved lottery rules.",
+  "targets": [
+   "gambling.unlawful_game"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "On conviction, a fine not exceeding $500,000 and imprisonment for a term not exceeding 7 years. A repeat offender faces a fine not exceeding $700,000 and imprisonment for a term not exceeding 10 years (s22(4))"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/GCA2022/s85(1)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 136,
+  "section": "Section 85(1)-(3)",
+  "verbatim_text": "A person commits an offence if the person advertises any unlawful gambling. (2) A person who is guilty of an offence under subsection (1) shall be liable on conviction to a fine not exceeding $20,000. (3) For the purposes of this Division, a person advertises unlawful gambling if — (a) the person informs the public of any place or any online location where unlawful gambling takes place or will take place or an unlawful gambling service is or is to be provided; (b) the person invites the public — (i) to engage in any unlawful gambling;",
+  "summary": "Anyone who advertises unlawful gambling commits a strict-liability offence. This includes telling the public where unlawful (including online) gambling or gambling services can be found, inviting the public to gamble or commit money, bringing unlawful gambling facilities to people's attention, or publishing gambling ads for unlicensed gambling, such as a video promoting an unlicensed betting or casino site.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "Defence (s86(1)(a)) if the person proves, on a balance of probabilities, that the gambling advertisement was published for or on the direction of a licensee or class licensee",
+   "Defence (s86(1)(b)) if the person proves they act in the course of a business of delivering, transmitting or broadcasting information or making data available, where persons in that business have no control over the nature or content of the material",
+   "Further defences under s86(2) continue beyond this page"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "not specified on this page",
+   "penalty": "Fine not exceeding $20,000 on conviction; strict liability applies (s85(7))"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/GCA2022/s85(5)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 137,
+  "section": "Section 85(5)",
+  "verbatim_text": "(a) the person enters into arrangements (whether by way of sponsorship, brand‑sharing or otherwise) under which a name is displayed in connection with an event or product; and (b) either — (i) the provision of facilities for gambling is the sole or main activity undertaken under that name; or (ii) themannerorcontextinwhichthenameisdisplayed isdesignedtodrawattentiontothefactthatfacilities for gambling are provided under that name.",
+  "summary": "A person who displays a gambling operator's name through sponsorship, brand-sharing or similar deals is treated as advertising unlawful gambling. This applies where gambling is that name's sole or main activity, or where the display is designed to draw attention to its gambling facilities. A creator showing a sponsored gambling brand in a video could be covered.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "Defence (s86(1)(a)) if the advertisement was published for or on the direction of a licensee or class licensee",
+   "Defence (s86(1)(b)) for businesses that only deliver, transmit or broadcast material and have no control over its content"
+  ],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "fine",
+   "timeframe": "not specified on this page",
+   "penalty": "Fine not exceeding $20,000 on conviction under s85(1); strict liability applies (s85(7))"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/GCA2022/s87(1)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 139,
+  "section": "Section 87(1)",
+  "verbatim_text": "87.—(1) Whereany person has advertised or causedadvertising of anyunlawfulgambling(whetherornotanoffenceundersection85is committed by the person), the Authority may order that person to do all or any of the following: (a) to stop the advertising with immediate effect; (b) totakesuchmeasuresasmaybereasonableandnecessary in the circumstances to remove the advertisements that have already been published in Singapore;",
+  "summary": "Anyone who advertises unlawful gambling, or causes it to be advertised, in Singapore can be ordered by the Authority to stop right away and to remove any ads already published, even if they have not committed an offence under section 85.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [],
+  "duty_holder": "advertiser",
+  "consequence": {
+   "kind": "takedown",
+   "timeframe": "stop advertising with immediate effect",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "SG/GCA2022/s117(1)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 178,
+  "section": "Section 117(1)",
+  "verbatim_text": "(b) an online location that is or may be used by individuals present in Singapore to gamble in contravention of section 20(1); (c) an online location that contains an invitation to young persons to gamble in contravention of section 34; or (d) an online location that is otherwise a remote gambling service advertisement published in Singapore in contravention of section 85, the Authority may, after having regard to the matters referred to in subsection(2),directtheIMDAtoordertheinternetserviceprovider to take reasonable steps to disable access to that online location",
+  "summary": "The Authority can have the IMDA order internet service providers to block access to online locations that provide unlawful remote gambling services (s18), are used for unlawful gambling from Singapore (s20(1)), invite young persons to gamble (s34) or are remote gambling advertisements published in Singapore (s85). An ISP that does not comply commits an offence.",
+  "targets": [
+   "gambling.unlawful_game",
+   "gambling.promotion"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block",
+   "timeframe": "not specified on this page",
+   "penalty": "Under s117(6), an ISP that does not comply commits an offence for each online location not blocked. The fine is up to $20,000 for every day the order is not fully complied with, up to a total of $500,000 per offence."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/GCA2022/s117(4)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 180,
+  "section": "Section 117(4)(a)",
+  "verbatim_text": "(a) must send a notice to the owner or operator of the online location (called the relevant online location proprietor), stating the intention to direct the IMDA to issue an access blocking order if the relevant online location proprietor does not, within the prescribed period — (i) stop the invitation on that online location to young persons to gamble in contravention of section 34; or (ii) stop the publishing of a remote gambling service advertisement in contravention of section 85 on that online location;",
+  "summary": "An owner or operator of an online location that invites young persons to gamble or publishes remote gambling advertising gets a notice to stop within the prescribed period. If they do not stop, access to the location is blocked. Under s117(5), no notice is needed if the owner or operator has already failed to comply with a s87(1) order.",
+  "targets": [
+   "gambling.promotion"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block",
+   "timeframe": "within the prescribed period after the notice",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/GCA2022/s118(1)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 181,
+  "section": "Section 118(1)",
+  "verbatim_text": "Where the Authority, after receiving a complaint or on the Authority’s initiative, is satisfied that a person is participating or has participated in any unlawful remote gambling activity, the Authority may, after having regard to the matters referred to in subsection (4) — (a) direct the MAS to give a financial institution a payment blocking order; or (b) give a financial transaction provider a payment blocking order.",
+  "summary": "Financial institutions and financial transaction providers can be ordered to block payments, transfers and credit for people involved in unlawful remote gambling, and to block transactions with gambling merchant category codes. They commit an offence if they do not comply.",
+  "targets": [
+   "gambling.unlawful_game",
+   "gambling.promotion"
+  ],
+  "exceptions": [],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "payment_block",
+   "timeframe": "not specified on this page",
+   "penalty": "Under s118(6), a fine of up to $20,000 for each specified transaction not blocked. The cap is $500,000 per account for orders that specify an account, or $500,000 in total for orders that specify transactions."
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ },
+ {
+  "id": "SG/GCA2022/s119(10)",
+  "country": "SG",
+  "law_id": "GCA2022",
+  "law_title": "Gambling Control Act 2022 (No. 15 of 2022)",
+  "law_status": "in_force",
+  "source_pdf": "singapore_gambling_control_act_2022.pdf",
+  "page": 186,
+  "section": "Section 119(10)",
+  "verbatim_text": "(10) AnapplicationforreviewoftheAuthority’sdecisiondoesnot affect the operation of the decision or prevent the taking of action to implement the decision, and unless otherwise provided by the authorised officer, that decision must be complied with until the determination of the review.",
+  "summary": "Internet service providers, financial institutions and financial transaction providers must keep complying with the Authority's access blocking or payment blocking decision while a review of it is pending. These orders cover online locations offering unlawful remote gambling, inviting young persons to gamble, or carrying unlawful remote gambling advertisements.",
+  "targets": [
+   "gambling.unlawful_game",
+   "gambling.promotion"
+  ],
+  "exceptions": [
+   "Unless otherwise provided by the authorised officer",
+   "Under section 120, no criminal or civil liability is incurred by an internet service provider, financial institution or financial transaction provider for anything done or omitted with reasonable care and in good faith in complying with an access blocking order or payment blocking order"
+  ],
+  "duty_holder": "platform",
+  "consequence": {
+   "kind": "block",
+   "timeframe": "must be complied with until the determination of the review",
+   "penalty": "not specified on this page"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "obligation"
+ }
+]

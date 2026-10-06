@@ -10,7 +10,7 @@ from tests.test_privacy import _analyse, _upload
 
 def test_report_records_provenance(tiny_video, real_provisions):
     with TestClient(app) as client:
-        job = _analyse(client, _upload(client, tiny_video[0])["video_id"], ("MY", "AU"))
+        job = _analyse(client, _upload(client, tiny_video[0])["video_id"], ("MY", "PK"))
     assert job["status"] == "done"
     report = job["report"]
     assert report["disclaimer"] == "Automated pre-check, not legal advice. A person makes the publish decision."
@@ -26,9 +26,9 @@ def test_report_records_provenance(tiny_video, real_provisions):
     assert my["OSA2025"]["provisions"] == sum(p.law_id == "OSA2025" for p in provisions.provisions_for("MY"))
     assert my["OSA2025"]["provisions_built"]
 
-    # AU has no provisions: its rule cards are the law version (drafts)
-    au = [law for law in pv["laws"] if law["country"] == "AU"]
-    assert len(au) == 1 and au[0]["law_id"] == config.COUNTRIES["AU"].source and au[0]["status"] == "draft"
+    # PK has no provisions: its rule cards are the law version (drafts)
+    pk = [law for law in pv["laws"] if law["country"] == "PK"]
+    assert len(pk) == 1 and pk[0]["law_id"] == config.COUNTRIES["PK"].source and pk[0]["status"] == "draft"
 
 
 def test_provenance_model_and_location(monkeypatch):
