@@ -34,6 +34,10 @@ class Law:
     pdf: str  # file name in data/laws/raw
     text: str  # file name in data/laws/text
     label: str | None = None
+    source_url: str | None = None  # where the PDF was downloaded
+    version: str | None = None  # compilation / consolidation the PDF shows
+    sha256: str | None = None  # of the PDF as downloaded (tests check it)
+    replaces: str | None = None  # an earlier text this law supersedes (no longer loaded)
 
     @property
     def key(self) -> str:

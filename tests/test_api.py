@@ -30,7 +30,7 @@ def test_countries_and_pdf():
         cs = client.get("/api/countries").json()
         assert [c["code"] for c in cs] == list(config.COUNTRIES)
         sg = next(c for c in cs if c["code"] == "SG")
-        assert "Bill as introduced" in sg["label"]
+        assert sg["label"] is None and "Act 2025" in sg["law"]
         assert all(c["rules_status"] == "draft/unreviewed" for c in cs)
         pdf = client.get(cs[0]["pdf_url"])
         assert pdf.status_code == 200 and pdf.content[:4] == b"%PDF"
@@ -134,8 +134,8 @@ def test_countries_coverage_fields(real_provisions):
     assert my["coverage"] == "deep" and au["coverage"] == "basic"
     assert my["laws_count"] == len(my["laws"]) == 5
     assert my["provisions_count"] == sum(law["provisions"] for law in my["laws"]) > 0
-    assert au["provisions_count"] == 0 and au["laws_count"] == 1
-    assert sg["bill"] is True and my["bill"] is False
+    assert au["provisions_count"] == 0 and au["laws_count"] == 3
+    assert sg["bill"] is False and my["bill"] is False
     assert all(c["draft"] == (c["rules_status"] != "reviewed") for c in cs.values())
     assert my["laws"][0]["pdf_url"].startswith("/api/laws/MY/")
 
