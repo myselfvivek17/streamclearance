@@ -75,7 +75,8 @@ GOOGLE_APPLICATION_CREDENTIALS=.secrets/gcp-sa.json \
 GOOGLE_CLOUD_PROJECT=booming-entity-510706-e9 SC_PORT=8431 ./run.sh
 ```
 
-- Models: `SC_MODEL_FAST` / `SC_MODEL_SMART`, default `gemini-3.8-flash`. The
+- Models: `SC_MODEL_FAST` / `SC_MODEL_SMART`, default `gemini-3.8-flash`
+  (`gemini-2.5-flash` with `SC_DATA_RESIDENCY=sg`, see below). The
   ADK agents use `SC_MODEL_SMART`; `config.apply_adk_env()` sets
   `GOOGLE_GENAI_USE_VERTEXAI`, `GOOGLE_CLOUD_PROJECT`, `GOOGLE_CLOUD_LOCATION`
   so ADK talks to the same backend.
@@ -87,6 +88,90 @@ GOOGLE_CLOUD_PROJECT=booming-entity-510706-e9 SC_PORT=8431 ./run.sh
   it after the call). AI Studio uses the Files API.
 - Cost: every call (direct and ADK) appends its token counts to
   `jobs/usage.log`; `SC_MAX_CALLS_PER_JOB` (default 40) is a hard cap per job.
+
+## Privacy and data handling
+
+What the app does (details and the data flow: `docs/GOVERNANCE.md`):
+
+- **Video**: deleted as soon as its check ends, whether it finished, failed or
+  was cancelled (`app/jobs.py` `run_job` finally → `app/retention.py`
+  `purge_video`): the file, its meta, anything under `uploads/<id>*`, and the
+  upload-bucket object a large Vertex call used. Uploads never analysed go
+  after `SC_UNUSED_VIDEO_TTL_MIN` (default 60). The report's
+  `privacy.video_deleted_at` records when. The UI plays the browser's own copy
+  of the file; after a reload it shows the timeline without the player.
+- **Reports**: deleted `SC_REPORT_TTL_DAYS` (default 7) after creation, by a
+  sweeper (startup + every 30 min) and lazily on read (404 "This report
+  expired and was deleted"). `DELETE /api/jobs/{id}` ("Delete this report
+  now") deletes the report and everything stored for it at once.
+- **Logs**: ids, sizes, counts, durations, model names and token counts only
+  (`app/logsafe.py`; `tests/test_logs.py` checks a canary phrase never reaches
+  a log line or `jobs/usage.log`).
+- **Upload bucket**: soft delete is off (`retentionDurationSeconds: 0`, set
+  2026-10-05), so deleted objects are gone, not recoverable for 7 days; the
+  lifecycle rule deletes anything left after 1 day.
+
+### What Vertex AI does with prompts (Google's docs, checked 2026-10-05)
+
+- **No training**: "Google won't use your data to train or fine-tune any AI/ML
+  models without your prior permission or instruction" (Service Specific Terms,
+  "Training Restriction").
+  <https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/zero-data-retention>
+- **In-memory caching**: by default Gemini models cache inputs, outputs and
+  derived data in memory (not at rest), isolated per project, with a 24-hour
+  TTL. It can be turned off per project with the `cacheConfig` API (same page).
+- **Abuse monitoring**: if Google's safety classifiers flag a prompt, Google may
+  log it for up to 90 days to check for policy violations (not used for
+  training). Customers under the online Google Cloud Platform Terms of Service
+  (this project) are in scope; zero data retention needs an exception from
+  Google. <https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/abuse-monitoring>
+- Not used here: request-response logging to BigQuery (off by default),
+  Grounding with Google Search/Maps, Live API session resumption, the
+  Interactions API.
+- **Where**: the default location `global` "may be processed in any Google
+  Cloud location around the world, and therefore don't provide any data
+  residency guarantees"; regional endpoints keep ML processing in that
+  region's jurisdiction.
+  <https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/data-residency>,
+  <https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations>
+- Cloud Run request logs (URL with ids, IP address, time) stay in Cloud
+  Logging's `_Default` bucket for 30 days.
+  <https://docs.cloud.google.com/logging/quotas#logs_retention_periods>
+
+**Manual step for zero data retention (not done yet).** On 2026-10-06 the
+project's cache is on (`GET .../cacheConfig` returns no `disableCache`), and
+the app's service account can't change it (403, missing
+`aiplatform.cacheConfigs.update`). Someone with `roles/aiplatform.admin` on the
+project runs:
+
+```bash
+gcloud auth login            # a user with roles/aiplatform.admin
+curl -X PATCH -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+  -H "Content-Type: application/json" \
+  https://us-central1-aiplatform.googleapis.com/v1/projects/booming-entity-510706-e9/cacheConfig \
+  -d '{"name": "projects/booming-entity-510706-e9/cacheConfig", "disableCache": true}'
+# check: the GET returns "disableCache": true (the setting applies to all regions)
+curl -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+  https://us-central1-aiplatform.googleapis.com/v1/projects/booming-entity-510706-e9/cacheConfig
+```
+
+For full zero data retention, also ask Google (support or account team) for
+an abuse-monitoring prompt-logging exception. Until both are done, don't claim
+zero data retention.
+
+### Data residency: `SC_DATA_RESIDENCY=sg`
+
+By default Gemini runs on the `global` endpoint with `gemini-3.8-flash`: no
+residency guarantee. `SC_DATA_RESIDENCY=sg` switches to location
+`asia-southeast1` with `gemini-2.5-flash` (it overrides `GOOGLE_CLOUD_LOCATION`;
+`SC_MODEL_*` still override the model). `gemini-3.8-flash` is not served in
+asia-southeast1 (404; Google lists in-region ML processing for it only in the
+US and EU multi-regions), while `gemini-2.5-flash` (128k context) has ML
+processing in Singapore. Trade-off: everything then stays in Singapore
+(Cloud Run, the upload bucket, RAG Engine already do), but the older model
+is weaker at the video inventory and the legal assessment, so expect more
+misses and more "check manually" moments. The default stays `global` +
+`gemini-3.8-flash`.
 
 ## Law search (Vertex AI RAG Engine)
 

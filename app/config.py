@@ -16,8 +16,18 @@ LAWS_RAW_DIR = DATA_DIR / "laws" / "raw"
 LAWS_TEXT_DIR = DATA_DIR / "laws" / "text"
 RULES_DIR = DATA_DIR / "rules"
 
-SC_MODEL_FAST = os.getenv("SC_MODEL_FAST", "gemini-3.8-flash")
-SC_MODEL_SMART = os.getenv("SC_MODEL_SMART", "gemini-3.8-flash")
+# SC_DATA_RESIDENCY=sg keeps Gemini processing in Singapore: Vertex AI location
+# asia-southeast1 with gemini-2.5-flash, because gemini-3.8-flash is not served
+# there (404). Unset (the default): location `global` (Google picks the region)
+# with gemini-3.8-flash.
+RESIDENCY = {"sg": ("asia-southeast1", "gemini-2.5-flash")}
+DATA_RESIDENCY = os.getenv("SC_DATA_RESIDENCY", "").strip().lower() or None
+if DATA_RESIDENCY is not None and DATA_RESIDENCY not in RESIDENCY:
+    raise ValueError(f"SC_DATA_RESIDENCY must be one of {', '.join(RESIDENCY)} or unset")
+_DEFAULT_MODEL = RESIDENCY[DATA_RESIDENCY][1] if DATA_RESIDENCY else "gemini-3.8-flash"
+
+SC_MODEL_FAST = os.getenv("SC_MODEL_FAST", _DEFAULT_MODEL)
+SC_MODEL_SMART = os.getenv("SC_MODEL_SMART", _DEFAULT_MODEL)
 
 # Local storage root (uploads/ and jobs/ live under it). Swap app/storage.py for GCS later.
 STORAGE_DIR = Path(os.getenv("SC_STORAGE_DIR", str(ROOT)))
@@ -43,6 +53,8 @@ def gcp_project() -> str | None:
 
 
 def vertex_location() -> str:
+    if DATA_RESIDENCY:  # wins over GOOGLE_CLOUD_LOCATION (deploy.sh sets global)
+        return RESIDENCY[DATA_RESIDENCY][0]
     return os.getenv("GCP_VERTEX_LOCATION") or os.getenv("GOOGLE_CLOUD_LOCATION") or "global"
 
 
