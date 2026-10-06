@@ -6,6 +6,7 @@ import contextlib
 import hmac
 import html
 import logging
+import time
 import uuid
 from pathlib import Path
 from urllib.parse import unquote
@@ -210,6 +211,7 @@ async def upload(file: UploadFile):
     except TooLarge as e:
         raise HTTPException(413, str(e)) from e
 
+    t0 = time.perf_counter()
     try:
         duration = media.probe_duration(path)
     except media.UnreadableVideo as e:
@@ -227,6 +229,7 @@ async def upload(file: UploadFile):
         "mime_type": config.VIDEO_TYPES[ext],
         "size_bytes": path.stat().st_size,
         "duration_s": duration,
+        "probe_s": round(time.perf_counter() - t0, 2),
     }
     store.save_video_meta(video_id, meta)
     log.info("upload %s %s %d bytes duration=%s", video_id, ext, meta["size_bytes"], duration)

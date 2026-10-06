@@ -24,7 +24,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any, TypeVar
 
-from app import config
+from app import config, metrics
 
 log = logging.getLogger(__name__)
 
@@ -104,11 +104,14 @@ def count_call(what: str) -> None:
         b.take(what)
 
 
-def log_usage(what: str, model: str, usage: Any) -> None:
-    """Append one call's token counts to jobs/usage.log (usage = genai usage_metadata)."""
+def log_usage(what: str, model: str, usage: Any, *, stage: str | None = None,
+              seconds: float | None = None) -> None:
+    """Append one call's token counts to jobs/usage.log (usage = genai usage_metadata),
+    and count it in the job's metrics under `stage` (default: the current stage)."""
     b = _budget.get()
     tokens = {k: getattr(usage, f"{k}_token_count", None) if usage is not None else None
               for k in ("prompt", "candidates", "thoughts", "total")}
+    metrics.record_call(stage, tokens, seconds)
     line = json.dumps({"ts": time.strftime("%Y-%m-%dT%H:%M:%S"), "job": b.job_id if b else None,
                        "what": what, "model": model, **tokens})
     log.info("gemini usage %s", line)
@@ -123,11 +126,12 @@ def log_usage(what: str, model: str, usage: Any) -> None:
 
 def _generate(client, model: str, contents: Any, cfg: Any, *, what: str):
     count_call(what)
+    t0 = time.perf_counter()
     resp = with_retry(
         lambda: client.models.generate_content(model=model, contents=contents, config=cfg),
         what=what)
     log_usage(what, getattr(resp, "model_version", None) or model,
-              getattr(resp, "usage_metadata", None))
+              getattr(resp, "usage_metadata", None), seconds=time.perf_counter() - t0)
     return resp
 
 

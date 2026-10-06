@@ -18,7 +18,7 @@ from collections.abc import Awaitable, Callable
 from pathlib import Path
 from typing import Any
 
-from app import config, pipeline, provisions, retrieval, taxonomy
+from app import config, metrics, pipeline, provisions, retrieval, taxonomy
 from app.brain import agents, verifier
 from app.brain.agents import MomentAssessment
 from app.schemas import (
@@ -137,7 +137,8 @@ async def run(
             await on_stage("inventory", "running", "")
         if mock:
             await asyncio.sleep(config.mock_delay_s())
-        inv = await asyncio.to_thread(pipeline.stage_a, video_path, duration_s, mock=mock)
+        with metrics.stage("stage_a"):
+            inv = await asyncio.to_thread(pipeline.stage_a, video_path, duration_s, mock=mock)
         state["inventory"] = inv
         tagged = sum(1 for s in inv.segments if s.leaves)
         if on_stage:
@@ -159,12 +160,13 @@ async def run(
                 await on_start(cc)
             inv = state["inventory"]
             try:
-                if mock:
-                    await asyncio.sleep(config.mock_delay_s())
-                if not provisions.has_provisions(cc):
-                    ctx["report"] = await asyncio.to_thread(_legacy_country, inv, cc, mock)
-                    return {"country": cc, "legacy": True}
-                ctx["assessments"], ctx["notes"] = await agents.assess(inv, cc, mock=mock)
+                with metrics.stage(f"assessor:{cc}"):
+                    if mock:
+                        await asyncio.sleep(config.mock_delay_s())
+                    if not provisions.has_provisions(cc):
+                        ctx["report"] = await asyncio.to_thread(_legacy_country, inv, cc, mock)
+                        return {"country": cc, "legacy": True}
+                    ctx["assessments"], ctx["notes"] = await agents.assess(inv, cc, mock=mock)
                 return {"country": cc, "assessments": len(ctx["assessments"])}
             except Exception as e:  # noqa: BLE001 - reported per country
                 return await fail(e)
@@ -172,7 +174,8 @@ async def run(
         async def verify(node_input: dict) -> dict:
             if node_input.get("error") or "report" in ctx:
                 return node_input
-            ctx["verified"] = v = verifier.verify(ctx["assessments"], cc, state["inventory"])
+            with metrics.stage(f"verifier:{cc}"):
+                ctx["verified"] = v = verifier.verify(ctx["assessments"], cc, state["inventory"])
             return {"country": cc, "covered": len(v.covered), "dropped": v.dropped}
 
         async def critic(node_input: dict) -> dict:
@@ -181,7 +184,9 @@ async def run(
             try:
                 if "report" not in ctx:
                     v = ctx["verified"]
-                    verdicts, notes = await agents.critique(v.covered, state["inventory"], cc, mock=mock)
+                    with metrics.stage(f"critic:{cc}"):
+                        verdicts, notes = await agents.critique(v.covered, state["inventory"], cc,
+                                                                mock=mock)
                     kept, removed, changes = agents.apply_verdicts(v.covered, verdicts)
                     ctx["report"] = build_report(cc, state["inventory"], kept, removed, v, changes,
                                                  ctx["notes"] + notes)

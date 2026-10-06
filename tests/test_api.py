@@ -67,6 +67,13 @@ def test_job_lifecycle_end_to_end(tiny_video):
         assert drifts.count("increased") == 1
         assert not next(c for c in report.countries if c.country == "AU").translation
 
+        # per-stage timings in the job JSON
+        t = job["timings"]
+        assert {"upload_probe", "stage_a", "translation", "total"} <= set(t)
+        assert {"assessor:PK", "assessor:SG", "translation:PK/Urdu"} <= set(t)
+        assert all(v >= 0 for v in t.values()) and t["total"] >= t["stage_a"]
+        assert "calls" in job  # mock makes no model calls
+
 
 def test_analyze_validation(tiny_video):
     with TestClient(app) as client:

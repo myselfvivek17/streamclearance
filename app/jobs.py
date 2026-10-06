@@ -16,7 +16,7 @@ import time
 import uuid
 from typing import Any
 
-from app import config, gemini, pipeline, provenance, retention
+from app import config, gemini, metrics, pipeline, provenance, retention
 from app.schemas import CountryReport, Privacy, Report
 from app.storage import get_storage
 
@@ -81,6 +81,9 @@ def _save(job: dict[str, Any]) -> None:
     if store.gone_reason(job["job_id"]):
         return  # deleted while running: never write it back
     job["updated_at"] = time.time()
+    meter = metrics.current()
+    if meter is not None and meter.job_id == job["job_id"]:
+        job["timings"], job["calls"] = meter.snapshot()
     store.save_job(job["job_id"], job)
 
 
@@ -105,6 +108,8 @@ async def run_job(job: dict[str, Any]) -> None:
     store = get_storage()
     mock = job["mock"]
     gemini.job_budget(job["job_id"])  # cost guard: SC_MAX_CALLS_PER_JOB model calls per job
+    meter = metrics.start(job["job_id"])  # per-stage timings and calls -> job["timings"/"calls"]
+    t_job = time.perf_counter()
     job["status"] = "running"
     current = "inventory"
     try:
@@ -112,6 +117,8 @@ async def run_job(job: dict[str, Any]) -> None:
         path = store.video_path(job["video_id"])
         if meta is None or path is None:
             raise FileNotFoundError("uploaded video not found")
+        if meta.get("probe_s") is not None:
+            meter.add_time("upload_probe", meta["probe_s"])
 
         async def on_start(cc: str) -> None:
             _set(job, f"country:{cc}", "running")
@@ -139,7 +146,9 @@ async def run_job(job: dict[str, Any]) -> None:
             _set(job, "inventory", "running")
             if mock:
                 await asyncio.sleep(config.mock_delay_s())
-            inventory = await asyncio.to_thread(pipeline.stage_a, path, meta.get("duration_s"), mock=mock)
+            with metrics.stage("stage_a"):
+                inventory = await asyncio.to_thread(pipeline.stage_a, path, meta.get("duration_s"),
+                                                    mock=mock)
             _set(job, "inventory", "done", f"{len(inventory.segments)} segments")
             current = "countries"
             results = await pipeline.run_countries(
@@ -153,7 +162,8 @@ async def run_job(job: dict[str, Any]) -> None:
         current = "translation"
         if any(config.COUNTRIES[cc].drift_languages and r.findings for cc, r in reports.items()):
             _set(job, "translation", "running")
-            t_errors = await pipeline.run_translation(inventory, reports, mock=mock)
+            with metrics.timed("translation"):
+                t_errors = await pipeline.run_translation(inventory, reports, mock=mock)
             errors += t_errors
             checks = sum(len(r.translation) for r in reports.values())
             _set(job, "translation", "error" if t_errors and not checks else "done",
@@ -196,4 +206,5 @@ async def run_job(job: dict[str, Any]) -> None:
             job["report"]["privacy"]["video_deleted_at"] = deleted_at
         if job["status"] == "running":
             job["status"] = "error"
+        meter.add_time("total", time.perf_counter() - t_job)
         _set(job, "done", "done" if job["status"] == "done" else "error")

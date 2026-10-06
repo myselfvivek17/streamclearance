@@ -9,7 +9,7 @@ import asyncio
 from collections.abc import Callable
 from typing import Any
 
-from app import retrieval
+from app import metrics, retrieval
 from app.schemas import Provision
 
 
@@ -33,7 +33,8 @@ def make_tools(bound: str) -> tuple[Callable[..., dict], Callable[..., dict]]:
         """
         if country.strip().upper() != bound:
             return {"error": f"you assess {bound} only", "provisions": []}
-        hits = retrieval.lookup(bound, leaves)
+        with metrics.timed(f"retrieval:{bound}"):
+            hits = retrieval.lookup(bound, leaves)
         return {"provisions": [provision_view(p) for p in hits]}
 
     async def search_law(country: str, query: str) -> dict:
@@ -49,7 +50,8 @@ def make_tools(bound: str) -> tuple[Callable[..., dict], Callable[..., dict]]:
         if country.strip().upper() != bound:
             return {"error": f"you assess {bound} only", "provisions": []}
         # a network query (RAG Engine): keep it off the event loop the other countries share
-        hits, passages = await asyncio.to_thread(retrieval.search_with_passages, bound, query, 5)
+        with metrics.timed(f"retrieval:{bound}"):
+            hits, passages = await asyncio.to_thread(retrieval.search_with_passages, bound, query, 5)
         return {"provisions": [provision_view(p) for p in hits],
                 "passages": [{"law": x.law, "page": x.page, "snippet": x.snippet} for x in passages]}
 

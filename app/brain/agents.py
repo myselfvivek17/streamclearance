@@ -21,7 +21,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ValidationError
 
-from app import config, gemini, provisions, retrieval
+from app import config, gemini, metrics, provisions, retrieval
 from app.brain.models import adk_model, count_call, log_usage
 from app.brain.tools import make_tools, provision_view
 from app.schemas import Inventory, Risk
@@ -208,11 +208,12 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> tuple[lis
 
 def candidates(country: str, m: dict) -> list[dict]:
     """Path A lookup, topped up with path B search on the moment's words."""
-    hits = retrieval.lookup(country, m["leaves"])
-    query = " ".join([m["transcript"], *m["claims"], m["on_screen_text"]])
-    for p in retrieval.search(country, query, k=3):
-        if p not in hits:
-            hits.append(p)
+    with metrics.timed(f"retrieval:{country}"):
+        hits = retrieval.lookup(country, m["leaves"])
+        query = " ".join([m["transcript"], *m["claims"], m["on_screen_text"]])
+        for p in retrieval.search(country, query, k=3):
+            if p not in hits:
+                hits.append(p)
     return [provision_view(p) for p in hits[: retrieval.MAX_RESULTS]]
 
 

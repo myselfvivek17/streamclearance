@@ -23,7 +23,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field, ValidationError
 
-from app import config, gemini, provisions, taxonomy
+from app import config, gemini, metrics, provisions, taxonomy
 from app.schemas import (
     RISK_ORDER, Category, CountryReport, Drift, DriftCheck, Finding, Inventory, Risk, RuleCard,
     RulesStatus, Segment, Uncovered,
@@ -510,9 +510,10 @@ async def run_translation(
 
     async def one(cc: str, lang: str):
         async with sem:
-            return await asyncio.to_thread(
-                translation_check, inventory, reports[cc], lang, mock=mock,
-                mock_increase=(cc, lang) == first)
+            with metrics.stage(f"translation:{cc}/{lang}"):
+                return await asyncio.to_thread(
+                    translation_check, inventory, reports[cc], lang, mock=mock,
+                    mock_increase=(cc, lang) == first)
 
     results = await asyncio.gather(*(one(cc, lang) for cc, lang in tasks), return_exceptions=True)
     if mock and tasks:
@@ -549,8 +550,9 @@ async def run_countries(
                 cards, status = await asyncio.to_thread(load_cards, cc)
                 if mock:
                     await asyncio.sleep(config.mock_delay_s())
-                report = await asyncio.to_thread(
-                    stage_b, inventory, cc, cards, rules_status=status, mock=mock)
+                with metrics.stage(f"assessor:{cc}"):
+                    report = await asyncio.to_thread(
+                        stage_b, inventory, cc, cards, rules_status=status, mock=mock)
             except Exception as e:  # noqa: BLE001 - reported per country
                 log.error("stage B failed for %s: %s", cc, type(e).__name__)
                 if on_done:
