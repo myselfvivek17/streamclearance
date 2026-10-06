@@ -113,3 +113,30 @@ def test_platform_obligations_attached_not_cited(real_provisions):
     assert not set(duties) & {pid for f in rep.findings for pid in f.rule_card_ids}
     casino = next(f for f in rep.findings if f.leaf == "gambling.promotion")
     assert casino.obligation_ids == []
+
+
+def test_tools_stop_after_the_call_limit(real_provisions):
+    import asyncio
+
+    from app.brain.tools import LIMIT_REACHED, make_tools
+
+    lookup, search = make_tools("MY", max_calls=2)
+    assert lookup("MY", ["gambling.promotion"])["provisions"]
+    assert "error" not in asyncio.run(search("MY", "casino promo code"))
+    assert lookup("MY", ["gambling.promotion"]) == {"error": LIMIT_REACHED, "provisions": []}
+    assert asyncio.run(search("MY", "casino"))["error"] == LIMIT_REACHED
+    assert lookup("IN", ["gambling.promotion"])["error"] == "you assess MY only"
+
+
+def test_assessor_prompt_carries_the_lookup_provisions(real_provisions):
+    from app import retrieval
+    from app.brain import agents
+
+    inv = pipeline.mock_inventory(60)
+    items, provs = agents.prefetch("MY", agents.moments(inv))
+    gamb = next(m for m in items if "gambling.promotion" in m["leaves"])
+    want = [p.id for p in retrieval.lookup("MY", gamb["leaves"])]
+    assert want and gamb["candidate_provision_ids"] == want
+    assert set(want) <= set(provs) and provs[want[0]]["verbatim_text"]
+    prompt = agents._assess_prompt("MY", items, provs)
+    assert "PROVISIONS" in prompt and want[0] in prompt

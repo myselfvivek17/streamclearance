@@ -93,6 +93,7 @@ def stage_a(video_path: Path, duration_s: float | None = None, *, mock: bool | N
         StageADraft,
         model=config.SC_MODEL_FAST,
         system_instruction=STAGE_A_SYSTEM,
+        hedge_after=config.video_hedge_after(duration_s),
     )
     draft = StageADraft.model_validate(raw)
     segments = []

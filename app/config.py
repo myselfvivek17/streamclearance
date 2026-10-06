@@ -40,6 +40,21 @@ VIDEO_TYPES = {".mp4": "video/mp4", ".mov": "video/quicktime", ".webm": "video/w
 # 8 concurrent calls on gemini-3.8-flash (Vertex, global) gave no 429; retries cover the rest.
 GEMINI_CONCURRENCY = int(os.getenv("SC_GEMINI_CONCURRENCY", "8"))
 GEMINI_MAX_RETRIES = int(os.getenv("SC_GEMINI_MAX_RETRIES", "5"))
+# Hedged requests (app/gemini.py `_hedged`): a text call with no answer after
+# SC_HEDGE_AFTER_S seconds is sent again and the first answer wins (0 = off).
+# Stage A waits SC_HEDGE_VIDEO_BASE_S + SC_HEDGE_VIDEO_PER_S * video seconds.
+HEDGE_AFTER_S = float(os.getenv("SC_HEDGE_AFTER_S", "20"))
+HEDGE_VIDEO_BASE_S = float(os.getenv("SC_HEDGE_VIDEO_BASE_S", "15"))
+HEDGE_VIDEO_PER_S = float(os.getenv("SC_HEDGE_VIDEO_PER_S", "0.5"))
+
+
+def video_hedge_after(duration_s: float | None) -> float | None:
+    if HEDGE_AFTER_S <= 0:
+        return None
+    return HEDGE_VIDEO_BASE_S + HEDGE_VIDEO_PER_S * (duration_s or MAX_DURATION_S)
+# Tool calls (lookup_provisions + search_law) per country assessor; the exact-lookup
+# provisions are already in its prompt, so search is rarely needed.
+ASSESSOR_MAX_TOOL_CALLS = int(os.getenv("SC_ASSESSOR_MAX_TOOL_CALLS", "2"))
 # Cap translation-drift checks so a long video can't burn the quota.
 MAX_DRIFT_SEGMENTS = int(os.getenv("SC_MAX_DRIFT_SEGMENTS", "6"))
 

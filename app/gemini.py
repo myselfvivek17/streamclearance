@@ -21,6 +21,7 @@ import threading
 import time
 import uuid
 from collections.abc import Callable
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from pathlib import Path
 from typing import Any, TypeVar
 
@@ -124,15 +125,52 @@ def log_usage(what: str, model: str, usage: Any, *, stage: str | None = None,
         log.warning("could not write %s", USAGE_LOG)
 
 
-def _generate(client, model: str, contents: Any, cfg: Any, *, what: str):
+def _generate(client, model: str, contents: Any, cfg: Any, *, what: str,
+              hedge_after: float | None = None):
     count_call(what)
     t0 = time.perf_counter()
-    resp = with_retry(
-        lambda: client.models.generate_content(model=model, contents=contents, config=cfg),
-        what=what)
+
+    def call():
+        return with_retry(
+            lambda: client.models.generate_content(model=model, contents=contents, config=cfg),
+            what=what)
+
+    resp = _hedged(call, hedge_after, what) if hedge_after else call()
     log_usage(what, getattr(resp, "model_version", None) or model,
               getattr(resp, "usage_metadata", None), seconds=time.perf_counter() - t0)
     return resp
+
+
+def _hedged(call: Callable[[], T], after: float, what: str) -> T:
+    """Run `call`; if it has not answered after `after` seconds, send the same request
+    again and take whichever answers first. Single calls sometimes take 4-5x their
+    usual time (measured: stage A 10-15s usually, 40-70s in about a third of runs), and
+    the slowest call sets the job's time. The duplicate counts against the job's call
+    budget; when the budget is used up, no duplicate is sent."""
+    pool = ThreadPoolExecutor(max_workers=2, thread_name_prefix="gemini-hedge")
+    try:
+        first = pool.submit(contextvars.copy_context().run, call)
+        done, _ = wait([first], timeout=after)
+        if done:
+            return first.result()
+        try:
+            count_call(f"{what} (hedge)")
+        except CallBudgetExceeded:
+            return first.result()
+        log.warning("gemini %s: no answer after %.0fs, sending a hedge request", what, after)
+        metrics.record_hedge()
+        pending = {first, pool.submit(contextvars.copy_context().run, call)}
+        error: BaseException | None = None
+        while pending:
+            done, pending = wait(pending, return_when=FIRST_COMPLETED)
+            for f in done:
+                if f.exception() is None:
+                    return f.result()
+                error = f.exception()
+        assert error is not None
+        raise error
+    finally:
+        pool.shutdown(wait=False)  # the losing request finishes in the background; its answer is dropped
 
 
 def iter_json(text: str):
@@ -221,7 +259,8 @@ def generate_json(
     model = model or config.SC_MODEL_SMART
     cfg = _config(response_schema, system_instruction, temperature, thinking)
     log.info("gemini.generate_json model=%s prompt_chars=%d", model, len(prompt))
-    resp = _generate(_get_client(), model, prompt, cfg, what="generate_json")
+    resp = _generate(_get_client(), model, prompt, cfg, what="generate_json",
+                     hedge_after=config.HEDGE_AFTER_S)
     return _parse(resp, model)
 
 
@@ -236,6 +275,7 @@ def generate_json_with_video(
     temperature: float = 0.2,
     thinking: str | None = None,
     media_resolution: str | None = None,
+    hedge_after: float | None = None,
 ) -> Any:
     """One multimodal call over the whole video (frames and audio) -> JSON.
 
@@ -254,12 +294,13 @@ def generate_json_with_video(
             log.info("gemini.generate_json_with_video model=%s inline %d bytes", model, size)
             part = types.Part.from_bytes(data=video_path.read_bytes(), mime_type=mime_type)
             return _parse(_generate(client, model, [part, prompt], cfg,
-                                    what="generate_json_with_video"), model)
-        return _video_via_gcs(client, video_path, mime_type, prompt, cfg, model)
-    return _video_via_files_api(client, video_path, mime_type, prompt, cfg, model)
+                                    what="generate_json_with_video", hedge_after=hedge_after), model)
+        return _video_via_gcs(client, video_path, mime_type, prompt, cfg, model, hedge_after)
+    return _video_via_files_api(client, video_path, mime_type, prompt, cfg, model, hedge_after)
 
 
-def _video_via_files_api(client, video_path: Path, mime_type: str, prompt: str, cfg, model: str) -> Any:
+def _video_via_files_api(client, video_path: Path, mime_type: str, prompt: str, cfg, model: str,
+                         hedge_after: float | None = None) -> Any:
     log.info("gemini.files.upload %s (%d bytes)", video_path.name, video_path.stat().st_size)
     f = with_retry(
         lambda: client.files.upload(file=str(video_path), config={"mime_type": mime_type}),
@@ -275,7 +316,8 @@ def _video_via_files_api(client, video_path: Path, mime_type: str, prompt: str, 
         if state != "ACTIVE":
             raise RuntimeError(f"Gemini file processing failed (state={state})")
         log.info("gemini.generate_json_with_video model=%s", model)
-        return _parse(_generate(client, model, [f, prompt], cfg, what="generate_json_with_video"), model)
+        return _parse(_generate(client, model, [f, prompt], cfg, what="generate_json_with_video",
+                                hedge_after=hedge_after), model)
     finally:
         try:
             client.files.delete(name=f.name)
@@ -323,7 +365,8 @@ def delete_gcs_objects(video_id: str) -> int:
     return n
 
 
-def _video_via_gcs(client, video_path: Path, mime_type: str, prompt: str, cfg, model: str) -> Any:
+def _video_via_gcs(client, video_path: Path, mime_type: str, prompt: str, cfg, model: str,
+                   hedge_after: float | None = None) -> Any:
     from urllib.parse import quote
 
     from google.genai import types
@@ -343,7 +386,8 @@ def _video_via_gcs(client, video_path: Path, mime_type: str, prompt: str, cfg, m
     try:
         part = types.Part.from_uri(file_uri=f"gs://{bucket}/{name}", mime_type=mime_type)
         log.info("gemini.generate_json_with_video model=%s gcs", model)
-        return _parse(_generate(client, model, [part, prompt], cfg, what="generate_json_with_video"), model)
+        return _parse(_generate(client, model, [part, prompt], cfg, what="generate_json_with_video",
+                                hedge_after=hedge_after), model)
     finally:
         try:
             session.delete(GCS_OBJECT_URL.format(bucket=bucket, name=quote(name, safe="")), timeout=60)

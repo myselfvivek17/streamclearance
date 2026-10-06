@@ -1,7 +1,8 @@
 """The LLM agents of the brain: country assessor and critic (Google ADK `Agent`s).
 
-Assessor: one per country, with tools `lookup_provisions` and `search_law`;
-returns one MomentAssessment per (sensitive moment, leaf). If ADK tool calling
+Assessor: one per country. Its prompt carries the exact-lookup provisions for
+every moment (`prefetch`); tools `lookup_provisions` and `search_law` answer at
+most SC_ASSESSOR_MAX_TOOL_CALLS calls. Returns one MomentAssessment per (sensitive moment, leaf). If ADK tool calling
 fails, it falls back to: retrieval in Python -> one
 JSON call with the retrieved provisions in the prompt. The fallback is noted
 in the report.
@@ -14,6 +15,7 @@ Mock mode: deterministic stand-ins, no network.
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import uuid
@@ -109,14 +111,16 @@ ASSESSOR_INSTRUCTION = """You are the legal assessor for ONE country ({country})
 that warns online video creators which moments of their video may be taken down, \
 geo-blocked or penalised there.
 
-You get the video's sensitive moments, each tagged with content-taxonomy leaves. For EVERY \
-moment and EVERY leaf of it:
-1. Call lookup_provisions(country="{country}", leaves=[...]) to fetch the provisions of \
-{country}'s loaded laws that target that leaf. If nothing fits, you may call \
-search_law(country="{country}", query=...) once with words from the moment.
+You get the video's sensitive moments, each tagged with content-taxonomy leaves, and \
+the provisions of {country}'s loaded laws that target those leaves (already looked up for \
+you: each moment lists its candidate_provision_ids; the provisions' full text is under \
+PROVISIONS). For EVERY moment and EVERY leaf of it:
+1. Use the given provisions. Only if none of them fits a moment, you may call \
+search_law(country="{country}", query=...) with words from the moment; at most \
+{max_calls} tool calls in total, then answer with what you have.
 2. Decide whether a returned provision's verbatim_text REALLY covers this moment. Sharing a \
 broad topic is not enough (a dangerous-drugs provision does not cover a casino promotion). \
-Never cite an id you did not get from a tool. If none fits, covered_by = [] ("not covered \
+Never cite an id that was not given to you or returned by a tool. If none fits, covered_by = [] ("not covered \
 by any loaded law") - that is a valid, honest answer.
 3. Check the provision's exceptions (e.g. education, awareness, news, government \
 advertisement). If one plausibly applies, set exception_applies=true and say why.
@@ -167,9 +171,25 @@ def mock_assess(inventory: Inventory, country: str) -> list[MomentAssessment]:
     return out
 
 
-def _assess_prompt(country: str, ms: list[dict]) -> str:
-    return (f"Country: {country}. Video moments (JSON):\n{json.dumps(ms, ensure_ascii=False)}\n\n"
-            "Assess every (moment, leaf) and reply with the JSON array only.")
+def prefetch(country: str, ms: list[dict]) -> tuple[list[dict], dict[str, dict]]:
+    """Path A lookup for every moment, done here instead of by the agent: saves one
+    model round trip per lookup (each re-sends the whole conversation)."""
+    provs: dict[str, dict] = {}
+    out = []
+    with metrics.timed(f"retrieval:{country}"):
+        for m in ms:
+            hits = retrieval.lookup(country, m["leaves"])
+            for p in hits:
+                provs.setdefault(p.id, provision_view(p))
+            out.append({**m, "candidate_provision_ids": [p.id for p in hits]})
+    return out, provs
+
+
+def _assess_prompt(country: str, ms: list[dict], provs: dict[str, dict] | None = None) -> str:
+    text = f"Country: {country}. Video moments (JSON):\n{json.dumps(ms, ensure_ascii=False)}\n\n"
+    if provs is not None:
+        text += f"PROVISIONS (JSON, by id):\n{json.dumps(provs, ensure_ascii=False)}\n\n"
+    return text + "Assess every (moment, leaf) and reply with the JSON array only."
 
 
 async def assess(inventory: Inventory, country: str, *, mock: bool) -> tuple[list[MomentAssessment], list[str]]:
@@ -181,16 +201,18 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> tuple[lis
         return [], []
     from google.adk import Agent
 
-    lookup_provisions, search_law = make_tools(country)
+    lookup_provisions, search_law = make_tools(country, max_calls=config.ASSESSOR_MAX_TOOL_CALLS)
     fallbacks = retrieval.track_fallbacks()  # law-search errors -> a report note
     agent = Agent(
         name=f"country_assessor_{country}", model=adk_model(),
-        instruction=ASSESSOR_INSTRUCTION.format(country=country),
+        instruction=ASSESSOR_INSTRUCTION.format(country=country,
+                                                max_calls=config.ASSESSOR_MAX_TOOL_CALLS),
         tools=[lookup_provisions, search_law],
         before_model_callback=count_call, after_model_callback=log_usage,
     )
     try:
-        text = await run_agent(agent, _assess_prompt(country, ms))
+        items, provs = await asyncio.to_thread(prefetch, country, ms)
+        text = await run_agent(agent, _assess_prompt(country, items, provs))
         out = _parse_list(text, MomentAssessment)
         if not out:
             raise ValueError("no assessments in the agent's reply")
@@ -218,8 +240,6 @@ def candidates(country: str, m: dict) -> list[dict]:
 
 
 async def _fallback_assess(country: str, ms: list[dict]) -> list[MomentAssessment]:
-    import asyncio
-
     items = await asyncio.to_thread(  # path B may query RAG Engine: off the event loop
         lambda: [{**m, "candidate_provisions": candidates(country, m)} for m in ms])
     prompt = (f"Country: {country}.\nMoments with their candidate provisions (JSON):\n"

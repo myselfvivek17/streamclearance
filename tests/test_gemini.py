@@ -95,3 +95,50 @@ def test_parse_list_skips_prose_id_lists():
             '```json\n[{"start_s": 1, "end_s": 2, "leaf": "health.cure_claim"}]\n```')
     out = _parse_list(text, MomentAssessment)
     assert [a.leaf for a in out] == ["health.cure_claim"]
+
+
+class _SlowFirst:
+    """First request hangs for `first_s`, later ones answer at once."""
+
+    def __init__(self, first_s):
+        import threading
+        self.n, self.first_s, self.lock = 0, first_s, threading.Lock()
+        self.models = self
+
+    def generate_content(self, model, contents, config):
+        import time
+        with self.lock:
+            self.n += 1
+            n = self.n
+        if n == 1:
+            time.sleep(self.first_s)
+        return SimpleNamespace(text=json.dumps({"n": n}), model_version=model, usage_metadata=None)
+
+
+def test_slow_call_is_hedged_and_the_first_answer_wins(tmp_path, monkeypatch):
+    from app import metrics
+
+    monkeypatch.setattr(gemini, "USAGE_LOG", tmp_path / "usage.log")
+    client = _SlowFirst(first_s=1.0)
+    budget = gemini.job_budget("j", limit=5)
+    m = metrics.start("j")
+    with metrics.stage("translation:MY"):
+        resp = gemini._generate(client, "m", "p", None, what="generate_json", hedge_after=0.05)
+    assert json.loads(resp.text) == {"n": 2} and budget.used == 2
+    assert m.snapshot()[1]["translation:MY"]["hedges"] == 1
+
+
+def test_no_hedge_when_fast_or_out_of_budget(tmp_path, monkeypatch):
+    monkeypatch.setattr(gemini, "USAGE_LOG", tmp_path / "usage.log")
+    budget = gemini.job_budget("j", limit=5)
+    resp = gemini._generate(_SlowFirst(first_s=0), "m", "p", None, what="x", hedge_after=1.0)
+    assert json.loads(resp.text) == {"n": 1} and budget.used == 1
+    budget = gemini.job_budget("j", limit=1)  # the duplicate would exceed the budget
+    resp = gemini._generate(_SlowFirst(first_s=0.3), "m", "p", None, what="x", hedge_after=0.05)
+    assert json.loads(resp.text) == {"n": 1} and budget.used == 1
+
+
+def test_video_hedge_scales_with_duration(monkeypatch):
+    assert config.video_hedge_after(26) == pytest.approx(15 + 13)
+    monkeypatch.setattr(config, "HEDGE_AFTER_S", 0)
+    assert config.video_hedge_after(26) is None

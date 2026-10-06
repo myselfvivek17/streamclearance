@@ -23,7 +23,19 @@ def provision_view(p: Provision) -> dict[str, Any]:
     }
 
 
-def make_tools(bound: str) -> tuple[Callable[..., dict], Callable[..., dict]]:
+LIMIT_REACHED = "tool-call limit reached: answer now with the provisions you already have"
+
+
+def make_tools(bound: str, max_calls: int | None = None
+               ) -> tuple[Callable[..., dict], Callable[..., dict]]:
+    """Tools bound to one country; together they answer at most `max_calls` calls
+    (None: no limit), then return an error telling the agent to answer."""
+    used = [0]
+
+    def over_limit() -> bool:
+        used[0] += 1
+        return max_calls is not None and used[0] > max_calls
+
     def lookup_provisions(country: str, leaves: list[str]) -> dict:
         """Provisions of a country's loaded laws that target the given content-taxonomy leaves.
 
@@ -33,6 +45,8 @@ def make_tools(bound: str) -> tuple[Callable[..., dict], Callable[..., dict]]:
         """
         if country.strip().upper() != bound:
             return {"error": f"you assess {bound} only", "provisions": []}
+        if over_limit():
+            return {"error": LIMIT_REACHED, "provisions": []}
         with metrics.timed(f"retrieval:{bound}"):
             hits = retrieval.lookup(bound, leaves)
         return {"provisions": [provision_view(p) for p in hits]}
@@ -49,6 +63,8 @@ def make_tools(bound: str) -> tuple[Callable[..., dict], Callable[..., dict]]:
         """
         if country.strip().upper() != bound:
             return {"error": f"you assess {bound} only", "provisions": []}
+        if over_limit():
+            return {"error": LIMIT_REACHED, "provisions": []}
         # a network query (RAG Engine): keep it off the event loop the other countries share
         with metrics.timed(f"retrieval:{bound}"):
             hits, passages = await asyncio.to_thread(retrieval.search_with_passages, bound, query, 5)

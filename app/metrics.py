@@ -40,6 +40,12 @@ class Meter:
             if seconds is not None:
                 c["model_s"] = round(c["model_s"] + seconds, 2)
 
+    def add_hedge(self, key: str) -> None:
+        with self._lock:
+            c = self.calls.setdefault(key, {"calls": 0, "prompt": 0, "out": 0, "thoughts": 0,
+                                            "model_s": 0.0})
+            c["hedges"] = c.get("hedges", 0) + 1
+
     def snapshot(self) -> tuple[dict[str, float], dict[str, dict[str, Any]]]:
         with self._lock:
             return dict(self.timings), {k: dict(v) for k, v in self.calls.items()}
@@ -73,6 +79,13 @@ def record_call(key: str | None, usage: dict[str, int | None], seconds: float | 
     m = _meter.get()
     if m is not None:
         m.add_call(key or _stage.get() or "other", usage, seconds)
+
+
+def record_hedge(key: str | None = None) -> None:
+    """A duplicate request was sent for a slow call (app/gemini.py `_hedged`)."""
+    m = _meter.get()
+    if m is not None:
+        m.add_hedge(key or _stage.get() or "other")
 
 
 @contextlib.contextmanager
