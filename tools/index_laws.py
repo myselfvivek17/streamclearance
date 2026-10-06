@@ -8,6 +8,10 @@ created if missing) it indexes:
 - the full text of every law in the registry, one document per page
   (data/laws/text/*.json), metadata country, law_id, doc_type=full_text, page.
 
+Only laws with `source_verified: true` in the registry are indexed. Any other law
+is logged and skipped, and its documents are deleted from the corpus if an
+earlier run indexed them (a country left with nothing is emptied, not skipped).
+
 What was uploaded (file name -> content hash + metadata) is recorded in
 data/search_index.json (committed, no secrets), so a re-run only imports new or
 changed documents and deletes removed ones. The file names are the keys the app
@@ -87,7 +91,10 @@ def build_docs(countries: list[str] | None = None) -> dict[str, dict[str, tuple[
     for law in provisions.registry():
         if countries and law.country not in countries:
             continue
-        docs = out.setdefault(law.country, {})
+        docs = out.setdefault(law.country, {})  # even when empty: removes what was indexed
+        if not law.source_verified:
+            log.warning("%s: source not verified, not indexed (removed if it was)", law.key)
+            continue
         for name, text, meta in page_docs(law):
             docs[name] = (text, meta)
     for cc, provs in provisions.all_provisions().items():

@@ -170,6 +170,7 @@ _dryrun_lock = threading.Lock()
 def load_cards(code: str) -> tuple[list[RuleCard], RulesStatus]:
     """Cards derived from provisions if the country has any (data/provisions),
     else a rule-card file if present, else dry-run cards (generated on demand).
+    None at all when the rule-card source law is not verified against its official source.
 
     Drafted provisions/cards carry needs_review=true; a country is only
     "reviewed" once every card has been signed off.
@@ -179,6 +180,10 @@ def load_cards(code: str) -> tuple[list[RuleCard], RulesStatus]:
         cards = provisions.cards_from_provisions(code)
         status = "draft/unreviewed" if any(c.needs_review for c in cards) else "reviewed"
         return cards, status
+    legacy = provisions.legacy_law(code)
+    if legacy is None or not legacy.source_verified:
+        log.warning("%s: rule-card source not verified, no cards", code)
+        return [], "draft/unreviewed"
     if country.rules_path.exists():
         cards = _read_cards(country.rules_path)
         status: RulesStatus = "draft/unreviewed" if any(c.needs_review for c in cards) else "reviewed"
@@ -238,6 +243,10 @@ lower the risk while keeping the creator's intent.
 - Return an empty array if nothing is risky."""
 
 
+UNVERIFIED_NOTE = ("This country's law could not be verified against its official source, "
+                   "so nothing was checked or cited for it.")
+
+
 def worst_risk(findings: list[Finding]) -> Risk:
     return max((f.risk for f in findings), key=RISK_ORDER.__getitem__, default="green")
 
@@ -253,7 +262,10 @@ def stage_b(
     """Inventory + one country's cards -> validated CountryReport."""
     mock = config.mock_mode() if mock is None else mock
     law = config.COUNTRIES[country]
-    raw = _mock_findings(inventory, country, cards) if mock else _gemini_findings(inventory, law, cards)
+    if not cards:  # e.g. the law's source is not verified: nothing may be cited
+        raw = []
+    else:
+        raw = _mock_findings(inventory, country, cards) if mock else _gemini_findings(inventory, law, cards)
 
     parsed: list[Finding] = []
     for item in raw:
@@ -283,6 +295,7 @@ def stage_b(
         cited_cards=[by_id[cid] for cid in cited],
         dropped_findings=len(raw) - len(findings),
         uncovered=uncovered,
+        notes=[] if cards else [UNVERIFIED_NOTE],
     )
 
 

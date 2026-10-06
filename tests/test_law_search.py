@@ -157,3 +157,14 @@ def test_index_docs_and_plan(real_provisions):
     assert delete == ["rf/b", "rf/old"]  # old copy of the changed one, and the removed one
     assert index_laws.plan(desired, recorded | {"b.txt": {"hash": index_laws.content_hash("B2")}},
                            remote | {"c.txt": "rf/c"}) == ([], ["rf/old"])
+
+
+def test_indexer_skips_unverified_laws_and_removes_their_docs(real_provisions):
+    docs = index_laws.build_docs(["IN", "PK"])
+    assert set(docs) == {"IN", "PK"} and docs["PK"] == {}  # PK is synced (emptied), not skipped
+    assert not any(m.get("law_id") == "DMR1954" for _, m in docs["IN"].values())
+    assert any(m.get("law_id") == "PROGA2025" for _, m in docs["IN"].values())
+    recorded = {"t_IN_DMR1954_p002.txt": {"country": "IN", "hash": "x"}}
+    remote = {"t_IN_DMR1954_p002.txt": "ragFiles/1"}
+    up, delete = index_laws.plan(docs["IN"], recorded, remote)
+    assert "ragFiles/1" in delete and "t_IN_DMR1954_p002.txt" not in up

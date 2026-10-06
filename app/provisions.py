@@ -34,9 +34,20 @@ class Law:
     pdf: str  # file name in data/laws/raw
     text: str  # file name in data/laws/text
     label: str | None = None
-    source_url: str | None = None  # where the PDF was downloaded
-    version: str | None = None  # compilation / consolidation the PDF shows
-    sha256: str | None = None  # of the PDF as downloaded (tests check it)
+    source_url: str | None = None  # the exact file downloaded (not a home page)
+    source_page: str | None = None  # the publisher's landing page for the law
+    publisher: str | None = None
+    version: str | None = None  # compilation / as-at / gazette date printed in the document
+    retrieved_at: str | None = None  # date (YYYY-MM-DD) the file was downloaded or re-checked
+    sha256: str | None = None  # of the PDF in data/laws/raw (tests check it)
+    language: str = "en"
+    authoritative_language: str | None = None  # which language text prevails, or "unknown: ..."
+    # True only when the file was matched to the official source (hash or substantially identical
+    # text). Unverified laws are never indexed, retrieved or cited (only listed as sources).
+    source_verified: bool = False
+    text_source: str | None = None  # where the extracted text came from, if not this PDF's text layer
+    superseded_by: str | None = None  # a newer text the publisher issued (not loaded)
+    unverified_reason: str | None = None
     replaces: str | None = None  # an earlier text this law supersedes (no longer loaded)
 
     @property
@@ -66,7 +77,23 @@ def registry() -> list[Law]:
 
 
 def laws_for(country: str) -> list[Law]:
+    """Every law listed for the country, verified or not (for showing sources)."""
     return [law for law in registry() if law.country == country]
+
+
+def verified_laws(country: str | None = None) -> list[Law]:
+    """Laws whose file matches its official source: the only ones checks may use."""
+    return [law for law in registry() if law.source_verified and (country is None or law.country == country)]
+
+
+def is_verified(country: str, law_id: str) -> bool:
+    return any(law.id == law_id for law in verified_laws(country))
+
+
+def legacy_law(country: str) -> Law | None:
+    """The registry entry for a country's legacy rule-card source (config.COUNTRIES[cc].source)."""
+    stem = config.COUNTRIES[country].source
+    return next((law for law in laws_for(country) if law.pdf == f"{stem}.pdf"), None)
 
 
 def get_law(key: str) -> Law:
@@ -89,6 +116,9 @@ def _load_all() -> dict[str, list[Provision]]:
     for law in registry():
         path = law.provisions_path
         if not path.exists():
+            continue
+        if not law.source_verified:
+            log.warning("%s: source not verified, its provisions are not loaded", law.key)
             continue
         items = json.loads(path.read_text(encoding="utf-8"))
         provs = [Provision.model_validate(p) for p in items]
@@ -134,8 +164,15 @@ def law_infos(country: str) -> list[LawInfo]:
     for p in provisions_for(country):
         counts[p.law_id] = counts.get(p.law_id, 0) + 1
     return [LawInfo(id=law.id, title=law.title, status=law.status, label=law.label,
-                    pdf_url=law.pdf_url, provisions=counts.get(law.id, 0))
+                    pdf_url=law.pdf_url, provisions=counts.get(law.id, 0), **source_info(law))
             for law in laws_for(country)]
+
+
+def source_info(law: Law) -> dict:
+    """Where the law's text comes from, as shown in reports and on the country page."""
+    return {"source_url": law.source_url, "source_page": law.source_page, "publisher": law.publisher,
+            "version": law.version, "source_sha256": law.sha256, "source_verified": law.source_verified,
+            "authoritative_language": law.authoritative_language}
 
 
 # ---------------------------------------------------------------- derived rule cards

@@ -78,8 +78,9 @@ def test_real_store_casino_and_diabetes_per_country(real_provisions):
     assert {p.law_id for p in in_casino} >= {"PROGA2025"}
     assert any(p.id in ("IN/PROGA2025/s6", "IN/PROGA2025/s9(2)") for p in in_casino)
     in_cure = retrieval.lookup("IN", ["health.cure_claim"])
-    assert in_cure and in_cure[0].law_id == "DMR1954"
-    assert "diabetes" in " ".join(p.verbatim_text.lower() for p in in_cure)
+    assert not any(p.law_id == "DMR1954" for p in in_cure)  # source not verified: never retrieved
+    my_cure = retrieval.lookup("MY", ["health.cure_claim"])
+    assert my_cure and "diabetes" in " ".join(p.verbatim_text.lower() for p in my_cure)
     for cc in ("MY", "IN"):  # no drug or medicine provision for gambling, and vice versa
         assert not any(t.startswith(("drugs", "health")) for p in retrieval.lookup(cc, ["gambling.promotion"])
                        for t in p.targets)

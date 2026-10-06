@@ -79,29 +79,29 @@ def test_red_country_stays_red_with_increased_drift():
 
 
 def test_real_drift_translates_back_translates_blind_and_judges(monkeypatch):
-    inv, reps = _reports(["PK"])
+    inv, reps = _reports(["IN"])
     calls = []
-    n = len(pipeline.flagged_segments(inv, reps["PK"]))
+    n = len(pipeline.flagged_segments(inv, reps["IN"]))
 
     def fake(prompt, schema, **kw):
         calls.append((prompt, kw))
         if len(calls) == 1:
-            return [{"index": i, "language": "Urdu", "text": f"URDU{i}"} for i in range(n)]
+            return [{"index": i, "language": "Hindi", "text": f"HINDI{i}"} for i in range(n)]
         if len(calls) == 2:
             return [{"index": k, "text": f"BACK{k}"} for k in range(n)]
         return [{"index": 0, "drift": "increased", "explanation": "x"}] + \
                [{"index": k, "drift": "none", "explanation": "y"} for k in range(1, n)]
 
     monkeypatch.setattr(gemini, "generate_json", fake)
-    out = pipeline.translation_check(inv, "PK", ["Urdu"], report=reps["PK"], mock=False)
+    out = pipeline.translation_check(inv, "IN", ["Hindi"], report=reps["IN"], mock=False)
     assert len(calls) == 3
-    assert "Urdu" in calls[0][0] and "fasting" in calls[0][0]
-    assert "fasting" not in calls[1][0] and "URDU0" in calls[1][0]  # blind back-translation
-    assert "Urdu" not in calls[1][0].split("\n", 1)[1]
+    assert "Hindi" in calls[0][0] and "fasting" in calls[0][0]
+    assert "fasting" not in calls[1][0] and "HINDI0" in calls[1][0]  # blind back-translation
+    assert "Hindi" not in calls[1][0].split("\n", 1)[1]
     assert "BACK0" in calls[2][0] and "religious_offence" in calls[2][0]
     assert calls[0][1]["thinking"] == calls[1][1]["thinking"] == "low"
     assert calls[2][1].get("thinking") is None  # the judge keeps the default
-    first = next(d for d in out if d.translated == "URDU0")
+    first = next(d for d in out if d.translated == "HINDI0")
     assert first.drift == "increased" and first.back_translated == "BACK0"
     assert [d.start_s for d in out] == sorted(d.start_s for d in out)  # shown in video order
 

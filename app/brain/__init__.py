@@ -116,7 +116,8 @@ async def assess_country(inventory: Inventory, country: str, *, mock: bool) -> C
 def _legacy_country(inventory: Inventory, country: str, mock: bool) -> CountryReport:
     cards, status = pipeline.load_cards(country)
     rep = pipeline.stage_b(inventory, country, cards, rules_status=status, mock=mock)
-    rep.notes.append("No provisions loaded for this country yet: checked against legacy rule cards.")
+    if cards:
+        rep.notes.append("No provisions loaded for this country yet: checked against legacy rule cards.")
     return rep
 
 

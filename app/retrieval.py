@@ -239,7 +239,8 @@ def _file_search(country: str, query: str, k: int, kind: ProvisionKind | None = 
     by_page: dict[tuple[str, int], list[Provision]] = {}
     for p in by_id.values():
         by_page.setdefault((p.law_id, p.page), []).append(p)
-    titles = {law.id: law.title for law in provisions.laws_for(country)}
+    # Only laws verified against their official source; a stale index entry for any other is ignored.
+    titles = {law.id: law.title for law in provisions.verified_laws(country)}
 
     hits: list[Provision] = []
     passages: list[Passage] = []
@@ -252,6 +253,8 @@ def _file_search(country: str, query: str, k: int, kind: ProvisionKind | None = 
             p = by_id.get(meta.get("provision_id", ""))
             if p and (kind is None or p.kind == kind) and p not in hits:
                 hits.append(p)
+            continue
+        if meta.get("law_id") not in titles:  # a provision of an unverified law is never in by_id
             continue
         page = int(meta.get("page", 0))
         body = c.text.split("\n---\n", 1)[-1]

@@ -99,8 +99,8 @@ def laws_used(country: str) -> list[LawVersion]:
             out.append(LawVersion(
                 country=country, law_id=law.id, title=law.title, legal_status=law.status,
                 status="reviewed" if reviewed else "draft", source_file=law.pdf,
-                source_sha256=file_hash(law.pdf_path), provisions=len(mine),
-                provisions_built=_file_date(law.provisions_path)))
+                provisions=len(mine), provisions_built=_file_date(law.provisions_path),
+                **_source(law, law.pdf_path)))
         return out
     c = config.COUNTRIES[country]
     from app.pipeline import load_cards
@@ -110,8 +110,14 @@ def laws_used(country: str) -> list[LawVersion]:
     return [LawVersion(
         country=country, law_id=c.source, title=c.law, legal_status=None,
         status="reviewed" if status == "reviewed" else "draft", source_file=c.pdf_path.name,
-        source_sha256=file_hash(c.pdf_path), provisions=len(cards),
-        provisions_built=_file_date(cards_path))]
+        provisions=len(cards), provisions_built=_file_date(cards_path),
+        **_source(provisions.legacy_law(country), c.pdf_path))]
+
+
+def _source(law: provisions.Law | None, pdf: Path) -> dict:
+    """Source fields for a LawVersion; the hash is of the file actually read."""
+    info = provisions.source_info(law) if law else {}
+    return {**info, "source_sha256": file_hash(pdf)}
 
 
 def model_info(mock: bool) -> ModelInfo:

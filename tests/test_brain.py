@@ -88,13 +88,19 @@ def test_badge_check_when_only_uncovered():
     assert rep.badge == "check"
 
 
-def test_mock_brain_in_casino_proga_and_diabetes_dmr(real_provisions):
+def test_mock_brain_in_casino_proga_and_diabetes_not_cited_from_unverified_dmr(real_provisions):
     rep = asyncio.run(brain.assess_country(_inv(), "IN", mock=True))
     by_leaf = {f.leaf: f for f in rep.findings}
     assert {pid.split("/")[1] for pid in by_leaf["gambling.promotion"].rule_card_ids} == {"PROGA2025"}
-    assert {pid.split("/")[1] for pid in by_leaf["health.cure_claim"].rule_card_ids} == {"DMR1954"}
+    # DMR 1954's file is not verified against India Code: the cure claim stays uncovered
+    assert "health.cure_claim" not in by_leaf
+    assert any(u.leaf == "health.cure_claim" for u in rep.uncovered)
+    assert not any(p.law_id == "DMR1954" for p in rep.cited_provisions)
     assert not any("drugs" in t for p in rep.cited_provisions for t in p.targets)
-    assert {law.id for law in rep.laws} >= {"ITRULES2021", "PROGA2025", "DMR1954"}
+    laws = {law.id: law for law in rep.laws}
+    assert set(laws) >= {"ITRULES2021", "PROGA2025", "DMR1954"}  # listed as a source, flagged
+    assert laws["DMR1954"].provisions == 0 and not laws["DMR1954"].source_verified
+    assert laws["PROGA2025"].source_verified and laws["PROGA2025"].publisher
 
 
 def test_platform_obligations_attached_not_cited(real_provisions):

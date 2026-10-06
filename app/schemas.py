@@ -100,6 +100,13 @@ class LawInfo(BaseModel):
     label: str | None = None
     pdf_url: str
     provisions: int = 0
+    source_sha256: str | None = None
+    source_url: str | None = None  # the official file the law text was taken from
+    source_page: str | None = None
+    publisher: str | None = None
+    version: str | None = None  # compilation / as-at / gazette date printed in the document
+    source_verified: bool = False  # unverified laws are listed, never cited
+    authoritative_language: str | None = None
 
 
 class _Timed(BaseModel):
@@ -228,6 +235,12 @@ class LawVersion(BaseModel):
     source_sha256: str | None = None  # of the law PDF the provisions were taken from
     provisions: int = 0
     provisions_built: str | None = None  # last commit of the provisions file (ISO 8601)
+    source_url: str | None = None  # the official file the law text was taken from
+    source_page: str | None = None
+    publisher: str | None = None
+    version: str | None = None  # compilation / as-at / gazette date printed in the document
+    source_verified: bool = False  # unverified laws are listed, never cited
+    authoritative_language: str | None = None
 
 
 class ModelInfo(BaseModel):

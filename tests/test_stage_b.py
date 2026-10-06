@@ -7,14 +7,16 @@ from app import config, gemini, pipeline
 from app.schemas import CountryReport, RuleCard
 
 CODES = sorted(config.COUNTRIES)
+UNVERIFIED = {"PK"}  # rule-card source law not verified against its official source
+VERIFIED_CODES = [c for c in CODES if c not in UNVERIFIED]
 
 
-def _card(id, category="religious_offence", applies_to="platform"):
-    return RuleCard(id=id, country="PK", law="PECA", section="s. 26A", page=3, category=category,
+def _card(id, category="religious_offence", applies_to="platform", country="PK"):
+    return RuleCard(id=id, country=country, law="PECA", section="s. 26A", page=3, category=category,
                     conduct="c", applies_to=applies_to, platform_duty="d", penalty="p", quote="q")
 
 
-@pytest.mark.parametrize("code", CODES)
+@pytest.mark.parametrize("code", VERIFIED_CODES)
 def test_mock_stage_b_valid_and_cites_only_own_cards(code):
     cards, status = pipeline.load_cards(code)
     assert cards and status == "draft/unreviewed"
@@ -33,12 +35,26 @@ def test_mock_stage_b_valid_and_cites_only_own_cards(code):
 
 
 def test_reviewed_rules_preferred_over_dryrun():
-    path = config.COUNTRIES["PK"].rules_path
+    path = config.COUNTRIES["AU"].rules_path
+    card = _card("AU-001", country="AU").model_dump(mode="json")
+    path.write_text(json.dumps([card | {"needs_review": False}]))
+    cards, status = pipeline.load_cards("AU")
+    assert [c.id for c in cards] == ["AU-001"] and status == "reviewed"
+    path.write_text(json.dumps([card]))
+    assert pipeline.load_cards("AU")[1] == "draft/unreviewed"
+
+
+@pytest.mark.parametrize("mock", [True, False])
+def test_unverified_source_gives_no_cards_and_no_model_call(monkeypatch, mock):
+    path = config.COUNTRIES["PK"].rules_path  # even a reviewed rule-card file is ignored
     path.write_text(json.dumps([_card("PK-001").model_dump(mode="json") | {"needs_review": False}]))
     cards, status = pipeline.load_cards("PK")
-    assert [c.id for c in cards] == ["PK-001"] and status == "reviewed"
-    path.write_text(json.dumps([_card("PK-001").model_dump(mode="json")]))
-    assert pipeline.load_cards("PK")[1] == "draft/unreviewed"
+    assert cards == [] and status == "draft/unreviewed"
+    assert not config.COUNTRIES["PK"].dryrun_rules_path.exists()
+    monkeypatch.setattr(gemini, "generate_json", lambda *a, **k: pytest.fail("model called"))
+    rep = pipeline.stage_b(pipeline.mock_inventory(60), "PK", cards, rules_status=status, mock=mock)
+    assert rep.findings == [] and rep.cited_cards == [] and rep.overall_risk == "green"
+    assert rep.notes == [pipeline.UNVERIFIED_NOTE] and rep.uncovered
 
 
 def test_real_stage_b_drops_invented_and_foreign_ids(monkeypatch):
