@@ -87,7 +87,7 @@ def build_report(country: str, inventory: Inventory, kept: list[MomentAssessment
         country=country,
         law="; ".join(law.title for law in laws if law.provisions) or config.COUNTRIES[country].law,
         label=None,
-        overall_risk=pipeline.worst_risk(findings),
+        overall_risk=pipeline.overall_risk(findings, checked=bool(provisions.provisions_for(country))),
         findings=findings,
         rules_status="reviewed" if all(p.review.status == "reviewed" for p in provisions.provisions_for(country))
         else "draft/unreviewed",

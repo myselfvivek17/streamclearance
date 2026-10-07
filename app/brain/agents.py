@@ -121,7 +121,9 @@ search_law(country="{country}", query=...) with words from the moment; at most \
 2. Decide whether a returned provision's verbatim_text REALLY covers this moment. Sharing a \
 broad topic is not enough (a dangerous-drugs provision does not cover a casino promotion). \
 Never cite an id that was not given to you or returned by a tool. If none fits, covered_by = [] ("not covered \
-by any loaded law") - that is a valid, honest answer.
+by any loaded law") - that is a valid, honest answer. Its rationale says only which loaded \
+provisions were considered and why they do not fit; never say the creator is safe, not \
+liable, cleared or permitted (other laws may still apply).
 3. Check the provision's exceptions (e.g. education, awareness, news, government \
 advertisement). If one plausibly applies, set exception_applies=true and say why.
 
@@ -139,7 +141,8 @@ FALLBACK_SYSTEM = """You are the legal assessor for one country in a tool that w
 online video creators which moments may be taken down, geo-blocked or penalised. For each \
 moment you get the candidate provisions retrieved for it. Cite ONLY those provision ids, \
 and only when the provision's verbatim_text really covers the moment (sharing a broad \
-topic is not enough). If none fits, covered_by = []. Check each provision's exceptions. \
+topic is not enough). If none fits, covered_by = [] and never say the content is safe, \
+cleared, permitted or carries no liability. Check each provision's exceptions. \
 Return one item per (moment, leaf). risk: red = clearly within; amber = arguable; green = \
 fine. rationale: 1-3 sentences; suggested_fix: a concrete edit."""
 

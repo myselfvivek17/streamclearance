@@ -3,7 +3,7 @@ import asyncio
 from app import brain, pipeline, provisions
 from app.brain import agents, verifier
 from app.brain.agents import CriticVerdict, MomentAssessment
-from app.schemas import CountryReport
+from app.schemas import UNCOVERED_NOTE, CountryReport, reads_like_clearance
 
 
 def _inv():
@@ -157,3 +157,21 @@ def test_country_progress_reports_assess_and_critic_steps(real_provisions):
     inv, results = asyncio.run(brain.run(None, 60, ["MY"], mock=True, on_stage=on_stage))
     steps = [d.split(":")[0] for k, st, d in seen if k == "country:MY" and st == "running"]
     assert steps == ["assess", "critic"]
+
+
+def test_uncovered_note_from_assessor_is_neutral(real_provisions):
+    inv = _inv()
+    casino = _seg(inv, "gambling.promotion")
+    clearance = MomentAssessment(start_s=casino.start_s, end_s=casino.end_s, leaf="gambling.promotion",
+                                 rationale="The creator faces no liability under the loaded legislation.")
+    v = verifier.verify([clearance], "SG", inv)
+    rep = brain.build_report("SG", inv, [], [], v, 0, [])
+    notes = [u.note for u in rep.uncovered if u.leaf == "gambling.promotion"]
+    assert notes == [UNCOVERED_NOTE]
+    assert all(not reads_like_clearance(u.note.removeprefix(UNCOVERED_NOTE)) for u in rep.uncovered)
+    assert rep.overall_risk == "green"  # checked: SG has verified provisions
+
+
+def test_brain_country_without_verified_provisions_is_not_checked(real_provisions):
+    rep = brain.build_report("PK", _inv(), [], [], verifier.Verified(), 0, [])
+    assert rep.overall_risk == "not_checked" and rep.badge == "not_checked"

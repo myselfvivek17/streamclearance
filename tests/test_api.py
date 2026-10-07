@@ -242,3 +242,19 @@ def test_drift_starts_before_the_countries_are_assessed(tiny_video, monkeypatch)
     assert job["status"] == "done"
     assert order[0] == "drift" and order.count("country") == 2
     assert all(c["translation"] for c in job["report"]["countries"])
+
+
+def test_country_without_verified_law_is_not_checked(tiny_video, real_provisions):
+    with TestClient(app) as client:
+        cs = {c["code"]: c for c in client.get("/api/countries").json()}
+        assert cs["PK"]["checked"] is False
+        assert all(cs[cc]["checked"] for cc in ("IN", "AU", "MY", "SG"))
+        video_id = _upload(client, tiny_video[0]).json()["video_id"]
+        job = _wait(client, client.post("/api/analyze", json={
+            "video_id": video_id, "countries": ["SG", "PK"]}).json()["job_id"])
+        assert job["status"] == "done", job
+        by = {c["country"]: c for c in job["report"]["countries"]}
+        assert by["PK"]["overall_risk"] == "not_checked" and by["PK"]["badge"] == "not_checked"
+        assert by["SG"]["overall_risk"] != "not_checked"
+        pk_stage = next(s for s in job["stages"] if s["key"] == "country:PK")
+        assert pk_stage["detail"].startswith("not_checked")

@@ -25,8 +25,8 @@ from pydantic import BaseModel, Field, ValidationError
 
 from app import config, gemini, metrics, provisions, taxonomy
 from app.schemas import (
-    RISK_ORDER, Category, CountryReport, Drift, DriftCheck, Finding, Inventory, Risk, RuleCard,
-    RulesStatus, Segment, Uncovered,
+    RISK_ORDER, Category, CountryReport, Drift, DriftCheck, Finding, Inventory, OverallRisk, Risk,
+    RuleCard, RulesStatus, Segment, Uncovered,
 )
 from app.validate import validate_findings
 
@@ -226,7 +226,8 @@ sections or laws.
 a broad category is NOT enough (e.g. a card about dangerous drugs does not cover a casino \
 promotion; a card about hostility between groups does not cover a false health claim). \
 If no card fits a moment, do NOT flag it: the report lists it separately as "not covered \
-by this law". Never stretch a card to make something fit.
+by this law". Never stretch a card to make something fit. Never say content is safe, \
+cleared, permitted or carries no liability: these cards are not the whole law.
 - The finding's `category` must equal the `category` of at least one cited card. Cards \
 with category "other" (general procedures) may be cited in addition, never alone.
 - A finding covers one moment (start_s/end_s inside the video, taken from the \
@@ -249,6 +250,11 @@ UNVERIFIED_NOTE = ("This country's law could not be verified against its officia
 
 def worst_risk(findings: list[Finding]) -> Risk:
     return max((f.risk for f in findings), key=RISK_ORDER.__getitem__, default="green")
+
+
+def overall_risk(findings: list[Finding], checked: bool) -> OverallRisk:
+    """Green only when the country was checked and nothing was found."""
+    return worst_risk(findings) if checked else "not_checked"
 
 
 def stage_b(
@@ -288,7 +294,7 @@ def stage_b(
         country=country,
         law=law.law,
         label=law.label,
-        overall_risk=worst_risk(findings),
+        overall_risk=overall_risk(findings, checked=bool(cards)),
         findings=findings,
         rules_status=rules_status,
         risk_framing=_risk_framing(findings),

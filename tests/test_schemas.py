@@ -1,7 +1,10 @@
 import pytest
 from pydantic import ValidationError
 
-from app.schemas import Category, CountryReport, Finding, Inventory, Report, RuleCard, Segment
+from app.schemas import (
+    NOT_CHECKED_FRAMING, UNCOVERED_NOTE, Category, CountryReport, Finding, Inventory, Report, RuleCard,
+    Segment, Uncovered,
+)
 
 
 def _card(**kw):
@@ -51,3 +54,35 @@ def test_finding_requires_ordered_timestamps_and_citation():
     with pytest.raises(ValidationError):
         Finding(start_s=0, end_s=1, category="other", rule_card_ids=[],
                 risk="red", suggested_fix="", rationale="")
+
+
+@pytest.mark.parametrize("note", [
+    "The creator faces no liability under the loaded legislation.",
+    "This moment is safe to publish in Singapore.",
+    "Cleared: no provision applies.",
+    "Religious commentary is permitted here.",
+    "There is no risk of an offence.",
+    "The content is lawful and does not violate any loaded law.",
+])
+def test_uncovered_note_never_reads_like_clearance(note):
+    u = Uncovered(start_s=0, end_s=1, category="other", note=note)
+    assert u.note == UNCOVERED_NOTE
+    assert "does not cover" in u.note and "Check it manually" in u.note
+
+
+def test_uncovered_note_keeps_neutral_reason_after_standard_wording():
+    why = "The gambling provisions target operators, not health claims."
+    u = Uncovered(start_s=0, end_s=1, category="other", note=why)
+    assert u.note == f"{UNCOVERED_NOTE} {why}"
+    assert Uncovered.model_validate(u.model_dump()).note == u.note  # idempotent on reload
+    assert Uncovered(start_s=0, end_s=1, category="other").note == UNCOVERED_NOTE
+
+
+def test_not_checked_is_grey_never_green():
+    rep = CountryReport(country="PK", law="x", overall_risk="not_checked",
+                        risk_framing="No moment is covered.")
+    assert rep.badge == "not_checked" and rep.risk_framing == NOT_CHECKED_FRAMING
+    assert CountryReport.model_validate(rep.model_dump()).badge == "not_checked"
+    with pytest.raises(ValidationError):
+        Finding(start_s=0, end_s=1, category="other", rule_card_ids=["X"], risk="not_checked",
+                suggested_fix="", rationale="")

@@ -1,6 +1,7 @@
 """Pydantic models shared by stage A, stage B, rule cards and the report."""
 from __future__ import annotations
 
+import re
 from enum import Enum
 from typing import Literal
 
@@ -9,6 +10,9 @@ from pydantic import BaseModel, Field, computed_field, model_validator
 CountryCode = Literal["IN", "AU", "MY", "SG", "PK"]
 AppliesTo = Literal["platform", "creator", "both"]
 Risk = Literal["red", "amber", "green"]
+# "not_checked": the country had zero verified provisions or rule cards to check against.
+# Green means checked and nothing found; it is never used for a country that was not checked.
+OverallRisk = Literal["red", "amber", "green", "not_checked"]
 RulesStatus = Literal["reviewed", "draft/unreviewed"]
 Drift = Literal["none", "reduced", "increased"]
 LawStatus = Literal["in_force", "bill", "amended", "guideline"]
@@ -16,7 +20,7 @@ DutyHolder = Literal["platform", "creator", "advertiser", "both"]
 # content = says some kind of content is prohibited/harmful (a moment can be "covered by" it);
 # obligation = what a platform must do about such content (duties, takedown, penalties).
 ProvisionKind = Literal["content", "obligation"]
-Badge = Literal["red", "amber", "green", "check"]
+Badge = Literal["red", "amber", "green", "check", "not_checked"]
 
 DISCLAIMER = (
     "Advisory only, not legal advice. Most of these laws place duties on platforms; "
@@ -24,6 +28,32 @@ DISCLAIMER = (
 )
 REPORT_DISCLAIMER = "Automated pre-check, not legal advice. A person makes the publish decision."
 RISK_ORDER: dict[str, int] = {"green": 0, "amber": 1, "red": 2}
+NOT_CHECKED_LABEL = "Not checked: no verified law loaded"
+NOT_CHECKED_FRAMING = ("Not checked: no verified law is loaded for this country, so nothing was "
+                       "checked. This is not a clearance; check the video manually.")
+UNCOVERED_NOTE = "The loaded law library does not cover this moment. Check it manually."
+# Wording that reads like legal clearance. Never allowed in an uncovered / no-finding note:
+# not being covered by the loaded laws says nothing about whether the creator is safe.
+_CLEARANCE = re.compile(
+    r"\b(?:no|not|nor|without|zero|free\s+(?:of|from))\b[\w\s,'-]{0,40}?\b(?:liab\w*|risk\w*|offen[cs]\w*|"
+    r"violat\w*|breach\w*|illegal\w*|unlawful\w*|prohibit\w*|penalt\w*|issues?|problems?|concerns?)\b"
+    r"|\b(?:safe\w*|clear(?:ed|ance|s)?|permitted|permissible|allowed|lawful|legal(?:ly)?|compliant|"
+    r"complies|acceptable|fine|ok(?:ay)?|exempt\w*|harmless)\b",
+    re.IGNORECASE)
+
+
+def reads_like_clearance(text: str) -> bool:
+    return bool(_CLEARANCE.search(text or ""))
+
+
+def neutral_note(text: str) -> str:
+    """The standard neutral wording, unless `text` is a neutral explanation (kept after it)."""
+    text = (text or "").strip()
+    if text.startswith(UNCOVERED_NOTE):
+        text = text[len(UNCOVERED_NOTE):].strip()
+    if not text or reads_like_clearance(text):
+        return UNCOVERED_NOTE
+    return f"{UNCOVERED_NOTE} {text}"
 
 
 class Category(str, Enum):
@@ -181,14 +211,21 @@ class Uncovered(_Timed):
     """A sensitive moment (per stage A) that no provision of this country's law covers."""
     category: Category
     leaf: str | None = None
-    note: str = ""
+    note: str = UNCOVERED_NOTE
+
+    @model_validator(mode="after")
+    def _neutral(self):
+        # Post-processing guard: the note comes from model output (assessor rationale, critic
+        # reason) and must never state or imply that the creator is safe or not liable.
+        self.note = neutral_note(self.note)
+        return self
 
 
 class CountryReport(BaseModel):
     country: CountryCode
     law: str
     label: str | None = None
-    overall_risk: Risk
+    overall_risk: OverallRisk
     findings: list[Finding] = []
     rules_status: RulesStatus = "reviewed"
     risk_framing: str = ""
@@ -206,11 +243,22 @@ class CountryReport(BaseModel):
     critic_changes: int = 0
     notes: list[str] = []
 
+    @model_validator(mode="after")
+    def _no_clearance(self):
+        if self.overall_risk == "not_checked":
+            self.risk_framing = NOT_CHECKED_FRAMING
+        elif not self.findings and reads_like_clearance(self.risk_framing):
+            self.risk_framing = "No moment is covered by a loaded provision of this country's laws."
+        return self
+
     @computed_field
     @property
     def badge(self) -> Badge:
         """Grey "check" instead of green when sensitive moments are simply not covered;
-        at least amber when a line reads riskier once translated for this country."""
+        at least amber when a line reads riskier once translated for this country;
+        grey "not_checked" when there was no verified law to check against."""
+        if self.overall_risk == "not_checked":
+            return "amber" if any(d.drift == "increased" for d in self.translation) else "not_checked"
         if self.overall_risk != "red" and any(d.drift == "increased" for d in self.translation):
             return "amber"
         if self.overall_risk == "green" and self.uncovered:

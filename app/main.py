@@ -171,6 +171,7 @@ def _country(c: config.CountryLaw) -> dict:
         "rules_status": status,
         "pdf_url": f"/api/laws/{c.code}/pdf",
         "coverage": "deep" if deep else "basic",
+        "checked": provisions.checkable(c.code),  # False: no verified law loaded, nothing is checked
         "laws_count": len(laws),
         "provisions_count": sum(law.provisions for law in laws),
         "draft": status != "reviewed",

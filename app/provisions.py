@@ -159,6 +159,13 @@ def has_provisions(country: str) -> bool:
     return bool(all_provisions().get(country))
 
 
+def checkable(country: str) -> bool:
+    """Whether a check has anything verified to check against: provisions, or rule cards
+    from a verified legacy source (app.pipeline.load_cards)."""
+    legacy = legacy_law(country)
+    return has_provisions(country) or bool(legacy and legacy.source_verified)
+
+
 def law_infos(country: str) -> list[LawInfo]:
     counts: dict[str, int] = {}
     for p in provisions_for(country):

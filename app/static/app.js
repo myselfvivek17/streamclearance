@@ -73,6 +73,7 @@ const RISK = {
   amber: { cls: "risk-amber", icon: "warn", verdict: "Fix recommended", level: "Medium risk", word: "Amber", rank: 2, dot: "dot-amber" },
   green: { cls: "risk-green", icon: "okc", verdict: "Looks clear", level: "Clear", word: "Green", rank: 0, dot: "dot-green" },
   grey: { cls: "risk-grey", icon: "help", verdict: "Check manually", level: "Check manually", word: "Check manually", rank: 1, dot: "dot-grey" },
+  not_checked: { cls: "risk-grey", icon: "info", verdict: "Not checked: no verified law loaded", level: "Not checked", word: "Not checked", rank: 1, dot: "dot-grey" },
 };
 const NO_RISK = { cls: "", icon: "", verdict: "", level: "No issues", word: "", rank: -1, dot: "dot-none" };
 const riskMeta = (r) => RISK[r === "check" ? "grey" : r] || NO_RISK;
@@ -465,7 +466,8 @@ async function screenCountries(stale) {
     } });
     const lawsLabel = c.coverage === "deep"
       ? `${plural(c.laws_count, "law")} · ${plural(c.provisions_count, "provision")}`
-      : `${plural(c.laws_count, "law")} · basic rule cards`;
+      : c.checked === false ? `${plural(c.laws_count, "law")} · none verified`
+        : `${plural(c.laws_count, "law")} · basic rule cards`;
     const card = el("label", { class: `ccard ${selected.has(c.code) ? "on" : ""}` },
       box,
       el("div", { class: "row", style: "gap: 12px" },
@@ -473,7 +475,8 @@ async function screenCountries(stale) {
         el("div", { class: "stack grow" }, el("span", { class: "c-name" }, c.name), el("span", { class: "c-laws" }, lawsLabel)),
         el("span", { class: "check-box", "aria-hidden": "true" }, icon("check"))),
       el("div", { class: "tags" },
-        el("span", { class: covCls(c) }, covLabel(c)),
+        c.checked === false ? el("span", { class: "tag risk-grey" }, icon("info"), "Not checked yet (no verified source)")
+          : el("span", { class: covCls(c) }, covLabel(c)),
         c.bill ? el("span", { class: "tag tag-draft" }, icon("info"), "Bill, not yet enacted") : null,
         c.draft ? el("span", { class: "tag tag-draft" }, icon("draft"), "Draft rules: not yet reviewed by a lawyer") : null));
     return card;
@@ -813,6 +816,7 @@ function reasonOf(c) {
   const riskier = [...new Set((c.translation || []).filter((d) => d.drift === "increased").map((d) => d.language))];
   if (riskier.length) return `A spoken line reads riskier in ${joinWords(riskier)}`;
   if (b === "grey") return "Sensitive content found, but no loaded law covers it";
+  if (b === "not_checked") return "No verified law is loaded for this country, so nothing was checked";
   return "No moment matched a loaded law";
 }
 
@@ -834,10 +838,14 @@ async function screenResults(jobId, stale) {
 
   const needFix = cs.filter((c) => ["red", "amber"].includes(badgeOf(c))).length;
   const greyN = cs.filter((c) => badgeOf(c) === "grey").length;
+  const notChecked = cs.filter((c) => badgeOf(c) === "not_checked").length;
   const n = cs.length;
-  const headline = needFix ? `${needFix} of ${n} ${n === 1 ? "country needs" : "countries need"} changes before you publish`
+  const checkedN = n - notChecked;
+  const notCheckedPart = notChecked ? ` · ${notChecked} not checked (no verified law loaded)` : "";
+  const headline = (needFix ? `${needFix} of ${n} ${n === 1 ? "country needs" : "countries need"} changes before you publish`
     : greyN ? `${greyN} of ${n} ${n === 1 ? "country needs" : "countries need"} a manual check`
-      : `Looks clear in ${n === 1 ? "the 1 country" : `all ${n} countries`} checked`;
+      : !checkedN ? `Not checked: no verified law loaded for ${n === 1 ? "this country" : `these ${n} countries`}`
+        : `Looks clear in ${checkedN === 1 ? "the 1 country" : `all ${checkedN} countries`} checked`) + (checkedN ? notCheckedPart : "");
 
   const p = makePlayer(job, cs, { legend: true });
   const ms = moments(r);
@@ -861,7 +869,8 @@ async function screenResults(jobId, stale) {
     const info = countryInfo(c.country);
     const meta = riskMeta(badgeOf(c));
     const nf = c.findings.length; const nu = (c.uncovered || []).length;
-    const countLabel = nf ? `${plural(nf, "issue")}${nu ? ` · ${nu} to check` : ""}` : nu ? `${nu} to check manually` : "Nothing to fix";
+    const countLabel = c.overall_risk === "not_checked" ? "Not checked"
+      : nf ? `${plural(nf, "issue")}${nu ? ` · ${nu} to check` : ""}` : nu ? `${nu} to check manually` : "Nothing to fix";
     const reason = reasonOf(c);
     return el("button", { class: "rcard", type: "button", "aria-label": `${info.name}: ${meta.verdict}. ${reason}. View details`,
       onclick: () => go(`#country/${jobId}/${c.country}`) },
@@ -892,7 +901,7 @@ async function screenResults(jobId, stale) {
         el("ul", { class: "tr-list" }, items))),
     el("section", { class: "section", "aria-label": "Verdict by country" },
       el("div", { class: "section-head" }, el("h2", { class: "h2" }, "By country"),
-        el("span", { class: "small muted" }, `${plural(job.countries.length, "country", "countries")} checked`)),
+        el("span", { class: "small muted" }, `${plural(job.countries.length - notChecked - failed.length, "country", "countries")} checked`)),
       el("div", { class: "results-grid" }, cards),
       el("div", { class: "disclaimer", style: "margin-top: 16px" }, icon("info"),
         el("span", {}, el("b", { style: "font-weight: 600" }, "Automated pre-check, not legal advice. "),
@@ -1159,7 +1168,10 @@ async function screenCountry(jobId, cc, stale) {
     c.critic_changes ? `The reviewer AI changed ${plural(c.critic_changes, "finding")}.` : null,
   ].filter(Boolean);
 
-  const verdictSub = meta === RISK.grey
+  const notChecked = c.overall_risk === "not_checked";
+  const verdictSub = notChecked
+    ? "No verified law is loaded for this country, so nothing was checked. This is not a clearance: check the video manually."
+    : meta === RISK.grey
     ? "Sensitive content found, but no loaded law covers it. Check these moments manually."
     : nf ? `${reasonOf(c)}.` : "No moment matched a loaded law.";
 
@@ -1188,9 +1200,10 @@ async function screenCountry(jobId, cc, stale) {
         nf ? el("span", { class: "small muted" }, "Open an issue for the legal basis") : null),
       nf ? c.findings.map((f) => issueCard(job, c, f, p, provs, cards))
         : el("div", { class: "neutral-card" }, icon("info", "width: 18px; height: 18px; color: var(--text-3); margin-top: 2px"),
-          el("div", {}, el("div", { class: "h3" }, "No moment matched a loaded law"),
-            el("p", { class: "small muted", style: "margin-top: 2px" },
-              `This does not mean the video is safe here. Coverage for ${info.name} is ${info.coverage || "basic"}${unc.length ? ", so see the moments to check manually below." : "."}`)))),
+          el("div", {}, el("div", { class: "h3" }, notChecked ? "Nothing was checked" : "No moment matched a loaded law"),
+            el("p", { class: "small muted", style: "margin-top: 2px" }, notChecked
+              ? `No verified law is loaded for ${info.name}. Check the video manually before publishing there.`
+              : `This does not mean the video is safe here. Coverage for ${info.name} is ${info.coverage || "basic"}${unc.length ? ", so see the moments to check manually below." : "."}`)))),
 
     el("section", { class: "section", "aria-label": "Not covered by any loaded law" },
       el("div", { class: "section-head" }, el("h2", { class: "h2" }, `Not covered by any loaded law (${unc.length})`),
@@ -1199,7 +1212,7 @@ async function screenCountry(jobId, cc, stale) {
         el("button", { class: "chip-time", type: "button", "aria-label": `Play ${range(u.start_s, u.end_s)}`, onclick: () => p.seek(u.start_s) }, icon("play"), range(u.start_s, u.end_s)),
         el("div", { class: "stack grow", style: "gap: 6px" },
           el("div", { class: "row wrap" }, el("span", { class: "badge risk-grey" }, icon("help"), "Check manually"), el("span", { class: "h3" }, leafLabel(u))),
-          el("p", { class: "small", style: "color: var(--text-2)" }, u.note || `Sensitive, but no loaded law for ${info.name} covers it. Other local laws may still apply.`)))))
+          el("p", { class: "small", style: "color: var(--text-2)" }, u.note || "The loaded law library does not cover this moment. Check it manually.")))))
         : el("p", { class: "small muted" }, "Nothing to check manually.")),
 
     translationSection(c, info, p),

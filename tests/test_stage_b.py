@@ -53,7 +53,8 @@ def test_unverified_source_gives_no_cards_and_no_model_call(monkeypatch, mock):
     assert not config.COUNTRIES["PK"].dryrun_rules_path.exists()
     monkeypatch.setattr(gemini, "generate_json", lambda *a, **k: pytest.fail("model called"))
     rep = pipeline.stage_b(pipeline.mock_inventory(60), "PK", cards, rules_status=status, mock=mock)
-    assert rep.findings == [] and rep.cited_cards == [] and rep.overall_risk == "green"
+    assert rep.findings == [] and rep.cited_cards == [] and rep.overall_risk == "not_checked"
+    assert rep.badge == "not_checked" and "Not checked" in rep.risk_framing
     assert rep.notes == [pipeline.UNVERIFIED_NOTE] and rep.uncovered
 
 
