@@ -464,6 +464,40 @@ def flagged_segments(inventory: Inventory, report: CountryReport | None = None) 
     return (flagged + idioms + rest)[: config.MAX_DRIFT_SEGMENTS]
 
 
+# Stage A's ISO 639-1 speech codes that are already the drift language, so translating
+# the line into it means nothing. Only unambiguous codes: spoken "zh" may be Cantonese or
+# Hokkien, which still need the Mandarin check.
+SAME_LANGUAGE_CODES = {
+    "Hindi": {"hi"}, "Malay": {"ms"}, "Tamil": {"ta"}, "Urdu": {"ur"},
+    "Mandarin Chinese": {"cmn", "zh-cn", "zh-hans", "zh-sg"},
+}
+
+
+def already_in(seg: Segment, language: str) -> bool:
+    """Whether the spoken line is already in `language` (no translation check needed)."""
+    code = seg.language.strip().lower().replace("_", "-")
+    return code in SAME_LANGUAGE_CODES.get(language, ()) or code == language.casefold()
+
+
+def _clock(s: float) -> str:
+    return f"{int(s) // 60}:{int(s) % 60:02d}"
+
+
+def same_language_note(inventory: Inventory, country: str,
+                       report: CountryReport | None = None) -> str:
+    """Says which lines skipped a drift language because they are already spoken in it."""
+    segs = flagged_segments(inventory, report)
+    parts = []
+    for lang in config.COUNTRIES[country].drift_languages:
+        same = [s for s in segs if already_in(s, lang)]
+        if not same:
+            continue
+        where = "" if len(same) == len(segs) else " for " + ", ".join(
+            f"{_clock(s.start_s)}–{_clock(s.end_s)}" for s in same)
+        parts.append(f"Already in {lang}: translation check not needed{where}.")
+    return " ".join(parts)
+
+
 def _categories_at(report: CountryReport | None, seg: Segment) -> list[str]:
     if report is None:
         return sorted({c.value for c in seg.categories if c != Category.other})
@@ -476,21 +510,26 @@ def translation_check(
 ) -> list[DriftCheck]:
     """Translate -> blind back-translate -> judge, for one country and all its languages:
     three calls whatever the number of languages. `report` (if known) orders the lines
-    by its findings; without it stage A's leaves stand in for them."""
+    by its findings; without it stage A's leaves stand in for them. A line already
+    spoken in a language is not translated into it (`same_language_note` says so);
+    every other language is still checked."""
     mock = config.mock_mode() if mock is None else mock
     languages = [languages] if isinstance(languages, str) else list(languages)
     segs = flagged_segments(inventory, report)
-    if not segs or not languages:
+    needed = {i: [lang for lang in languages if not already_in(s, lang)] for i, s in enumerate(segs)}
+    if not any(needed.values()):
         return []
     if mock:
         return [d for n, lang in enumerate(languages)
-                for d in _mock_drift(segs, lang, increase_first=mock_increase and n == 0)]
+                for d in _mock_drift([s for i, s in enumerate(segs) if lang in needed[i]], lang,
+                                     increase_first=mock_increase and n == 0)]
 
     law = config.COUNTRIES[country]
-    items = [{"index": i, "text": s.transcript} for i, s in enumerate(segs)]
+    items = [{"index": i, "text": s.transcript, "languages": needed[i]}
+             for i, s in enumerate(segs) if needed[i]]
     raw = gemini.generate_json(
-        f"Translate every item into each of these languages for viewers in {law.name}: "
-        f"{', '.join(languages)}. Write each language name exactly as given.\n"
+        f"Translate every item into each of the languages listed for it ({', '.join(languages)}) "
+        f"for viewers in {law.name}. Write each language name exactly as given.\n"
         f"{json.dumps(items, ensure_ascii=False)}",
         list[_Translation], model=config.SC_MODEL_FAST, system_instruction=TRANSLATE_SYSTEM,
         thinking=TRANSLATE_THINKING)
@@ -503,7 +542,7 @@ def translation_check(
         except ValidationError:
             continue
         lang = wanted.get(t.language.strip().casefold())
-        if lang and 0 <= t.index < len(segs) and (t.index, lang) not in seen:
+        if lang and lang in needed.get(t.index, ()) and (t.index, lang) not in seen:
             seen.add((t.index, lang))
             translated[len(translated)] = (t.index, lang, t.text)
     if not translated:
@@ -606,7 +645,8 @@ async def run_drift(
             errors.append(f"translation {cc}: {public_error(res)}")
             continue
         checks[cc] = res
-    return checks, {}, errors
+    notes = {cc: note for cc in todo if (note := same_language_note(inventory, cc, rep(cc)))}
+    return checks, notes, errors
 
 
 def attach_drift(reports: dict[str, CountryReport], checks: dict[str, list[DriftCheck]],

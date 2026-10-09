@@ -71,7 +71,7 @@ class _FakeModels:
         items = json.loads(prompt.split("\n", 1)[1])
         if "translation" in items[0]:  # judge
             return _Resp([{"index": x["index"], "drift": "increased", "explanation": CANARY} for x in items])
-        if "each of these languages" in prompt:  # translate (Malaysia: Malay)
+        if "languages listed for it" in prompt:  # translate (Malaysia: Malay)
             return _Resp([{"index": x["index"], "language": "Malay", "text": f"{x['text']} ({CANARY})"}
                           for x in items])
         return _Resp([{"index": x["index"], "text": f"{x['text']} ({CANARY})"} for x in items])

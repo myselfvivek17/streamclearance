@@ -148,3 +148,65 @@ def test_drift_languages_in_hindi_my_malay():
 def test_drift_languages_sg_official_languages():
     assert config.COUNTRIES["SG"].drift_languages == ("Mandarin Chinese", "Malay", "Tamil")
     assert config.COUNTRIES["AU"].drift_languages == ()
+
+
+def _hindi_inventory():
+    from app.schemas import Inventory, Segment
+    line = "आज रात तक ₹50,000 भेज दो वरना मैं तुम्हारी निजी तस्वीरें अपलोड कर दूंगा।"
+    return Inventory(duration_s=8, languages=["hi"], segments=[
+        Segment(start_s=0, end_s=8, transcript=line, language="hi",
+                leaves=["harassment.extortion", "harassment.sextortion", "harassment.threats"])])
+
+
+def test_line_already_in_hindi_is_not_translated_into_hindi(monkeypatch):
+    inv = _hindi_inventory()
+    monkeypatch.setattr(gemini, "generate_json", lambda *a, **k: (_ for _ in ()).throw(AssertionError("no call")))
+    assert pipeline.translation_check(inv, "IN", ["Hindi"], mock=False) == []
+    checks, notes, errors = asyncio.run(pipeline.run_drift(inv, ["IN"], mock=False))
+    assert checks == {"IN": []} and not errors
+    assert notes == {"IN": "Already in Hindi: translation check not needed."}
+    assert pipeline.translation_check(inv, "IN", ["Hindi"], mock=True) == []  # no "Same meaning" row
+
+
+def test_same_language_skip_keeps_every_other_language(monkeypatch):
+    inv = _hindi_inventory()
+    inv.segments[0].language = "ms"
+    calls = []
+
+    def fake(prompt, schema, **kw):
+        calls.append(prompt)
+        if len(calls) == 1:  # a Malay translation of a Malay line is ignored even if returned
+            return [{"index": 0, "language": lang, "text": lang} for lang in ("Malay", "Mandarin Chinese", "Tamil")]
+        if len(calls) == 2:
+            return [{"index": k, "text": f"BACK{k}"} for k in range(3)]
+        return [{"index": k, "drift": "none", "explanation": "y"} for k in range(3)]
+
+    monkeypatch.setattr(gemini, "generate_json", fake)
+    out = pipeline.translation_check(inv, "SG", list(config.COUNTRIES["SG"].drift_languages), mock=False)
+    assert '"languages": ["Mandarin Chinese", "Tamil"]' in calls[0]
+    assert [d.language for d in out] == ["Mandarin Chinese", "Tamil"]
+    assert pipeline.same_language_note(inv, "SG") == "Already in Malay: translation check not needed."
+    assert pipeline.same_language_note(inv, "IN") == ""  # a Malay line still gets the Hindi check
+
+
+def test_same_language_skip_names_only_the_lines_in_that_language():
+    from app.schemas import Segment
+    inv = _hindi_inventory()
+    inv.duration_s = 12
+    inv.segments.append(Segment(start_s=8, end_s=12, transcript="Pay up.", language="en",
+                                leaves=["harassment.extortion"]))
+    out = pipeline.translation_check(inv, "IN", ["Hindi"], mock=True)
+    assert [d.original for d in out] == ["Pay up."]
+    assert pipeline.same_language_note(inv, "IN") == "Already in Hindi: translation check not needed for 0:00–0:08."
+    reps = {"IN": CountryReport(country="IN", law="x", overall_risk="red")}
+    asyncio.run(pipeline.run_translation(inv, reps, mock=True))
+    assert len(reps["IN"].translation) == 1 and reps["IN"].translation_note.startswith("Already in Hindi")
+
+
+def test_ambiguous_chinese_still_gets_the_mandarin_check():
+    from app.schemas import Segment
+    seg = Segment(start_s=0, end_s=3, transcript="x", language="zh")
+    assert not pipeline.already_in(seg, "Mandarin Chinese")  # could be Cantonese or Hokkien
+    assert pipeline.already_in(seg.model_copy(update={"language": "zh-CN"}), "Mandarin Chinese")
+    assert pipeline.already_in(seg.model_copy(update={"language": "Hindi"}), "Hindi")
+    assert not pipeline.already_in(seg.model_copy(update={"language": "ur"}), "Hindi")

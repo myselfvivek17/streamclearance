@@ -233,7 +233,7 @@ class CountryReport(BaseModel):
     dropped_findings: int = 0
     uncovered: list[Uncovered] = []
     translation: list[DriftCheck] = []
-    translation_note: str = ""  # why there are no drift checks, e.g. "No speech to translate."
+    translation_note: str = ""  # why lines were not checked, e.g. "No speech to translate."
     disclaimer: str = DISCLAIMER
     # Brain (SC_BRAIN=adk) only:
     brain: Literal["adk", "legacy"] = "legacy"

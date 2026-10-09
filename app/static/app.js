@@ -1132,7 +1132,7 @@ function translationSection(c, info, p) {
   };
   more.addEventListener("click", () => { all = !all; draw(); });
   draw();
-  return sec(el("div", { class: "card tr-grid" },
+  return sec(c.translation_note ? el("p", { class: "small muted" }, c.translation_note) : null, el("div", { class: "card tr-grid" },
     el("div", { class: "tr-row head" }, el("span", {}, "Time"), el("span", {}, "Original"), el("span", {}, shown.length > 1 ? "Translation" : lang), el("span", {}, "Back-translation"), el("span", {}, "Result")),
     rowsBox, el("div", { class: "tr-more" }, note, more)));
 }
