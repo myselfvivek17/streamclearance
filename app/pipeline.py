@@ -69,8 +69,13 @@ Split the video into consecutive segments of roughly 3-15 seconds at natural bre
 - on_screen_text: captions, overlays or signs, verbatim
 - leaves: zero or more ids from the content taxonomy below that the segment might \
 plausibly touch, most specific first (e.g. a casino promo code is "gambling.promotion", \
-not "drugs.promotion"; "this drink cures diabetes" is "health.cure_claim"). Use the ids \
-exactly as written. Leave empty for clearly neutral segments.
+not "drugs.promotion"; "this drink cures diabetes" is "health.cure_claim"). A demand \
+for money or an act under threat ("pay me or I will ...") is "harassment.extortion" and \
+"harassment.threats"; a threat to publish or send someone's intimate or private images \
+unless they pay or comply is "harassment.sextortion", "harassment.extortion" and \
+"harassment.threats" (add "sexual.non_consensual_imagery" too only if such images are \
+shown or said to have already been shared). Use the ids exactly as written. Leave empty \
+for clearly neutral segments.
 - idioms: figures of speech or slang in the speech that could read as literal violence, \
 crime, insult or threat if translated word for word (e.g. "this offer is a bomb", \
 "it's a killer deal"), quoted verbatim; [] if none.
