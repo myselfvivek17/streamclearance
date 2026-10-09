@@ -4,7 +4,7 @@ from app.schemas import Category
 
 def test_taxonomy_shape():
     leaves = taxonomy.leaves()
-    assert 35 <= len(leaves) <= 45
+    assert 35 <= len(leaves) <= 50
     for lid, leaf in leaves.items():
         assert lid.count(".") == 1 and leaf.label and leaf.description
         assert isinstance(leaf.category, Category)

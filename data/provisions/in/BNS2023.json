@@ -1,0 +1,270 @@
+[
+ {
+  "id": "IN/BNS2023/s77",
+  "country": "IN",
+  "law_id": "BNS2023",
+  "law_title": "Bharatiya Nyaya Sanhita, 2023 (No. 45 of 2023)",
+  "law_status": "in_force",
+  "source_pdf": "india_bharatiya_nyaya_sanhita_2023.pdf",
+  "page": 27,
+  "section": "Section 77",
+  "verbatim_text": "77.Whoever watches, or captures the image of a woman engaging in a private act in circumstances where she would usually have the expectation of not being observed either by the perpetrator or by any other person at the behest of the perpetrator or disseminates such image shall be punished on first conviction with imprisonment of either description for a term which shall not be less than one year, but which may extend to three years, and shall also be liable to fine",
+  "summary": "Voyeurism: watching or capturing images of a woman in a private act where she expects not to be observed, or disseminating such images, is an offence.",
+  "targets": [
+   "privacy.covert_recording",
+   "sexual.non_consensual_imagery"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "on first conviction with imprisonment of either description for a term which shall not be less than one year, but which may extend to three years, and shall also be liable to fine, and be punished on a second or subsequent conviction, with imprisonment of either description for a term which shall not be less than three years, but which may extend to seven years, and shall also be liable to fine"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/BNS2023/s79",
+  "country": "IN",
+  "law_id": "BNS2023",
+  "law_title": "Bharatiya Nyaya Sanhita, 2023 (No. 45 of 2023)",
+  "law_status": "in_force",
+  "source_pdf": "india_bharatiya_nyaya_sanhita_2023.pdf",
+  "page": 28,
+  "section": "Section 79",
+  "verbatim_text": "79.Whoever, intending to insult the modesty of any woman, utters any words, makes any sound or gesture, or exhibits any object in any form, intending that such word or sound shall be heard, or that such gesture or object shall be seen, by such woman, or intrudes upon the privacy of such woman, shall be punished with simple imprisonment for a term which may extend to three years, and also with fine.",
+  "summary": "Words, sounds, gestures or objects meant to insult a woman's modesty, or intruding on her privacy, are an offence.",
+  "targets": [
+   "harassment.bullying",
+   "sexual.indecent_profane"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_and_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "simple imprisonment for a term which may extend to three years, and also with fine"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/BNS2023/s308(1)",
+  "country": "IN",
+  "law_id": "BNS2023",
+  "law_title": "Bharatiya Nyaya Sanhita, 2023 (No. 45 of 2023)",
+  "law_status": "in_force",
+  "source_pdf": "india_bharatiya_nyaya_sanhita_2023.pdf",
+  "page": 80,
+  "section": "Section 308(1)",
+  "verbatim_text": "308.(1) Whoever intentionally puts any person in fear of any injury to that person, or to any other, and thereby dishonestly induces the person so put in fear to deliver to any person any property, or valuable security or anything signed or sealed which may be converted into a valuable security, commits extortion.",
+  "summary": "Extortion: intentionally putting someone in fear of injury to them or another person (for example a threat to expose or harm them) and thereby dishonestly getting them to hand over money or property.",
+  "targets": [
+   "harassment.extortion",
+   "harassment.sextortion",
+   "harassment.threats"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified",
+   "penalty": "Section 308(2): imprisonment of either description for a term which may extend to seven years, or with fine, or with both"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/BNS2023/s308(2)",
+  "country": "IN",
+  "law_id": "BNS2023",
+  "law_title": "Bharatiya Nyaya Sanhita, 2023 (No. 45 of 2023)",
+  "law_status": "in_force",
+  "source_pdf": "india_bharatiya_nyaya_sanhita_2023.pdf",
+  "page": 81,
+  "section": "Section 308(2)",
+  "verbatim_text": "(2) Whoever commits extortion shall be punished with imprisonment of either description for a term which may extend to seven years, or with fine, or with both.",
+  "summary": "Penalises committing extortion with imprisonment up to seven years, a fine, or both.",
+  "targets": [
+   "harassment.extortion",
+   "harassment.sextortion",
+   "harassment.threats"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "imprisonment of either description for a term which may extend to seven years, or with fine, or with both"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/BNS2023/s308(3)",
+  "country": "IN",
+  "law_id": "BNS2023",
+  "law_title": "Bharatiya Nyaya Sanhita, 2023 (No. 45 of 2023)",
+  "law_status": "in_force",
+  "source_pdf": "india_bharatiya_nyaya_sanhita_2023.pdf",
+  "page": 81,
+  "section": "Section 308(3)",
+  "verbatim_text": "(3) Whoever, in order to the committing of extortion, puts any person in fear, or attempts to put any person in fear, of any injury, shall be punished with imprisonment of either description for a term which may extend to two years, or with fine, or with both.",
+  "summary": "Putting or trying to put someone in fear of injury in order to extort (for example \"pay or I will publish ...\") is an offence even if nothing is paid: up to two years' imprisonment, a fine, or both.",
+  "targets": [
+   "harassment.extortion",
+   "harassment.sextortion",
+   "harassment.threats"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "imprisonment of either description for a term which may extend to two years, or with fine, or with both"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/BNS2023/s351(1)",
+  "country": "IN",
+  "law_id": "BNS2023",
+  "law_title": "Bharatiya Nyaya Sanhita, 2023 (No. 45 of 2023)",
+  "law_status": "in_force",
+  "source_pdf": "india_bharatiya_nyaya_sanhita_2023.pdf",
+  "page": 97,
+  "section": "Section 351(1)",
+  "verbatim_text": "351.(1) Whoever threatens another by any means, with any injury to his person, reputation or property, or to the person or reputation of any one in whom that person is interested, with intent to cause alarm to that person, or to cause that person to do any act which he is not legally bound to do, or to omit to do any act which that person is legally entitled to do, as the means of avoiding the execution of such threat, commits criminal intimidation.",
+  "summary": "Criminal intimidation: threatening someone by any means with injury to their person, reputation or property (or that of someone close to them) to alarm them or make them do something they are not legally bound to do.",
+  "targets": [
+   "harassment.threats",
+   "harassment.extortion",
+   "harassment.sextortion"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified",
+   "penalty": "Section 351(2): imprisonment of either description for a term which may extend to two years, or with fine, or with both"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/BNS2023/s351(2)",
+  "country": "IN",
+  "law_id": "BNS2023",
+  "law_title": "Bharatiya Nyaya Sanhita, 2023 (No. 45 of 2023)",
+  "law_status": "in_force",
+  "source_pdf": "india_bharatiya_nyaya_sanhita_2023.pdf",
+  "page": 98,
+  "section": "Section 351(2)",
+  "verbatim_text": "(2) Whoever commits the offence of criminal intimidation shall be punished with imprisonment of either description for a term which may extend to two years, or with fine, or with both.",
+  "summary": "Penalises committing criminal intimidation with imprisonment up to two years, a fine, or both.",
+  "targets": [
+   "harassment.threats",
+   "harassment.extortion",
+   "harassment.sextortion"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "imprisonment of either description for a term which may extend to two years, or with fine, or with both"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/BNS2023/s351(3)",
+  "country": "IN",
+  "law_id": "BNS2023",
+  "law_title": "Bharatiya Nyaya Sanhita, 2023 (No. 45 of 2023)",
+  "law_status": "in_force",
+  "source_pdf": "india_bharatiya_nyaya_sanhita_2023.pdf",
+  "page": 98,
+  "section": "Section 351(3)",
+  "verbatim_text": "(3) Whoever commits the offence of criminal intimidation by threatening to cause death or grievous hurt, or to cause the destruction of any property by fire, or to cause an offence punishable with death or imprisonment for life, or with imprisonment for a term which may extend to seven years, or to impute unchastity to a woman, shall be punished with imprisonment of either description for a term which may extend to seven years, or with fine, or with both.",
+  "summary": "Penalises criminal intimidation involving threats of death, grievous hurt, fire, severe offences, or imputing unchastity to a woman with imprisonment up to seven years, fine, or both.",
+  "targets": [
+   "harassment.threats",
+   "harassment.extortion",
+   "harassment.sextortion"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "fine_or_prison",
+   "timeframe": "not specified on this page",
+   "penalty": "imprisonment of either description for a term which may extend to seven years, or with fine, or with both"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ },
+ {
+  "id": "IN/BNS2023/s351(4)",
+  "country": "IN",
+  "law_id": "BNS2023",
+  "law_title": "Bharatiya Nyaya Sanhita, 2023 (No. 45 of 2023)",
+  "law_status": "in_force",
+  "source_pdf": "india_bharatiya_nyaya_sanhita_2023.pdf",
+  "page": 98,
+  "section": "Section 351(4)",
+  "verbatim_text": "(4) Whoever commits the offence of criminal intimidation by an anonymous communication, or having taken precaution to conceal the name or abode of the person from whom the threat comes, shall be punished with imprisonment of either description for a term which may extend to two years, in addition to the punishment provided for the offence under sub-section (1).",
+  "summary": "Penalises criminal intimidation delivered anonymously or by concealing one's identity with up to two years additional imprisonment.",
+  "targets": [
+   "harassment.threats",
+   "harassment.extortion",
+   "harassment.sextortion"
+  ],
+  "exceptions": [],
+  "duty_holder": "creator",
+  "consequence": {
+   "kind": "prison",
+   "timeframe": "not specified on this page",
+   "penalty": "imprisonment of either description for a term which may extend to two years, in addition to the punishment provided for the offence under sub-section (1)"
+  },
+  "review": {
+   "status": "draft",
+   "reviewer": null,
+   "date": null
+  },
+  "kind": "content"
+ }
+]

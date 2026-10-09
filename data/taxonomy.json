@@ -188,6 +188,18 @@
    "category": "harassment_or_bullying"
   },
   {
+   "id": "harassment.extortion",
+   "label": "Extortion or blackmail",
+   "description": "Demanding money, property or an act under threat of harm or exposure (blackmail), e.g. \"pay me or I will ...\".",
+   "category": "harassment_or_bullying"
+  },
+  {
+   "id": "harassment.sextortion",
+   "label": "Sextortion",
+   "description": "Threatening to publish or send someone's intimate or private images unless they pay or comply.",
+   "category": "harassment_or_bullying"
+  },
+  {
    "id": "privacy.doxxing",
    "label": "Doxxing",
    "description": "Publishing someone's personal information (address, phone, ID) without consent.",
