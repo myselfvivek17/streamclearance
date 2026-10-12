@@ -309,7 +309,9 @@ GONE = {"expired": EXPIRED, "deleted": "This report was deleted"}
 
 
 @app.get("/api/jobs/{job_id}")
-def get_job(job_id: str):
+def get_job(job_id: str, since: int = 0):
+    """The job and its report. `events` is the activity feed; with `?since=n` only the
+    events after the first n (`events_total` says how many there are)."""
     store = get_storage()
     job = store.load_job(job_id)
     if job is not None and job_id not in jobs.active_job_ids() and retention.report_expired(job):
@@ -317,6 +319,9 @@ def get_job(job_id: str):
         job = None
     if job is None:
         raise HTTPException(404, GONE.get(store.gone_reason(job_id) or "", "job not found"))
+    feed = job.get("events") or []
+    job["events_total"] = len(feed)
+    job["events"] = feed[max(0, since):]
     return job
 
 

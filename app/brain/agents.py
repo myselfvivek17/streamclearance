@@ -23,9 +23,9 @@ from typing import Literal
 
 from pydantic import BaseModel, ValidationError
 
-from app import config, gemini, metrics, provisions, retrieval
+from app import config, events, gemini, metrics, provisions, retrieval, taxonomy
 from app.brain.models import adk_model, count_call, log_usage
-from app.brain.tools import make_tools, provision_view
+from app.brain.tools import cite, make_tools, provision_view
 from app.schemas import Inventory, Risk
 
 log = logging.getLogger(__name__)
@@ -185,7 +185,24 @@ def prefetch(country: str, ms: list[dict]) -> tuple[list[dict], dict[str, dict]]
             for p in hits:
                 provs.setdefault(p.id, provision_view(p))
             out.append({**m, "candidate_provision_ids": [p.id for p in hits]})
+    laws = sorted({p["law"] for p in provs.values()})
+    events.emit("law", f"Looked up {len(provs)} candidate provision{'s' * (len(provs) != 1)} for "
+                f"{len(ms)} sensitive moment{'s' * (len(ms) != 1)}"
+                + (f" in {'; '.join(laws)}" if laws else " (no loaded provision targets them)"),
+                stage="country", country=country)
     return out, provs
+
+
+def assessment_events(country: str, out: list[MomentAssessment]) -> None:
+    by_id = provisions.by_id(country)
+    for a in out:
+        where = events.span(a.start_s, a.end_s)
+        leaf = a.leaf.strip().lower()
+        label = taxonomy.label(leaf) if taxonomy.is_leaf(leaf) else "a tagged leaf"
+        refs = [cite(by_id[pid]) if pid in by_id else "an unknown id" for pid in a.covered_by]
+        text = (f"Assessed {where} {label} → {', '.join(refs)} ({a.risk})" if refs
+                else f"Assessed {where} {label} → no loaded provision fits")
+        events.emit("law", text, stage="country", country=country, ref=where)
 
 
 def _assess_prompt(country: str, ms: list[dict], provs: dict[str, dict] | None = None) -> str:
@@ -198,7 +215,9 @@ def _assess_prompt(country: str, ms: list[dict], provs: dict[str, dict] | None =
 async def assess(inventory: Inventory, country: str, *, mock: bool) -> tuple[list[MomentAssessment], list[str]]:
     """Returns (assessments, notes)."""
     if mock:
-        return mock_assess(inventory, country), []
+        out = mock_assess(inventory, country)
+        assessment_events(country, out)
+        return out, []
     ms = moments(inventory)
     if not ms:
         return [], []
@@ -219,6 +238,7 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> tuple[lis
         out = _parse_list(text, MomentAssessment)
         if not out:
             raise ValueError("no assessments in the agent's reply")
+        assessment_events(country, out)
         return out, fallbacks
     except gemini.GeminiUnavailable:
         raise
@@ -227,7 +247,11 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> tuple[lis
                     country, type(e).__name__)
         note = (f"Assessor fallback: ADK tool-calling run failed ({type(e).__name__}); "
                 "provisions were retrieved in Python and assessed in one JSON call.")
+        events.emit("warn", f"The assessor agent's run failed ({type(e).__name__}): switched to a "
+                    "simplified check (provisions retrieved in code, one structured call).",
+                    stage="country", country=country)
         out = await _fallback_assess(country, ms)
+        assessment_events(country, out)
         return out, [note, *fallbacks]
 
 
@@ -311,6 +335,26 @@ async def critique(found: list[MomentAssessment], inventory: Inventory, country:
     except Exception as e:  # noqa: BLE001
         log.warning("%s: critic failed (%s); findings kept unchanged", country, type(e).__name__)
         return [], [f"Critic unavailable ({type(e).__name__}); findings were not re-checked."]
+
+
+def critic_event(country: str, found: list[MomentAssessment], verdicts: list[CriticVerdict],
+                 removed: list[tuple[MomentAssessment, str]], changes: int) -> None:
+    """One feed event: what the reviewer (critic) kept, downgraded or dropped, and why."""
+    if not found:
+        return
+    if not verdicts:
+        events.emit("warn", "Reviewer unavailable: findings were not re-checked.", stage="country",
+                    country=country)
+        return
+    downgraded = changes - len(removed)
+    parts = [f"Reviewer kept {len(found) - len(removed) - downgraded}"]
+    if downgraded:
+        parts.append(f"downgraded {downgraded}")
+    if removed:
+        parts.append(f"dropped {len(removed)}")
+    reasons = "; ".join(r for _, r in removed if r)[:160]
+    events.emit("review", ", ".join(parts) + (f": {reasons}" if reasons else ""), stage="country",
+                country=country)
 
 
 def apply_verdicts(found: list[MomentAssessment], verdicts: list[CriticVerdict]

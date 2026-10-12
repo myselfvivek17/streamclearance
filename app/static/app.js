@@ -510,9 +510,13 @@ async function screenCountries(stale) {
 
 // ------------------------------------------------------------------ 3 · analysis
 
-async function fetchJob(jobId) {
+// since > 0: fetch only the feed events after the first `since` (the rest are kept from S.job).
+async function fetchJob(jobId, since = 0) {
+  const prev = since && S.job && S.job.job_id === jobId ? (S.job.events || []).slice(0, since) : [];
+  if (prev.length < since) since = 0;
   try {
-    S.job = await api(`/api/jobs/${encodeURIComponent(jobId)}`);
+    S.job = await api(`/api/jobs/${encodeURIComponent(jobId)}${since ? `?since=${since}` : ""}`);
+    if (since) S.job.events = prev.concat(S.job.events || []);
   } catch (e) {
     if (e.status === 404) {
       if (store.get(LS.job) === jobId) store.set(LS.job, null);
@@ -584,6 +588,40 @@ function buildStages(job) {
   return rows;
 }
 
+// ------------------------------------------------------------------ agent activity feed
+
+// Every event is a real pipeline step (app/events.py); model and video text goes in via textContent.
+const FEED = {
+  watch: ["eye", "Watched"], search: ["globe", "Law search"], law: ["scale", "Law"], review: ["bot", "Review"],
+  translate: ["lang", "Translation"], ai: ["shield", "AI-content check"], warn: ["warn", "Warning"], info: ["info", "Step"],
+};
+
+function feedItem(e) {
+  const [ic, label] = FEED[e.kind] || FEED.info;
+  return el("li", { class: `feed-item feed-${e.kind}` },
+    el("span", { class: "feed-t", title: "Time since the check started" }, fmt(e.t)),
+    el("span", { class: "feed-ic", title: label }, icon(ic), el("span", { class: "sr-only" }, `${label}: `)),
+    el("span", { class: "feed-text" }, e.country ? flag(e.country, false) : null, e.text));
+}
+
+/** A list that appends new events and stays scrolled to the newest, unless the user scrolled up. */
+function makeFeed({ live = true } = {}) {
+  const list = el("ol", { class: "feed-list", role: live ? "log" : null, "aria-label": "Agent activity" });
+  const empty = el("p", { class: "feed-empty" }, live ? "Waiting for the first step…" : "No steps were recorded for this report.");
+  const box = el("div", { class: `feed ${live ? "feed-live" : ""}` }, empty, list);
+  let shown = 0; let stick = true;
+  box.addEventListener("scroll", () => { stick = box.scrollTop + box.clientHeight >= box.scrollHeight - 12; });
+  function update(evs) {
+    evs = evs || [];
+    if (evs.length < shown) { list.replaceChildren(); shown = 0; }
+    for (const e of evs.slice(shown)) list.append(feedItem(e));
+    shown = evs.length;
+    empty.hidden = shown > 0;
+    if (live && stick) box.scrollTop = box.scrollHeight;
+  }
+  return { node: box, update };
+}
+
 async function screenAnalysis(jobId, stale) {
   const job = await fetchJob(jobId);
   S.reportVideo = savedMeta(job.video_id);
@@ -591,6 +629,7 @@ async function screenAnalysis(jobId, stale) {
   store.set(LS.job, jobId);
 
   const stages = el("ol", { class: "stages" });
+  const feed = makeFeed();
   const elapsed = el("span", { class: "elapsed" });
   const foot = el("div", { class: "an-foot", "aria-live": "polite" });
   const err = el("div", { style: "margin-top: 16px" });
@@ -603,7 +642,12 @@ async function screenAnalysis(jobId, stale) {
           el("span", { style: "font-weight: 600" }, videoName()),
           el("span", { class: "small muted" }, `· ${plural(job.countries.length, "country", "countries")}`)),
         elapsed),
-      stages, foot),
+      stages,
+      el("div", { class: "feed-wrap" },
+        el("div", { class: "feed-head" }, el("h2", { class: "h3" }, "Agent activity"),
+          el("span", { class: "xsmall muted" }, "What the agent watched, searched and decided, as it happens")),
+        feed.node),
+      foot),
     err));
 
   const tick = () => {
@@ -617,6 +661,7 @@ async function screenAnalysis(jobId, stale) {
 
   const draw = (j) => {
     stages.replaceChildren(...buildStages(j).map(stageRow));
+    feed.update(j.events);
     tick();
     if (j.status === "done") {
       foot.replaceChildren(icon("okc"), el("span", { class: "grow" }, "Report ready. Opening results…"),
@@ -639,7 +684,7 @@ async function screenAnalysis(jobId, stale) {
   const poll = async () => {
     if (stale()) return;
     try {
-      draw(await fetchJob(jobId));
+      draw(await fetchJob(jobId, (S.job.events || []).length));
     } catch (e) {
       err.replaceChildren(alertBox(`Lost contact with the server, retrying: ${e.message}`, "alert-grey", "info"));
     }
@@ -906,11 +951,23 @@ async function screenResults(jobId, stale) {
       el("div", { class: "disclaimer", style: "margin-top: 16px" }, icon("info"),
         el("span", {}, el("b", { style: "font-weight: 600" }, "Automated pre-check, not legal advice. "),
           "A person makes the publish decision."))),
+    howReached(job),
     howMade(r),
     el("div", { class: "footer-bar" },
       el("button", { class: "btn", type: "button", onclick: () => go("#upload") }, icon("upload"), "Check another video"),
       el("button", { class: "btn", type: "button", onclick: () => download(job) }, icon("download"), "Download report (JSON)"),
       el("button", { class: "btn btn-danger", type: "button", onclick: () => deleteReport(job) }, icon("x"), "Delete this report now"))));
+}
+
+// "How the agent reached this": the same activity feed as on the analysis screen, collapsed.
+function howReached(job) {
+  const evs = job.events || [];
+  if (!evs.length) return null;
+  const feed = makeFeed({ live: false });
+  feed.update(evs);
+  return el("section", { class: "section", "aria-label": "How the agent reached this" },
+    el("div", { class: "card", style: "padding: 0 18px" },
+      disclosure(`How the agent reached this (${plural(evs.length, "step")})`, "bot", feed.node, { style: "border-top: 0" })));
 }
 
 // "How this report was made": laws (and their review status), model, app version.

@@ -23,7 +23,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field, ValidationError
 
-from app import config, gemini, metrics, provisions, taxonomy
+from app import config, events, gemini, metrics, provisions, taxonomy
 from app.schemas import (
     RISK_ORDER, Category, CountryReport, Drift, DriftCheck, Finding, Inventory, OverallRisk, Risk,
     RuleCard, RulesStatus, Segment, Uncovered,
@@ -167,6 +167,39 @@ def mock_inventory(duration_s: float | None) -> Inventory:
 
 
 
+def inventory_events(inv: Inventory) -> None:
+    """Feed events for what stage A saw and heard: one per segment with a claim or a
+    taxonomy leaf, then a summary."""
+    for s in inv.segments:
+        if not (s.leaves or s.claims):
+            continue
+        if s.transcript.strip():
+            what = f"heard {events.quote(s.transcript)}"
+        elif s.on_screen_text.strip():
+            what = f"saw on-screen text {events.quote(s.on_screen_text)}"
+        else:
+            what = f"saw {events.quote(s.visuals)}"
+        tags = f" · tagged {', '.join(taxonomy.label(x) for x in s.leaves)}" if s.leaves else ""
+        events.emit("watch", f"Watched {events.span(s.start_s, s.end_s)} · {what}{tags}",
+                    stage="inventory", ref=events.span(s.start_s, s.end_s))
+    tagged = sum(1 for s in inv.segments if s.leaves)
+    langs = ", ".join(inv.languages) or "none"
+    speech = "yes" if has_speech(inv) else "no"
+    events.emit("info", f"Inventory built: {len(inv.segments)} moments, {tagged} sensitive · "
+                f"languages: {langs} · speech: {speech}", stage="inventory")
+
+
+def country_done_event(rep: CountryReport) -> None:
+    name = config.COUNTRIES[rep.country].name
+    if rep.overall_risk == "not_checked":
+        events.emit("warn", f"{name}: not checked, no verified law is loaded.", stage="country",
+                    country=rep.country)
+        return
+    n, u = len(rep.findings), len(rep.uncovered)
+    events.emit("info", f"{name}: {rep.badge.replace('_', ' ')} · {n} finding{'s' * (n != 1)}"
+                + (f", {u} to check manually" if u else ""), stage="country", country=rep.country)
+
+
 # ================================================================ rule cards
 
 _dryrun_lock = threading.Lock()
@@ -308,6 +341,17 @@ def stage_b(
         uncovered=uncovered,
         notes=[] if cards else [UNVERIFIED_NOTE],
     )
+
+
+def stage_b_event(report: CountryReport, n_cards: int) -> None:
+    if not n_cards:
+        return
+    n = len(report.findings)
+    dropped = f" · {report.dropped_findings} suggestion(s) dropped by the citation check" \
+        if report.dropped_findings else ""
+    events.emit("law", f"Checked the moments against {n_cards} rule cards of "
+                f"{config.COUNTRIES[report.country].law}: {n} finding{'s' * (n != 1)}{dropped}",
+                stage="country", country=report.country)
 
 
 def _uncovered(inventory: Inventory, findings: list[Finding]) -> list[Uncovered]:
@@ -631,9 +675,11 @@ async def run_drift(
     async def one(cc: str):
         async with sem:
             with metrics.stage(f"translation:{cc}"):
-                return await asyncio.to_thread(
+                out = await asyncio.to_thread(
                     translation_check, inventory, cc, config.COUNTRIES[cc].drift_languages,
                     report=rep(cc), mock=mock, mock_increase=cc == first)
+        translation_events(cc, out)
+        return out
 
     results = await asyncio.gather(*(one(cc) for cc in todo), return_exceptions=True)
     if mock and todo:
@@ -647,6 +693,22 @@ async def run_drift(
         checks[cc] = res
     notes = {cc: note for cc in todo if (note := same_language_note(inventory, cc, rep(cc)))}
     return checks, notes, errors
+
+
+def translation_events(country: str, checks: list[DriftCheck]) -> None:
+    """One feed event per language: lines checked and meaning shifts found."""
+    for lang in config.COUNTRIES[country].drift_languages:
+        mine = [d for d in checks if d.language == lang]
+        if not mine:
+            continue
+        up = sum(d.drift == "increased" for d in mine)
+        down = sum(d.drift == "reduced" for d in mine)
+        shifts = (f"{up} reads riskier" if up else "no line reads riskier") + (
+            f", {down} reads milder" if down else "")
+        events.emit("warn" if up else "translate",
+                    f"{lang} for {config.COUNTRIES[country].name}: {len(mine)} line"
+                    f"{'s' * (len(mine) != 1)} translated, back-translated and compared · {shifts}",
+                    stage="translation", country=country)
 
 
 def attach_drift(reports: dict[str, CountryReport], checks: dict[str, list[DriftCheck]],
@@ -690,6 +752,7 @@ async def run_countries(
                 with metrics.stage(f"assessor:{cc}"):
                     report = await asyncio.to_thread(
                         stage_b, inventory, cc, cards, rules_status=status, mock=mock)
+                stage_b_event(report, len(cards))
             except Exception as e:  # noqa: BLE001 - reported per country
                 log.error("stage B failed for %s: %s", cc, type(e).__name__)
                 if on_done:

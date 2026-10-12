@@ -507,3 +507,27 @@ html.dark, html.dark body { background: #0b0d12; color-scheme: dark; }
 .law-source .tag { margin-right: 6px; }
 .sources { margin-top: 16px; font-size: 13px; }
 .sources-country { padding: 8px 0 0; }
+
+/* Agent activity feed (analysis screen; collapsed on results) */
+.feed-wrap { border-top: 1px solid var(--border); padding: 14px 20px 16px; }
+.feed-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.feed { font-size: 13px; color: var(--text-2); }
+.feed-live { max-height: 300px; overflow-y: auto; overscroll-behavior: contain; border: 1px solid var(--border); border-radius: var(--r); background: var(--surface-2); padding: 6px 0; }
+.feed-list { list-style: none; margin: 0; padding: 0 0 8px; }
+.feed-live .feed-list { padding: 0; }
+.feed-item { display: grid; grid-template-columns: 40px 20px minmax(0, 1fr); gap: 8px; align-items: start; padding: 5px 12px; }
+.feed-item + .feed-item { border-top: 1px dashed var(--border); }
+.feed-t { font-family: var(--mono); font-size: 12px; color: var(--text-3); padding-top: 1px; }
+.feed-ic { display: grid; place-items: center; height: 20px; color: var(--text-3); }
+.feed-ic .ic { width: 14px; height: 14px; }
+.feed-text { overflow-wrap: anywhere; text-wrap: pretty; }
+.feed-text .flag { margin-right: 6px; vertical-align: -2px; }
+.feed-warn .feed-ic, .feed-warn .feed-text { color: var(--amber-fg); }
+.feed-ai .feed-ic { color: var(--accent); }
+.feed-empty { margin: 0; padding: 6px 12px; color: var(--text-3); }
+.feed-empty[hidden] { display: none; }
+@container (max-width: 640px) {
+  .feed-wrap { padding: 12px 14px 14px; }
+  .feed-item { grid-template-columns: 34px 18px minmax(0, 1fr); gap: 6px; padding: 5px 8px; }
+  .feed-live { max-height: 260px; }
+}

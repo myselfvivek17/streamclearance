@@ -16,7 +16,7 @@ import time
 import uuid
 from typing import Any
 
-from app import config, gemini, metrics, pipeline, provenance, retention
+from app import config, events, gemini, metrics, pipeline, provenance, retention
 from app.schemas import CountryReport, Inventory, Privacy, Report
 from app.storage import get_storage
 
@@ -57,6 +57,7 @@ def create_job(video_id: str, countries: list[str]) -> dict[str, Any]:
             _stage("done", "Report ready"),
         ],
         "report": None,
+        "events": [],  # the activity feed (app/events.py)
         "video_deleted_at": None,
         "expires_at": None,
     }
@@ -84,6 +85,10 @@ def _save(job: dict[str, Any]) -> None:
     meter = metrics.current()
     if meter is not None and meter.job_id == job["job_id"]:
         job["timings"], job["calls"] = meter.snapshot()
+    feed = events.current()
+    if feed is not None and feed.job_id == job["job_id"]:
+        job["events"] = feed.snapshot()
+        _saved_events[job["job_id"]] = feed.version
     store.save_job(job["job_id"], job)
 
 
@@ -95,6 +100,18 @@ async def delete_job(job_id: str) -> None:
         with contextlib.suppress(asyncio.CancelledError, asyncio.TimeoutError, Exception):
             await asyncio.wait_for(asyncio.shield(task), timeout=10)
     await asyncio.to_thread(retention.delete_report, job_id, "deleted")
+
+
+async def _flush_events(job: dict[str, Any], feed: events.EventLog) -> None:
+    """Save the job when the feed changed, so events show up while a stage runs."""
+    while True:
+        await asyncio.sleep(EVENT_FLUSH_S)
+        if feed.version != _saved_events.get(job["job_id"]):
+            _save(job)
+
+
+EVENT_FLUSH_S = 1.0
+_saved_events: dict[str, int] = {}  # job id -> feed version last saved
 
 
 def _set(job: dict[str, Any], key: str, status: str, detail: str = "") -> None:
@@ -109,6 +126,8 @@ async def run_job(job: dict[str, Any]) -> None:
     mock = job["mock"]
     gemini.job_budget(job["job_id"])  # cost guard: SC_MAX_CALLS_PER_JOB model calls per job
     meter = metrics.start(job["job_id"])  # per-stage timings and calls -> job["timings"/"calls"]
+    feed = events.start(job["job_id"], job["created_at"])  # the activity feed -> job["events"]
+    flusher = asyncio.create_task(_flush_events(job, feed))
     t_job = time.perf_counter()
     drift_task: asyncio.Task | None = None
     job["status"] = "running"
@@ -126,9 +145,12 @@ async def run_job(job: dict[str, Any]) -> None:
 
         async def on_done(cc: str, rep: CountryReport | None, err: str | None) -> None:
             if rep is None:
+                events.emit("warn", f"{config.COUNTRIES[cc].name}: the check failed ({err or 'error'}).",
+                            stage="country", country=cc)
                 _set(job, f"country:{cc}", "error", err or "failed")
             else:
                 n = len(rep.findings)
+                pipeline.country_done_event(rep)
                 _set(job, f"country:{cc}", "done",
                      f"{rep.badge} · {n} finding{'s' * (n != 1)}")
 
@@ -140,6 +162,7 @@ async def run_job(job: dict[str, Any]) -> None:
 
         async def on_inventory(inv: Inventory) -> None:
             nonlocal drift_task
+            pipeline.inventory_events(inv)
             if any(config.COUNTRIES[cc].drift_languages for cc in job["countries"]) \
                     and pipeline.has_speech(inv):
                 _set(job, "translation", "running")
@@ -202,6 +225,9 @@ async def run_job(job: dict[str, Any]) -> None:
                 job["created_at"]),
         )
         job["report"] = report.model_dump(mode="json")
+        checked = sum(c.overall_risk != "not_checked" for c in report.countries)
+        events.emit("info", f"Report ready: {checked} of {len(job['countries'])} countries checked"
+                    + (f", {len(errors)} check(s) failed" if errors else "") + ".", stage="report")
         job["status"] = "done"
     except asyncio.CancelledError:
         log.warning("job %s cancelled", job["job_id"])
@@ -216,6 +242,8 @@ async def run_job(job: dict[str, Any]) -> None:
             if st["status"] == "running" or (current == "inventory" and st["key"] == "inventory"):
                 st["status"], st["detail"] = "error", job["error"]
     finally:
+        flusher.cancel()
+        _saved_events.pop(job["job_id"], None)
         if drift_task is not None and not drift_task.done():
             drift_task.cancel()
         # The video is not needed any more, whatever happened: delete it before

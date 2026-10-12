@@ -111,6 +111,7 @@ def test_no_content_in_logs_real_pipeline_with_fake_model(tiny_video, capture, m
     assert job["status"] == "done" and not job["mock"], job.get("error")
     report = json.dumps(job["report"])
     assert CANARY in report  # the report holds the content; the logs must not
+    assert CANARY in json.dumps(job["events"])  # so does the activity feed (report data)
     assert any("AU" in e and CANARY in e for e in job["report"]["errors"])
     my = next(c for c in job["report"]["countries"] if c["country"] == "MY")
     assert my["findings"] and my["translation"]
@@ -123,11 +124,12 @@ def test_no_content_in_logs_real_pipeline_with_fake_model(tiny_video, capture, m
 def test_no_content_in_logs_adk_mock(tiny_video, capture, real_provisions, monkeypatch):
     """ADK brain (mock) with the canary in the transcript, plus a failing job."""
     segs = [dict(s) for s in pipeline._MOCK_SEGMENTS]
-    segs[1]["transcript"] = f"{segs[1]['transcript']} {CANARY}"
+    segs[1]["transcript"] = f"{CANARY} {segs[1]['transcript']}"
     monkeypatch.setattr(pipeline, "_MOCK_SEGMENTS", segs)
     with TestClient(app) as client:
         job = _run(client, _upload(client, tiny_video[0], "secret-name.mp4")["video_id"], ["MY", "IN"])
         assert job["status"] == "done" and CANARY in json.dumps(job["report"])
+        assert CANARY in json.dumps(job["events"])  # feed text is report data, never logged
 
         def boom(*a, **kw):
             raise ValueError(f"cannot parse {CANARY}")

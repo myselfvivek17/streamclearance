@@ -18,7 +18,7 @@ from collections.abc import Awaitable, Callable
 from pathlib import Path
 from typing import Any
 
-from app import config, metrics, pipeline, provisions, retrieval, taxonomy
+from app import config, events, metrics, pipeline, provisions, retrieval, taxonomy
 from app.brain import agents, verifier
 from app.brain.agents import MomentAssessment
 from app.schemas import (
@@ -108,9 +108,26 @@ async def assess_country(inventory: Inventory, country: str, *, mock: bool) -> C
     """assessor -> verifier -> critic -> report, for one country (no Workflow; used by tests)."""
     assessments, notes = await agents.assess(inventory, country, mock=mock)
     v = verifier.verify(assessments, country, inventory)
+    verifier_event(country, v)
     verdicts, c_notes = await agents.critique(v.covered, inventory, country, mock=mock)
     kept, removed, changes = agents.apply_verdicts(v.covered, verdicts)
+    agents.critic_event(country, v.covered, verdicts, removed, changes)
     return build_report(country, inventory, kept, removed, v, changes, notes + c_notes)
+
+
+def verifier_event(country: str, v: verifier.Verified) -> None:
+    """The citation check (plain code): what it let through and what it removed."""
+    if not (v.dropped or v.removed_citations):
+        if v.covered:
+            events.emit("review", f"Citation check passed: {len(v.covered)} cited finding(s), every "
+                        "provision id exists and targets the moment", stage="country", country=country)
+        return
+    parts = []
+    if v.dropped:
+        parts.append(f"dropped {v.dropped} assessment(s) whose citations did not exist or fit")
+    if v.removed_citations:
+        parts.append(f"removed {v.removed_citations} citation(s) that did not fit")
+    events.emit("review", "Citation check " + " and ".join(parts), stage="country", country=country)
 
 
 def _legacy_country(inventory: Inventory, country: str, mock: bool) -> CountryReport:
@@ -184,6 +201,7 @@ async def run(
                 return node_input
             with metrics.stage(f"verifier:{cc}"):
                 ctx["verified"] = v = verifier.verify(ctx["assessments"], cc, state["inventory"])
+            verifier_event(cc, v)
             return {"country": cc, "covered": len(v.covered), "dropped": v.dropped}
 
         async def critic(node_input: dict) -> dict:
@@ -199,6 +217,7 @@ async def run(
                         verdicts, notes = await agents.critique(v.covered, state["inventory"], cc,
                                                                 mock=mock)
                     kept, removed, changes = agents.apply_verdicts(v.covered, verdicts)
+                    agents.critic_event(cc, v.covered, verdicts, removed, changes)
                     ctx["report"] = build_report(cc, state["inventory"], kept, removed, v, changes,
                                                  ctx["notes"] + notes)
             except Exception as e:  # noqa: BLE001

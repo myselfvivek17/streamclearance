@@ -9,7 +9,7 @@ import asyncio
 from collections.abc import Callable
 from typing import Any
 
-from app import metrics, retrieval
+from app import config, events, metrics, retrieval
 from app.schemas import Provision
 
 
@@ -24,6 +24,19 @@ def provision_view(p: Provision) -> dict[str, Any]:
 
 
 LIMIT_REACHED = "tool-call limit reached: answer now with the provisions you already have"
+
+
+def cite(p: Provision) -> str:
+    """Short reference for the feed, e.g. "TGACODE2021 s9(1) p.13"."""
+    section = p.section if len(p.section) <= 40 else p.section[:39] + "…"
+    return f"{p.law_id} {section} p.{p.page}"
+
+
+def found(hits: list[Provision], n_passages: int = 0) -> str:
+    parts = [cite(p) for p in hits[:4]] + ([f"+{len(hits) - 4} more"] if len(hits) > 4 else [])
+    if n_passages:
+        parts.append(f"{n_passages} passage{'s' * (n_passages != 1)} of law text")
+    return ", ".join(parts) or "nothing"
 
 
 def make_tools(bound: str, max_calls: int | None = None
@@ -49,6 +62,8 @@ def make_tools(bound: str, max_calls: int | None = None
             return {"error": LIMIT_REACHED, "provisions": []}
         with metrics.timed(f"retrieval:{bound}"):
             hits = retrieval.lookup(bound, leaves)
+        events.emit("search", f"Looked up {config.COUNTRIES[bound].name} law for "
+                    f"{', '.join(map(str, leaves))} → {found(hits)}", stage="country", country=bound)
         return {"provisions": [provision_view(p) for p in hits]}
 
     async def search_law(country: str, query: str) -> dict:
@@ -68,6 +83,8 @@ def make_tools(bound: str, max_calls: int | None = None
         # a network query (RAG Engine): keep it off the event loop the other countries share
         with metrics.timed(f"retrieval:{bound}"):
             hits, passages = await asyncio.to_thread(retrieval.search_with_passages, bound, query, 5)
+        events.emit("search", f"Searched {config.COUNTRIES[bound].name} law for {events.quote(query, 60)} "
+                    f"→ {found(hits, len(passages))}", stage="country", country=bound)
         return {"provisions": [provision_view(p) for p in hits],
                 "passages": [{"law": x.law, "page": x.page, "snippet": x.snippet} for x in passages]}
 
