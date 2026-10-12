@@ -70,6 +70,11 @@ JUDGE_TEMPERATURE = float(os.getenv("SC_JUDGE_TEMPERATURE", "0"))
 # Thinking level of the critic agent ("" = model default).
 CRITIC_THINKING = os.getenv("SC_CRITIC_THINKING", "low") or None
 MODEL_SEED = int(os.getenv("SC_MODEL_SEED", "20261012"))
+# No call may hang a job: an ADK agent run (all its model rounds) gives up after
+# SC_AGENT_TIMEOUT_S (the assessor then runs the simplified check, the critic is noted
+# as unavailable), and a direct Gemini HTTP request after SC_GEMINI_HTTP_TIMEOUT_S.
+AGENT_TIMEOUT_S = float(os.getenv("SC_AGENT_TIMEOUT_S", "150"))
+GEMINI_HTTP_TIMEOUT_S = float(os.getenv("SC_GEMINI_HTTP_TIMEOUT_S", "240"))
 # Tool calls (lookup_provisions + search_law) per country assessor; the exact-lookup
 # provisions are already in its prompt, so search is rarely needed.
 ASSESSOR_MAX_TOOL_CALLS = int(os.getenv("SC_ASSESSOR_MAX_TOOL_CALLS", "2"))

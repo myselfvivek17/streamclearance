@@ -83,6 +83,8 @@ class Assessed:
 # Why the assessor agent's run was replaced by the simplified check.
 FALLBACK_REASONS = {
     "no_json": "the agent's reply held no JSON",
+    "empty_reply": "the agent replied with an empty list",
+    "timeout": "the agent did not answer in time",
     "no_valid_items": "the agent's reply held no valid assessment",
     "agent_error": "the agent run failed",
 }
@@ -123,6 +125,12 @@ async def run_agent(agent, message: str, *, retries: int | None = None) -> str:
 
 
 async def run_agent_once(agent, message: str) -> str:
+    """_run_agent with a deadline (SC_AGENT_TIMEOUT_S): a hung model request must not hang
+    the job. Raises TimeoutError."""
+    return await asyncio.wait_for(_run_agent(agent, message), timeout=config.AGENT_TIMEOUT_S)
+
+
+async def _run_agent(agent, message: str) -> str:
     """Run one ADK agent to completion in its own in-memory session; return its final text."""
     from google.adk.runners import InMemoryRunner
     from google.genai import types
@@ -345,13 +353,15 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> Assessed:
         except ValueError as e:
             raise _NoAssessments("no_json") from e
         if not out:
-            raise _NoAssessments("no_valid_items")
+            empty = [v for v in gemini.iter_json(text)] in ([[]], [{}])
+            raise _NoAssessments("empty_reply" if empty else "no_valid_items")
         assessment_events(country, out)
         return Assessed(out, fallbacks)
     except gemini.GeminiUnavailable:
         raise
     except Exception as e:  # noqa: BLE001 - fall back, and say so in the report and the feed
-        reason = str(e) if isinstance(e, _NoAssessments) else "agent_error"
+        reason = str(e) if isinstance(e, _NoAssessments) else \
+            "timeout" if isinstance(e, asyncio.TimeoutError) else "agent_error"
         log.warning("%s: ADK assessor failed (%s, %s); falling back to retrieval + one JSON call",
                     country, type(e).__name__, reason)
         note = (f"Simplified check: {FALLBACK_REASONS[reason]} ({type(e).__name__}), so the provisions "

@@ -56,14 +56,17 @@ def _get_client():
     backend = config.gemini_backend()
     if _client is None or _client_backend != backend:
         from google import genai
+        from google.genai import types
 
+        http = types.HttpOptions(timeout=int(config.GEMINI_HTTP_TIMEOUT_S * 1000))
         if backend == "vertex":
             project = config.gcp_project()
             if not project:
                 raise GeminiUnavailable("SC_GEMINI_BACKEND=vertex needs GOOGLE_CLOUD_PROJECT")
-            _client = genai.Client(vertexai=True, project=project, location=config.vertex_location())
+            _client = genai.Client(vertexai=True, project=project, location=config.vertex_location(),
+                                   http_options=http)
         elif backend == "studio":
-            _client = genai.Client(api_key=config.gemini_api_key())
+            _client = genai.Client(api_key=config.gemini_api_key(), http_options=http)
         else:
             raise GeminiUnavailable(
                 "No Gemini backend: set GOOGLE_CLOUD_PROJECT (Vertex AI) or GEMINI_API_KEY")

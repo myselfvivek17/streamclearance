@@ -118,3 +118,30 @@ def test_agent_run_retried_on_rate_limit(monkeypatch):
     with pytest.raises(RuntimeError):
         asyncio.run(agents.run_agent(A(), "m"))
     assert len(calls) == 1  # other errors are not retried
+
+
+def test_hung_agent_times_out_and_falls_back(real_provisions, monkeypatch):
+    from app import config
+
+    async def hang(agent, message):
+        await asyncio.sleep(60)
+
+    inv = _inventory()
+    monkeypatch.setattr(config, "AGENT_TIMEOUT_S", 0.05)
+    monkeypatch.setattr(agents, "_run_agent", hang)
+    monkeypatch.setattr(gemini, "generate_json", lambda *a, **kw: [])
+    res = asyncio.run(agents.assess(inv, "MY", mock=False))
+    assert res.method == "fallback" and res.fallback_reason == "timeout"
+    # the critic gives up too, and says so
+    verdicts, notes = asyncio.run(agents.critique(agents.mock_assess(inv, "MY")[:1], inv, "MY", mock=False))
+    assert verdicts == [] and notes and notes[0].startswith("Critic unavailable")
+
+
+def test_empty_reply_reason(real_provisions, monkeypatch):
+    async def empty(agent, message):
+        return "[]"
+
+    monkeypatch.setattr(agents, "run_agent", empty)
+    monkeypatch.setattr(gemini, "generate_json", lambda *a, **kw: [])
+    res = asyncio.run(agents.assess(_inventory(), "MY", mock=False))
+    assert res.fallback_reason == "empty_reply"
