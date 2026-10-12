@@ -5,7 +5,7 @@ timestamped flags tied to the exact law section and page. Advisory only, not
 legal advice. Most of these laws put duties on platforms, so the practical risk
 is takedown or geo-blocking in that country.
 
-## Status: M0–M5 working; Gemini on Vertex AI; deployable to Cloud Run
+## Status: M0–M5 + agent v1 working; Gemini on Vertex AI; deployable to Cloud Run
 
 | Path | What it does |
 |---|---|
@@ -17,12 +17,52 @@ is takedown or geo-blocking in that country.
 | `app/media.py` | ffprobe duration (optional; skipped if ffprobe is missing) |
 | `app/pipeline.py` | Stage A inventory, stage B per-country findings, translation-drift check, mocks |
 | `app/jobs.py` | Background analysis jobs, status persisted to `jobs/<id>.json` |
+| `app/events.py` | The job's agent activity feed (real pipeline steps, never logged) |
+| `app/frames.py` | One still per flagged moment (ffmpeg), stored and deleted with the report |
+| `app/synthetic.py` | AI-generated content check: signs of AI generation → per-country consequence (fixed table) |
+| `app/floors.py` | Severity floors applied after the critic (same video → same rating) |
 | `app/main.py` | FastAPI routes + optional access code + static UI |
 | `app/static/` | Plain HTML/CSS/JS UI (no framework, no CDN) |
 | `tools/extract_text.py` | `data/laws/raw/*.pdf` → `data/laws/text/*.json` (`[{page, text}]`) |
 | `app/law_search.py` | Vertex AI RAG Engine client (law search, retrieval path B) |
 | `tools/index_laws.py` | Sync provisions + full law text into the RAG Engine corpora → `data/search_index.json` |
 | `tools/build_rules.py` | Law text → Gemini-drafted rule cards → quote/page check → `data/rules/<cc>.json` |
+
+### What a check shows (agent v1)
+
+- **Live agent activity** (`app/events.py`, job `events`, `GET /api/jobs/{id}?since=n`):
+  every step the pipeline actually takes, as it happens: the moments stage A
+  watched (what was heard or read on screen), the AI-content check, each law
+  lookup and search the assessor made with the provisions it got back, each
+  assessment, the citation check, the reviewer's verdicts, fixed severity
+  rules, fallbacks, the translation result per language, and the timings.
+  Shown live on the analysis screen and, collapsed, as "How the agent reached
+  this" on results. Report data: kept and deleted with the report, never
+  logged (capped at 200 events).
+- **Moment stills** (`app/frames.py`): one ~320 px JPEG per flagged moment,
+  taken with ffmpeg before the video is deleted, shown on each issue, in the
+  transcript list and on timeline hover; deleted with the report. Without
+  ffmpeg there are simply no stills.
+- **AI-generated content check** (`app/synthetic.py`): stage A also reports
+  signs of AI generation (artefacts, synthetic voice, AI labels or
+  watermarks, a real public figure shown or voiced) as evidence only, plus
+  AI-tool names in the file's metadata tags. A fixed table turns that into
+  each country's consequence: India amber when there are clear signs and no
+  AI label (IT Rules r3(3)(a)(ii), r4(1A)); red for a real person where a
+  loaded law covers it (India r3(3)(a)(i)(IV), r3(1)(b)(vi); Singapore OSRA
+  s15), otherwise amber + check manually; an AI label present is a note
+  only. Always worded "signs of AI generation", never "this is
+  AI-generated". No C2PA check (paused: needs Vivek).
+- **Findings grouped by moment** (`CountryReport.moments`): issues on the
+  same or overlapping time range are one row with the worst risk; each issue
+  keeps its own sections and fix. `findings` stays the flat list.
+- **No silent fallback**: if the assessor agent's answer cannot be used, the
+  simplified check (retrieval in code + one structured call) runs and the
+  report says so (`method: "fallback"`, `fallback_reason`, a feed warning,
+  a "Simplified check" tag).
+- **Rules status**: provisions are AI-drafted with every quote checked word
+  for word against the official text, and "reviewed" only once a lawyer has
+  signed off every provision; the UI says exactly that.
 
 Countries: IN (IT Rules 2021, as updated Feb 2026), AU (Online Safety Act 2021),
 MY (Online Safety Act 2025), SG (Online Safety (Relief and Accountability) Bill
@@ -42,12 +82,18 @@ returns canned findings (plus one invented card ID the validator must drop),
 and the drift check returns one canned "increased" example. The UI shows a
 MOCK MODE banner. See [Gemini backends](#gemini-backends) to use Gemini.
 
-If `data/rules/<cc>.json` doesn't exist, the app falls back to
-`<cc>.dryrun.json`, generating it with the `build_rules --dry-run` logic, and
-marks that country's report `draft/unreviewed`.
+Countries with provisions use them; otherwise `data/rules/<cc>.json`; if
+that doesn't exist either, the app falls back to `<cc>.dryrun.json`,
+generating it with the `build_rules --dry-run` logic. The report's
+`rules_status` is `reviewed` only when every provision (or card) was signed
+off by a person, else `draft/unreviewed` (shown as "AI-drafted rules · every
+quote checked against the official text · not yet signed off by a lawyer").
+Pakistan's PECA 2025 source could not be verified (official hosts
+unreachable on 2026-10-07 and 2026-10-12), so PK is "not checked".
 
 API: `POST /api/upload` (multipart `file`), `POST /api/analyze
-{video_id, countries[]}`, `GET /api/jobs/{id}`, `GET /api/countries`,
+{video_id, countries[]}`, `GET /api/jobs/{id}` (`?since=n`: feed events after
+the first n), `GET /api/jobs/{id}/frames/{name}`, `GET /api/countries`,
 `GET /api/laws/{cc}/pdf`, `GET /api/videos/{id}`, `GET /api/status`.
 
 ## Setup and tests
@@ -86,6 +132,13 @@ GOOGLE_CLOUD_PROJECT=booming-entity-510706-e9 SC_PORT=8431 ./run.sh
   temporary object in `gs://<project>-sc-uploads` (`SC_UPLOAD_BUCKET`;
   asia-southeast1, lifecycle deletes objects after 1 day; the app also deletes
   it after the call). AI Studio uses the Files API.
+- Speed settings (measured on the eval clips, none checks less): the critic
+  runs at thinking level `SC_CRITIC_THINKING` (default low; the assessor keeps
+  the model default); text calls are hedged after `SC_HEDGE_AFTER_S` +
+  `SC_HEDGE_TEXT_PER_S` × video seconds; law-search results are cached per
+  (country, query); ADK agent runs are retried with backoff on 429 like direct
+  calls. Translation is one batched call per step (translate, blind
+  back-translate, judge) per country, never one call per line.
 - Cost: every call (direct and ADK) appends its token counts to
   `jobs/usage.log`; `SC_MAX_CALLS_PER_JOB` (default 40) is a hard cap per job.
 

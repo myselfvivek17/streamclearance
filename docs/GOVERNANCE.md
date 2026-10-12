@@ -67,6 +67,20 @@ reads also expire reports lazily (`GET /api/jobs/{id}`). Each report records
 - **Critic** (`app/brain/agents.py`): a second agent reviews each verified
   finding against the cited provision's text and its exceptions, and may
   downgrade or drop it; the report counts its changes (`critic_changes`).
+- **Severity floors** (`app/floors.py`): after the critic, fixed rules in code
+  raise (never lower) gambling promotion and serious cure / stop-your-medicine
+  claims to red when a cited in-force provision binding the publisher
+  genuinely matches; each raise is noted on the finding and in the feed.
+  Judgement calls run at temperature 0 with a fixed seed.
+- **AI-generated content check** (`app/synthetic.py`): the model only
+  reports evidence (signs, label, real person); a fixed table in code decides
+  each country's consequence and cites only provisions listed there (tests
+  check each quote on its page). Wording is "signs of AI generation".
+- **No silent fallback, no hang**: a simplified assessor check is recorded
+  (`method`, `fallback_reason`, feed warning, UI tag); agent runs and Gemini
+  requests have deadlines (`SC_AGENT_TIMEOUT_S`, `SC_GEMINI_HTTP_TIMEOUT_S`).
+- **Activity feed** (`app/events.py`): only real pipeline steps; report data,
+  never logged.
 - **Draft / reviewed labels**: every provision carries `review.status`; a law
   is "reviewed" only when a person signed off all its provisions. The UI and
   the report show draft laws as draft (`rules_status`, provenance `status`).
