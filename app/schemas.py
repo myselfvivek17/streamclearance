@@ -227,6 +227,7 @@ class Finding(_Timed):
     critic_note: str = ""
     obligation_ids: list[str] = []  # platform-obligation provisions for this leaf
     video_level: bool = False  # about the whole video (AI-content check), not one moment
+    floor_note: str = ""  # set when a fixed severity rule raised the risk (app/floors.py)
 
 
 class DriftCheck(_Timed):

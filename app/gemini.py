@@ -235,6 +235,7 @@ def _config(response_schema: Any, system_instruction: str | None, temperature: f
         response_schema=response_schema,
         system_instruction=system_instruction,
         temperature=temperature,
+        seed=config.MODEL_SEED,
         thinking_config=types.ThinkingConfig(thinking_level=thinking.upper()) if thinking else None,
         media_resolution=f"MEDIA_RESOLUTION_{media_resolution.upper()}" if media_resolution else None,
     )

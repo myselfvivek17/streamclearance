@@ -52,6 +52,11 @@ def video_hedge_after(duration_s: float | None) -> float | None:
     if HEDGE_AFTER_S <= 0:
         return None
     return HEDGE_VIDEO_BASE_S + HEDGE_VIDEO_PER_S * (duration_s or MAX_DURATION_S)
+# Consistency (same video -> same rating): the legal judgement calls (stage B, the ADK
+# assessor and critic, the assessor fallback) run at this temperature with a fixed seed.
+# Every call sends the seed; stage A and translation keep their own temperature.
+JUDGE_TEMPERATURE = float(os.getenv("SC_JUDGE_TEMPERATURE", "0"))
+MODEL_SEED = int(os.getenv("SC_MODEL_SEED", "20261012"))
 # Tool calls (lookup_provisions + search_law) per country assessor; the exact-lookup
 # provisions are already in its prompt, so search is rarely needed.
 ASSESSOR_MAX_TOOL_CALLS = int(os.getenv("SC_ASSESSOR_MAX_TOOL_CALLS", "2"))

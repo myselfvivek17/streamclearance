@@ -1188,6 +1188,7 @@ function issueCard(job, c, f, p, provs, cards) {
       el("dt", {}, "Who’s liable"),
       el("dd", { class: "liable" }, liable.map((w) => el("span", { class: "tag on" }, icon("user"), w)))) : null,
     f.critic_note ? el("div", { class: "note" }, icon("bot"), el("span", {}, el("b", {}, "Reviewer AI note: "), f.critic_note)) : null,
+    f.floor_note ? el("div", { class: "note" }, icon("scale"), el("span", {}, el("b", {}, "Fixed severity rule: "), f.floor_note)) : null,
     f.exception_applies ? el("div", { class: "note" }, icon("info"), el("span", {}, el("b", {}, "An exception may apply: "), f.exception_reason || "see the exceptions in the legal basis.")) : null,
     ownDuties.length ? el("div", { class: "note" }, icon("monitor"), el("span", {}, el("b", {}, "Platforms must also act: "),
       ownDuties.map((o) => `${o.section} (${o.law_id})`).join(", "), ". See Platform obligations below.")) : null,

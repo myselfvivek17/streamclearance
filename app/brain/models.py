@@ -25,6 +25,17 @@ def adk_model() -> str:
     return config.SC_MODEL_SMART
 
 
+def agent_config(thinking: str | None = None):
+    """Generation settings for the ADK agents: low temperature and a fixed seed, so the
+    same video gets the same assessment (config.JUDGE_TEMPERATURE, SC_MODEL_SEED).
+    thinking: Gemini thinking level, None = the model's default."""
+    from google.genai import types
+
+    return types.GenerateContentConfig(
+        temperature=config.JUDGE_TEMPERATURE, seed=config.MODEL_SEED,
+        thinking_config=types.ThinkingConfig(thinking_level=thinking.upper()) if thinking else None)
+
+
 def count_call(callback_context, llm_request):
     """before_model_callback: refuse the call once the job's call budget is used up."""
     gemini.count_call(f"adk/{callback_context.agent_name}")

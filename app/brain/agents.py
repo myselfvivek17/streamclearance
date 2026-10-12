@@ -25,7 +25,7 @@ from typing import Literal
 from pydantic import BaseModel, ValidationError, field_validator
 
 from app import config, events, gemini, metrics, provisions, retrieval, taxonomy
-from app.brain.models import adk_model, count_call, log_usage
+from app.brain.models import adk_model, agent_config, count_call, log_usage
 from app.brain.tools import cite, make_tools, provision_view
 from app.schemas import Inventory, Risk
 
@@ -310,6 +310,7 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> Assessed:
         instruction=ASSESSOR_INSTRUCTION.format(country=country,
                                                 max_calls=config.ASSESSOR_MAX_TOOL_CALLS),
         tools=[lookup_provisions, search_law],
+        generate_content_config=agent_config(),  # the assessor keeps the default thinking
         before_model_callback=count_call, after_model_callback=log_usage,
     )
     try:
@@ -357,7 +358,7 @@ async def _fallback_assess(country: str, ms: list[dict]) -> list[MomentAssessmen
               f"{json.dumps(items, ensure_ascii=False)}\n\nReturn the assessments as a JSON array.")
     raw = await asyncio.to_thread(
         gemini.generate_json, prompt, list[MomentAssessment], model=config.SC_MODEL_SMART,
-        system_instruction=FALLBACK_SYSTEM)
+        system_instruction=FALLBACK_SYSTEM, temperature=config.JUDGE_TEMPERATURE)
     return _parse_list(json.dumps(raw), MomentAssessment) if raw else []
 
 
@@ -410,6 +411,7 @@ async def critique(found: list[MomentAssessment], inventory: Inventory, country:
     from google.adk import Agent
 
     agent = Agent(name=f"critic_{country}", model=adk_model(), instruction=CRITIC_INSTRUCTION,
+                  generate_content_config=agent_config(),
                   before_model_callback=count_call, after_model_callback=log_usage)
     try:
         text = await run_agent(agent, json.dumps(_critic_items(country, found, inventory),

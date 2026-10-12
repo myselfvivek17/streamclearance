@@ -241,11 +241,13 @@ def synthetic_event(inv: Inventory) -> None:
 
 
 def finalize(rep: CountryReport, inventory: Inventory | None) -> None:
-    """Deterministic steps after a country's assessment (in place, before it is reported):
-    the AI-content check's consequence for this country."""
-    from app import synthetic
+    """Deterministic steps after a country's assessment and its critic (in place, before
+    it is reported): severity floors (app/floors.py), then the AI-content check's
+    consequence for this country (app/synthetic.py)."""
+    from app import floors, synthetic
 
     if inventory is not None:
+        floors.apply(rep, inventory)
         synthetic.apply(rep, inventory)
 
 
@@ -455,7 +457,8 @@ def _gemini_findings(inventory: Inventory, law: config.CountryLaw, cards: list[R
         "Return the findings as a JSON array."
     )
     out = gemini.generate_json(
-        prompt, list[Finding], model=config.SC_MODEL_SMART, system_instruction=STAGE_B_SYSTEM)
+        prompt, list[Finding], model=config.SC_MODEL_SMART, system_instruction=STAGE_B_SYSTEM,
+        temperature=config.JUDGE_TEMPERATURE)
     return [x for x in out if isinstance(x, dict)] if isinstance(out, list) else []
 
 
