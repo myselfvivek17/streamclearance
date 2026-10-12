@@ -255,6 +255,42 @@ class Uncovered(_Timed):
         return self
 
 
+class MomentGroup(_Timed):
+    """Findings of one country on the same or overlapping time range: one row, the worst
+    risk, every issue with its own citations and fix. Whole-video findings (the
+    AI-content check) form their own group."""
+    risk: Risk
+    issues: list[Finding]
+    video_level: bool = False
+
+
+def group_moments(findings: list[Finding]) -> list[MomentGroup]:
+    out: list[MomentGroup] = []
+    timed = sorted((f for f in findings if not f.video_level), key=lambda f: (f.start_s, f.end_s))
+    cur: list[Finding] = []
+    end = -1.0
+    for f in timed:
+        if cur and (f.start_s < end or f.start_s == cur[0].start_s):
+            cur.append(f)
+            end = max(end, f.end_s)
+            continue
+        if cur:
+            out.append(_group(cur))
+        cur, end = [f], f.end_s
+    if cur:
+        out.append(_group(cur))
+    whole = [f for f in findings if f.video_level]
+    if whole:
+        out.append(_group(whole, video_level=True))
+    return out
+
+
+def _group(fs: list[Finding], video_level: bool = False) -> MomentGroup:
+    issues = sorted(fs, key=lambda f: -RISK_ORDER[f.risk])
+    return MomentGroup(start_s=min(f.start_s for f in fs), end_s=max(f.end_s for f in fs),
+                       risk=issues[0].risk, issues=issues, video_level=video_level)
+
+
 class CountryReport(BaseModel):
     country: CountryCode
     law: str
@@ -290,6 +326,13 @@ class CountryReport(BaseModel):
         elif not self.findings and reads_like_clearance(self.risk_framing):
             self.risk_framing = "No moment is covered by a loaded provision of this country's laws."
         return self
+
+    @computed_field
+    @property
+    def moments(self) -> list[MomentGroup]:
+        """`findings` grouped by moment (same or overlapping time range); `findings` stays
+        the flat list for compatibility."""
+        return group_moments(self.findings)
 
     @computed_field
     @property

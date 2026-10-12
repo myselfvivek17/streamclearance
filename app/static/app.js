@@ -1163,24 +1163,16 @@ function liableOf(f, provs, cards) {
   return WHO_ORDER.filter((w) => who.has(w));
 }
 
-function issueCard(job, c, f, p, provs, cards) {
+// One issue of a moment: why, fix, who is liable, notes, and its own legal basis.
+function issueDetails(c, f, provs, cards, { titled }) {
   const m = riskMeta(f.risk);
-  const label = leafLabel(f);
-  const quote = f.video_level ? "" : quoteAt(job.report, f);
-  const chev = icon("chev");
-  chev.classList.add("chev");
-  const toggleBtn = el("button", { class: "issue-toggle", type: "button", "aria-expanded": "false" },
-    el("span", { class: `badge ${m.cls}` }, icon(m.icon), m.level),
-    el("span", { class: "issue-title" }, el("b", {}, label), quote ? el("span", {}, `“${quote}”`) : null),
-    chev);
-  const preview = el("div", { class: "fix-preview" }, icon("wrench", "color: var(--accent)"), el("b", {}, "Fix:"), el("span", {}, f.suggested_fix));
-
   const laws = Object.fromEntries([...countryInfo(c.country).laws.map((l) => [l.id, l]), ...(c.laws || []).map((l) => [l.law_id, l])]);
   const legal = f.rule_card_ids.map((id) => (provs[id] ? provisionCard(c.country, provs[id], laws[provs[id].law_id])
     : cards[id] ? ruleCardCard(c.country, cards[id], (c.laws || [])[0]) : null)).filter(Boolean);
   const liable = liableOf(f, provs, cards);
   const ownDuties = (c.platform_obligations || []).filter((o) => (f.obligation_ids || []).includes(o.id));
-  const body = el("div", { class: "issue-body", hidden: true },
+  return el("div", { class: `issue-part${titled ? " titled" : ""}` },
+    titled ? el("div", { class: "row wrap", style: "gap: 8px" }, el("span", { class: `badge ${m.cls}` }, icon(m.icon), m.level), el("b", {}, leafLabel(f))) : null,
     el("div", { class: "stack", style: "gap: 4px" }, el("span", { class: "eyebrow" }, "Why it’s a problem"), el("p", { style: "text-wrap: pretty" }, f.rationale)),
     el("div", { class: "fix" }, el("span", { class: "fix-icon" }, icon("wrench")),
       el("div", {}, el("div", { class: "fix-label" }, "How to fix"), el("p", { class: "fix-text" }, f.suggested_fix))),
@@ -1193,14 +1185,49 @@ function issueCard(job, c, f, p, provs, cards) {
     ownDuties.length ? el("div", { class: "note" }, icon("monitor"), el("span", {}, el("b", {}, "Platforms must also act: "),
       ownDuties.map((o) => `${o.section} (${o.law_id})`).join(", "), ". See Platform obligations below.")) : null,
     legal.length ? el("div", { class: "legal" }, disclosure(`Legal basis · ${plural(legal.length, "provision")}`, "scale", legal)) : null);
+}
 
-  const still = f.video_level ? null : frameUrl(job, f);
+/** Findings on the same or overlapping time range, as one moment (report `moments`; computed
+ * here for reports made before it existed). Whole-video findings form their own moment. */
+function groupMoments(c) {
+  if (c.moments) return c.moments;
+  const rank = (f) => riskMeta(f.risk).rank;
+  const timed = c.findings.filter((f) => !f.video_level).sort((a, b) => a.start_s - b.start_s || a.end_s - b.end_s);
+  const out = [];
+  for (const f of timed) {
+    const g = out[out.length - 1];
+    if (g && (f.start_s < g.end_s || f.start_s === g.start_s)) { g.issues.push(f); g.end_s = Math.max(g.end_s, f.end_s); } else out.push({ start_s: f.start_s, end_s: f.end_s, issues: [f] });
+  }
+  const whole = c.findings.filter((f) => f.video_level);
+  if (whole.length) out.push({ start_s: 0, end_s: Math.max(...whole.map((f) => f.end_s)), issues: whole, video_level: true });
+  for (const g of out) { g.issues.sort((a, b) => rank(b) - rank(a)); g.risk = g.issues[0].risk; }
+  return out;
+}
+
+function momentCard(job, c, g, p, provs, cards) {
+  const m = riskMeta(g.risk);
+  const labels = [...new Set(g.issues.map(leafLabel))];
+  const quote = g.video_level ? "" : quoteAt(job.report, g);
+  const chev = icon("chev");
+  chev.classList.add("chev");
+  const many = g.issues.length > 1;
+  const toggleBtn = el("button", { class: "issue-toggle", type: "button", "aria-expanded": "false" },
+    el("span", { class: `badge ${m.cls}` }, icon(m.icon), m.level),
+    el("span", { class: "issue-title" },
+      el("b", {}, many ? `${plural(g.issues.length, "issue")}: ${joinWords(labels.map((l, i) => (i ? l.charAt(0).toLowerCase() + l.slice(1) : l)))}` : labels[0]),
+      quote ? el("span", {}, `“${quote}”`) : null),
+    chev);
+  const fixes = [...new Set(g.issues.map((f) => f.suggested_fix).filter(Boolean))];
+  const preview = el("div", { class: "fix-preview" }, icon("wrench", "color: var(--accent)"), el("b", {}, many && fixes.length > 1 ? "Fixes:" : "Fix:"),
+    fixes.length > 1 ? el("ul", { class: "fix-list" }, fixes.map((x) => el("li", {}, x))) : el("span", {}, fixes[0] || ""));
+  const body = el("div", { class: "issue-body", hidden: true }, g.issues.map((f) => issueDetails(c, f, provs, cards, { titled: many })));
+  const still = g.video_level ? null : frameUrl(job, g);
   const art = el("article", { class: "issue" },
     el("div", { class: "issue-head" },
       el("div", { class: "issue-when" },
-        el("button", { class: "chip-time", type: "button", "aria-label": f.video_level ? "Play from the start (whole video)" : `Play ${range(f.start_s, f.end_s)}`, onclick: () => p.seek(f.start_s) },
-          icon("play"), f.video_level ? "Whole video" : range(f.start_s, f.end_s)),
-        thumb(still, `Still from the video at ${range(f.start_s, f.end_s)}`)),
+        el("button", { class: "chip-time", type: "button", "aria-label": g.video_level ? "Play from the start (whole video)" : `Play ${range(g.start_s, g.end_s)}`, onclick: () => p.seek(g.start_s) },
+          icon("play"), g.video_level ? "Whole video" : range(g.start_s, g.end_s)),
+        thumb(still, `Still from the video at ${range(g.start_s, g.end_s)}`)),
       toggleBtn),
     preview, body);
   toggleBtn.addEventListener("click", () => {
@@ -1265,6 +1292,7 @@ async function screenCountry(jobId, cc, stale) {
   const cards = Object.fromEntries((c.cited_cards || []).map((x) => [x.id, x]));
   const laws = (c.laws || []).length ? c.laws : info.laws || [];
   const nf = c.findings.length;
+  const groups = groupMoments(c);
   const unc = c.uncovered || [];
   const obl = c.platform_obligations || [];
   const p = makePlayer(job, [c]);
@@ -1315,8 +1343,8 @@ async function screenCountry(jobId, cc, stale) {
 
     el("section", { class: "section", "aria-label": "Issues" },
       el("div", { class: "section-head" }, el("h2", { class: "h2" }, `Issues to fix (${nf})`),
-        nf ? el("span", { class: "small muted" }, "Open an issue for the legal basis") : null),
-      nf ? c.findings.map((f) => issueCard(job, c, f, p, provs, cards))
+        nf ? el("span", { class: "small muted" }, `${plural(groups.length, "moment")} · open one for the legal basis`) : null),
+      nf ? groups.map((g) => momentCard(job, c, g, p, provs, cards))
         : el("div", { class: "neutral-card" }, icon("info", "width: 18px; height: 18px; color: var(--text-3); margin-top: 2px"),
           el("div", {}, el("div", { class: "h3" }, notChecked ? "Nothing was checked" : "No moment matched a loaded law"),
             el("p", { class: "small muted", style: "margin-top: 2px" }, notChecked

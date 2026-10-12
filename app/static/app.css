@@ -554,3 +554,8 @@ html.dark, html.dark body { background: #0b0d12; color-scheme: dark; }
 .ai-countries li { display: flex; flex-direction: column; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--border); }
 .ai-countries li:last-child { border-bottom: 0; padding-bottom: 0; }
 @container (max-width: 640px) { .ai-card { padding: 14px; } }
+
+/* Moment cards: several issues of one moment */
+.issue-part { display: flex; flex-direction: column; gap: 14px; }
+.issue-part.titled + .issue-part.titled { border-top: 1px dashed var(--border-strong); padding-top: 16px; }
+.fix-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
