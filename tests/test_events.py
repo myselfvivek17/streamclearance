@@ -42,7 +42,9 @@ def test_mock_job_events_in_order(tiny_video, real_provisions):
                    for e in evs)
         assert any(e["kind"] == "translate" or (e["kind"] == "warn" and e["stage"] == "translation")
                    for e in evs)
-        assert "2 of 3 countries checked" in evs[-1]["text"]  # PK has no verified law
+        ready = next(e for e in evs if e["text"].startswith("Report ready"))
+        assert "2 of 3 countries checked" in ready["text"]  # PK has no verified law
+        assert evs[-1]["text"].startswith("Timings: total ")
 
         tail = client.get(f"/api/jobs/{job['job_id']}?since=3").json()
         assert tail["events"] == evs[3:] and tail["events_total"] == len(evs)

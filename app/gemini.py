@@ -255,13 +255,16 @@ def generate_json(
     system_instruction: str | None = None,
     temperature: float = 0.2,
     thinking: str | None = None,
+    hedge_after: float | None = None,
 ) -> Any:
-    """Call Gemini with structured JSON output and return the parsed JSON."""
+    """Call Gemini with structured JSON output and return the parsed JSON. hedge_after:
+    seconds before a duplicate request is sent (default SC_HEDGE_AFTER_S; see
+    config.text_hedge_after for calls about a video)."""
     model = model or config.SC_MODEL_SMART
     cfg = _config(response_schema, system_instruction, temperature, thinking)
     log.info("gemini.generate_json model=%s prompt_chars=%d", model, len(prompt))
     resp = _generate(_get_client(), model, prompt, cfg, what="generate_json",
-                     hedge_after=config.HEDGE_AFTER_S)
+                     hedge_after=hedge_after if hedge_after is not None else config.HEDGE_AFTER_S)
     return _parse(resp, model)
 
 

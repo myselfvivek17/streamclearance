@@ -48,6 +48,17 @@ HEDGE_VIDEO_BASE_S = float(os.getenv("SC_HEDGE_VIDEO_BASE_S", "15"))
 HEDGE_VIDEO_PER_S = float(os.getenv("SC_HEDGE_VIDEO_PER_S", "0.5"))
 
 
+HEDGE_TEXT_PER_S = float(os.getenv("SC_HEDGE_TEXT_PER_S", "0.4"))
+
+
+def text_hedge_after(duration_s: float | None) -> float | None:
+    """Hedge delay for a text call about a video: longer videos mean longer prompts and
+    answers, so wait SC_HEDGE_AFTER_S + SC_HEDGE_TEXT_PER_S per video second."""
+    if HEDGE_AFTER_S <= 0:
+        return None
+    return HEDGE_AFTER_S + HEDGE_TEXT_PER_S * (duration_s or 0)
+
+
 def video_hedge_after(duration_s: float | None) -> float | None:
     if HEDGE_AFTER_S <= 0:
         return None
@@ -56,6 +67,8 @@ def video_hedge_after(duration_s: float | None) -> float | None:
 # assessor and critic, the assessor fallback) run at this temperature with a fixed seed.
 # Every call sends the seed; stage A and translation keep their own temperature.
 JUDGE_TEMPERATURE = float(os.getenv("SC_JUDGE_TEMPERATURE", "0"))
+# Thinking level of the critic agent ("" = model default).
+CRITIC_THINKING = os.getenv("SC_CRITIC_THINKING", "low") or None
 MODEL_SEED = int(os.getenv("SC_MODEL_SEED", "20261012"))
 # Tool calls (lookup_provisions + search_law) per country assessor; the exact-lookup
 # provisions are already in its prompt, so search is rarely needed.

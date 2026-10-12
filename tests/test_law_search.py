@@ -168,3 +168,31 @@ def test_indexer_skips_unverified_laws_and_removes_their_docs(real_provisions):
     remote = {"t_IN_DMR1954_p002.txt": "ragFiles/1"}
     up, delete = index_laws.plan(docs["IN"], recorded, remote)
     assert "ragFiles/1" in delete and "t_IN_DMR1954_p002.txt" not in up
+
+
+def test_rag_search_results_cached_errors_not(monkeypatch):
+    from app import retrieval
+
+    retrieval.reset()
+    monkeypatch.setenv("SC_LAW_SEARCH", "rag")
+    calls = []
+
+    def fake(country, query, k, kind):
+        calls.append(query)
+        return [], []
+
+    monkeypatch.setattr(retrieval, "_file_search", fake)
+    retrieval.search_with_passages("MY", "Casino  promo", 5)
+    retrieval.search_with_passages("MY", "casino promo", 5)  # same normalised query
+    retrieval.search_with_passages("SG", "casino promo", 5)  # another country's corpus
+    assert len(calls) == 2
+
+    def boom(*a):
+        calls.append("x")
+        raise RuntimeError("down")
+
+    monkeypatch.setattr(retrieval, "_file_search", boom)
+    retrieval.search_with_passages("AU", "q", 5)
+    retrieval.search_with_passages("AU", "q", 5)
+    assert calls.count("x") == 2  # errors are retried, not cached
+    retrieval.reset()

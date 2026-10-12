@@ -18,6 +18,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import random
 import uuid
 from dataclasses import dataclass, field
 from typing import Literal
@@ -98,7 +99,30 @@ def moments(inventory: Inventory) -> list[dict]:
 
 # ================================================================ ADK plumbing
 
-async def run_agent(agent, message: str) -> str:
+def _rate_limited(e: BaseException) -> bool:
+    text = f"{type(e).__name__} {str(e)[:300]}"
+    return "RESOURCE_EXHAUSTED" in text or "ResourceExhausted" in text or " 429" in text
+
+
+async def run_agent(agent, message: str, *, retries: int | None = None) -> str:
+    """run_agent_once, retried with backoff on rate limits (429), like app/gemini.py
+    `with_retry` for direct calls; a retry starts a fresh session."""
+    retries = config.GEMINI_MAX_RETRIES if retries is None else retries
+    for attempt in range(retries + 1):
+        try:
+            return await run_agent_once(agent, message)
+        except gemini.GeminiUnavailable:
+            raise
+        except Exception as e:  # noqa: BLE001 - ADK surfaces several types
+            if not _rate_limited(e) or attempt == retries:
+                raise
+            delay = min(30.0, 2.0 * 2**attempt) + random.uniform(0, 1)
+            log.warning("%s: rate limited, retry %d/%d in %.1fs", agent.name, attempt + 1, retries, delay)
+            await asyncio.sleep(delay)
+    raise AssertionError("unreachable")
+
+
+async def run_agent_once(agent, message: str) -> str:
     """Run one ADK agent to completion in its own in-memory session; return its final text."""
     from google.adk.runners import InMemoryRunner
     from google.genai import types
@@ -377,6 +401,11 @@ Be strict about real coverage, not about tone. Output ONLY a flat JSON array of 
 "reason": str}] with one item per finding."""
 
 
+# The critic answers keep / downgrade / remove per finding against quoted text: a simple
+# structured call, so low thinking (measured on the eval clips; the assessor keeps the default).
+CRITIC_THINKING = config.CRITIC_THINKING
+
+
 def _critic_items(country: str, found: list[MomentAssessment], inventory: Inventory) -> list[dict]:
     by_id = provisions.by_id(country)
     items = []
@@ -411,7 +440,7 @@ async def critique(found: list[MomentAssessment], inventory: Inventory, country:
     from google.adk import Agent
 
     agent = Agent(name=f"critic_{country}", model=adk_model(), instruction=CRITIC_INSTRUCTION,
-                  generate_content_config=agent_config(),
+                  generate_content_config=agent_config(thinking=CRITIC_THINKING),
                   before_model_callback=count_call, after_model_callback=log_usage)
     try:
         text = await run_agent(agent, json.dumps(_critic_items(country, found, inventory),

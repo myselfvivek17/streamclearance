@@ -271,4 +271,21 @@ async def run_job(job: dict[str, Any]) -> None:
         if job["status"] == "running":
             job["status"] = "error"
         meter.add_time("total", time.perf_counter() - t_job)
+        timing_event(meter)
         _set(job, "done", "done" if job["status"] == "done" else "error")
+
+
+def timing_event(meter: metrics.Meter) -> None:
+    """Where the time went (also in job["timings"]): stage A, the slowest country, translation."""
+    t, _ = meter.snapshot()
+    countries = {k.split(":", 1)[1]: v for k, v in t.items() if k.startswith("assessor:")}
+    for k, v in t.items():
+        if k.startswith("critic:"):
+            countries[k.split(":", 1)[1]] = countries.get(k.split(":", 1)[1], 0) + v
+    parts = [f"total {t.get('total', 0):.0f}s", f"video inventory {t.get('stage_a', 0):.0f}s"]
+    if countries:
+        slow = max(countries, key=countries.get)
+        parts.append(f"slowest country {config.COUNTRIES[slow].name} {countries[slow]:.0f}s")
+    if "translation" in t:
+        parts.append(f"translation {t['translation']:.0f}s (alongside the countries)")
+    events.emit("info", "Timings: " + " · ".join(parts), stage="report")

@@ -70,6 +70,8 @@ def reset() -> None:
     global _index, _bm25
     with _lock:
         _index, _bm25 = None, {}
+    with _search_lock:
+        _search_cache.clear()
 
 
 def lookup(country: str, leaves: list[str], *, cap: int = MAX_RESULTS,
@@ -276,6 +278,13 @@ def _file_search(country: str, query: str, k: int, kind: ProvisionKind | None = 
     return hits[:k], passages
 
 
+# Law-search results by (country, normalised query, k, kind). The corpora only change when
+# tools/index_laws.py runs, and the app is restarted after that. Errors are never cached.
+SEARCH_CACHE_SIZE = 512
+_search_cache: dict[tuple, tuple[list[Provision], list]] = {}
+_search_lock = threading.Lock()
+
+
 def search_with_passages(country: str, query: str, k: int = 5,
                          kind: ProvisionKind | None = "content") -> tuple[list[Provision], list[Passage]]:
     """Free-text search within one country: (provisions, full-text passages).
@@ -285,9 +294,18 @@ def search_with_passages(country: str, query: str, k: int = 5,
     """
     k = max(1, min(k, MAX_RESULTS))
     if config.law_search() == "rag":
+        key = (country, " ".join(query.split()).lower(), k, kind)
+        with _search_lock:
+            hit = _search_cache.get(key)
+        if hit is not None:  # same query again (another moment, a retry, the next job)
+            return list(hit[0]), list(hit[1])
         try:
             found = _file_search(country, query, k, kind)
             if found is not None:
+                with _search_lock:
+                    _search_cache[key] = found
+                    while len(_search_cache) > SEARCH_CACHE_SIZE:
+                        _search_cache.pop(next(iter(_search_cache)))
                 return found
         except Exception as e:  # noqa: BLE001 - any search error: fall back, say so
             _note_fallback(country, e)

@@ -87,3 +87,34 @@ def test_report_carries_method(real_provisions, monkeypatch):
     assert rep.method == "fallback" and rep.fallback_reason == "agent_error"
     assert "Simplified check: x" in rep.notes
     assert rep.model_dump()["method"] == "fallback"
+
+
+def test_agent_run_retried_on_rate_limit(monkeypatch):
+    calls = []
+
+    async def flaky(agent, message):
+        calls.append(1)
+        if len(calls) < 3:
+            raise RuntimeError("critic_MY: 429 RESOURCE_EXHAUSTED")
+        return "[]"
+
+    async def no_sleep(_):
+        return None
+
+    monkeypatch.setattr(agents, "run_agent_once", flaky)
+    monkeypatch.setattr(agents.asyncio, "sleep", no_sleep)
+
+    class A:
+        name = "critic_MY"
+
+    assert asyncio.run(agents.run_agent(A(), "m")) == "[]" and len(calls) == 3
+    calls.clear()
+
+    async def broken(agent, message):
+        calls.append(1)
+        raise RuntimeError("bad request")
+
+    monkeypatch.setattr(agents, "run_agent_once", broken)
+    with pytest.raises(RuntimeError):
+        asyncio.run(agents.run_agent(A(), "m"))
+    assert len(calls) == 1  # other errors are not retried

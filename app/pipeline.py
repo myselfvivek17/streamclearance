@@ -632,6 +632,7 @@ def translation_check(
                                      increase_first=mock_increase and n == 0)]
 
     law = config.COUNTRIES[country]
+    hedge = config.text_hedge_after(inventory.duration_s)
     items = [{"index": i, "text": s.transcript, "languages": needed[i]}
              for i, s in enumerate(segs) if needed[i]]
     raw = gemini.generate_json(
@@ -639,7 +640,7 @@ def translation_check(
         f"for viewers in {law.name}. Write each language name exactly as given.\n"
         f"{json.dumps(items, ensure_ascii=False)}",
         list[_Translation], model=config.SC_MODEL_FAST, system_instruction=TRANSLATE_SYSTEM,
-        thinking=TRANSLATE_THINKING)
+        thinking=TRANSLATE_THINKING, hedge_after=hedge)
     wanted = {lang.casefold(): lang for lang in languages}
     translated: dict[int, tuple[int, str, str]] = {}  # k -> (segment index, language, text)
     seen: set[tuple[int, str]] = set()
@@ -659,7 +660,7 @@ def translation_check(
         "Translate into English.\n" + json.dumps(
             [{"index": k, "text": text} for k, (_, _, text) in translated.items()], ensure_ascii=False),
         list[_Text], model=config.SC_MODEL_FAST, system_instruction=TRANSLATE_SYSTEM,
-        thinking=TRANSLATE_THINKING), _Text)
+        thinking=TRANSLATE_THINKING, hedge_after=hedge), _Text)
     judge_items = [
         {"index": k, "language": lang, "original": segs[i].transcript, "translation": text,
          "back_translation": back[k].text, "flagged_categories": _categories_at(report, segs[i]),
@@ -670,7 +671,8 @@ def translation_check(
         return []
     judged = _by_index(gemini.generate_json(
         f"Audience: {law.name}.\n{json.dumps(judge_items, ensure_ascii=False)}",
-        list[_Judgement], model=config.SC_MODEL_SMART, system_instruction=JUDGE_SYSTEM), _Judgement)
+        list[_Judgement], model=config.SC_MODEL_SMART, system_instruction=JUDGE_SYSTEM,
+        hedge_after=hedge), _Judgement)
     out = [
         DriftCheck(start_s=segs[i].start_s, end_s=segs[i].end_s, language=lang,
                    original=segs[i].transcript, translated=text, back_translated=back[k].text,
