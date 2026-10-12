@@ -19,6 +19,7 @@ import asyncio
 import json
 import logging
 import random
+import re
 import uuid
 from dataclasses import dataclass, field
 from typing import Literal
@@ -187,6 +188,22 @@ def _items(value, fields: set[str], inherited: dict | None = None, depth: int = 
     return [value]
 
 
+TRAILING_COMMA = re.compile(r",(\s*[}\]])")
+
+
+def reply_shape(text: str) -> str:
+    """Content-free outline of a reply, for logs: e.g. 'list[dict(keys=5) x3]', 'no JSON'."""
+    def shape(v, depth=0) -> str:
+        if isinstance(v, dict):
+            return f"dict(keys={len(v)})" if depth else f"dict(keys={sorted(map(str, v))[:6] if all(k in WRAPPER_KEYS for k in v) else len(v)})"
+        if isinstance(v, list):
+            kinds = sorted({shape(x, depth + 1) for x in v[:20]})
+            return f"list[{', '.join(kinds)} x{len(v)}]" if v else "list[]"
+        return type(v).__name__
+    values = list(gemini.iter_json(text))
+    return "; ".join(shape(v) for v in values[:4]) if values else f"no JSON ({len(text)} chars)"
+
+
 def _parse_list(text: str, model: type[BaseModel]) -> list:
     # Prefer the first value holding objects: prose before the answer may quote
     # a bracketed list of ids, which is not the answer.
@@ -197,6 +214,12 @@ def _parse_list(text: str, model: type[BaseModel]) -> list:
             return True
         return isinstance(v, list) and depth < 3 and any(holds_objects(x, depth + 1) for x in v)
 
+    if not any(holds_objects(v) for v in values):
+        # Models sometimes leave trailing commas ('"x": 1,\n}'), which strict JSON rejects;
+        # the whole answer then fails to decode and only inner lists like [] are found.
+        fixed = list(gemini.iter_json(TRAILING_COMMA.sub(r"\1", text)))
+        if any(holds_objects(v) for v in fixed):
+            values = fixed
     raw = next((v for v in values if holds_objects(v)), values[0] if values else None)
     if raw is None:
         raise ValueError("no JSON found in model output")
@@ -353,6 +376,7 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> Assessed:
         except ValueError as e:
             raise _NoAssessments("no_json") from e
         if not out:
+            log.warning("%s: assessor reply unusable: %s", country, reply_shape(text))
             empty = [v for v in gemini.iter_json(text)] in ([[]], [{}])
             raise _NoAssessments("empty_reply" if empty else "no_valid_items")
         assessment_events(country, out)

@@ -145,3 +145,14 @@ def test_empty_reply_reason(real_provisions, monkeypatch):
     monkeypatch.setattr(gemini, "generate_json", lambda *a, **kw: [])
     res = asyncio.run(agents.assess(_inventory(), "MY", mock=False))
     assert res.fallback_reason == "empty_reply"
+
+
+def test_trailing_commas_tolerated():
+    # seen on the eval (smoke_20s, IN): the agent's array had '"rationale": "...",\n  },'
+    text = '```json\n[\n  {"start_s": 5.0, "end_s": 10.0, "leaf": "health.cure_claim", "covered_by": [],\n' \
+           '   "risk": "green", "rationale": "Not covered, see [1, 2].",\n  },\n' \
+           '  {"start_s": 10.0, "end_s": 15.0, "leaf": "gambling.promotion", "covered_by": ["X",],},\n]\n```'
+    out = _parse_list(text, MomentAssessment)
+    assert [(a.leaf, a.covered_by) for a in out] == [("health.cure_claim", []), ("gambling.promotion", ["X"])]
+    assert out[0].rationale == "Not covered, see [1, 2]."
+    assert agents.reply_shape("[]") == "list[]" and agents.reply_shape("none") == "no JSON (4 chars)"
