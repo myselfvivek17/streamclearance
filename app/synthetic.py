@@ -46,8 +46,15 @@ FIX_PERSON = ("Don’t publish synthetic footage or voice of a real person witho
               "it is satire, make that unmistakable and label it as AI-generated.")
 
 
+def _readable(pid: str) -> str:
+    """"IN/ITRULES2021/r4(1A)" -> "IT Rules 2021 r4(1A)" for the activity feed."""
+    from app.brain.tools import law_name
+    parts = pid.split("/")
+    return f"{law_name(parts[1])} {'/'.join(parts[2:])}" if len(parts) >= 3 else pid
+
+
 def _signs(syn: SyntheticCheck) -> str:
-    return "Signs of AI generation" + (f" ({'; '.join(syn.signals[:3])})" if syn.signals else "")
+    return "Signs of AI generation" + (": " + "; ".join(x.strip().rstrip(".") for x in syn.signals[:3]) if syn.signals else "")
 
 
 def consequence(country: str, syn: SyntheticCheck, *, checked: bool) -> AIContentResult:
@@ -133,7 +140,7 @@ def apply(rep: CountryReport, inventory: Inventory) -> None:
             and RISK_ORDER[res.risk] > RISK_ORDER[rep.overall_risk]:
         rep.overall_risk = res.risk
     if res.outcome in ("flag", "check"):
-        what = {"flag": f"{res.risk} finding citing {', '.join(res.provision_ids)}",
+        what = {"flag": f"{res.risk} finding citing {', '.join(_readable(x) for x in res.provision_ids)}",
                 "check": f"check manually{' (amber)' if res.risk else ''}"}[res.outcome]
         events.emit("warn" if res.risk else "ai", f"AI-content check for {config.COUNTRIES[rep.country].name}: "
                     f"{what}", stage="ai", country=rep.country)

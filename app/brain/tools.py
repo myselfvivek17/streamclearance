@@ -9,7 +9,7 @@ import asyncio
 from collections.abc import Callable
 from typing import Any
 
-from app import config, events, metrics, retrieval
+from app import taxonomy, config, events, metrics, retrieval
 from app.schemas import Provision
 
 
@@ -26,17 +26,34 @@ def provision_view(p: Provision) -> dict[str, Any]:
 LIMIT_REACHED = "tool-call limit reached: answer now with the provisions you already have"
 
 
+# Readable short names for the feed (internal law ids stay in the report JSON).
+SHORT_LAW = {
+    "OSA2025": "Online Safety Act 2025", "MAS1956": "Medicines Act 1956",
+    "MOHADV": "MOH advertising guideline", "CGHA1953": "Common Gaming Houses Act",
+    "BETTING1953": "Betting Act 1953", "ITRULES2021": "IT Rules 2021",
+    "PROGA2025": "Online Gaming Act 2025", "DMR1954": "Drugs and Magic Remedies Act",
+    "BNS2023": "Bharatiya Nyaya Sanhita", "OSA2021": "Online Safety Act 2021",
+    "IGA2001": "Interactive Gambling Act", "TGACODE2021": "TGA Advertising Code",
+    "OSRA2025": "Online Safety (Relief) Act", "GCA2022": "Gambling Control Act",
+    "PECA2025": "PECA 2025",
+}
+
+
+def law_name(law_id: str) -> str:
+    return SHORT_LAW.get(law_id, law_id)
+
+
 def cite(p: Provision) -> str:
-    """Short reference for the feed, e.g. "TGACODE2021 s9(1) p.13"."""
-    section = p.section if len(p.section) <= 40 else p.section[:39] + "…"
-    return f"{p.law_id} {section} p.{p.page}"
+    """Short reference for the feed, e.g. "TGA Advertising Code s9(1), p.13"."""
+    section = p.section if len(p.section) <= 32 else p.section.split("(")[0].strip()[:32] + "…"
+    return f"{law_name(p.law_id)} {section}, p.{p.page}"
 
 
 def found(hits: list[Provision], n_passages: int = 0) -> str:
     parts = [cite(p) for p in hits[:4]] + ([f"+{len(hits) - 4} more"] if len(hits) > 4 else [])
     if n_passages:
         parts.append(f"{n_passages} passage{'s' * (n_passages != 1)} of law text")
-    return ", ".join(parts) or "nothing"
+    return "; ".join(parts) or "no matching provision"
 
 
 def make_tools(bound: str, max_calls: int | None = None
@@ -63,7 +80,7 @@ def make_tools(bound: str, max_calls: int | None = None
         with metrics.timed(f"retrieval:{bound}"):
             hits = retrieval.lookup(bound, leaves)
         events.emit("search", f"Looked up {config.COUNTRIES[bound].name} law for "
-                    f"{', '.join(map(str, leaves))} → {found(hits)}", stage="country", country=bound)
+                    f"{', '.join(taxonomy.label(str(x)).lower() for x in leaves)} → {found(hits)}", stage="country", country=bound)
         return {"provisions": [provision_view(p) for p in hits]}
 
     async def search_law(country: str, query: str) -> dict:
