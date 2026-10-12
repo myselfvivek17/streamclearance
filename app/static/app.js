@@ -79,6 +79,12 @@ const NO_RISK = { cls: "", icon: "", verdict: "", level: "No issues", word: "", 
 const riskMeta = (r) => RISK[r === "check" ? "grey" : r] || NO_RISK;
 const badgeOf = (c) => (c.badge === "check" ? "grey" : c.badge || c.overall_risk);
 
+// Rules status. "reviewed" means a person signed off every provision; until then the rules
+// are AI-drafted, with every quote checked word for word against the cited page (in code).
+const RULES_DRAFT = "AI-drafted rules · every quote checked against the official text · not yet signed off by a lawyer";
+const RULES_DRAFT_SHORT = "AI-drafted · quote checked · not yet signed off";
+const rulesTag = (text = RULES_DRAFT) => el("span", { class: "tag tag-rules", title: RULES_DRAFT }, icon("info"), text);
+
 const LAW_STATUS = { in_force: ["In force", "inforce"], amended: ["As amended", "inforce"], guideline: ["Guideline", "guideline"], bill: ["Bill", "bill"] };
 const lawStatus = (s) => LAW_STATUS[s] || [s, ""];
 const LANG_CODE = { Hindi: "hi", Malay: "ms", "Mandarin Chinese": "zh", Urdu: "ur", Tamil: "ta" };
@@ -478,7 +484,7 @@ async function screenCountries(stale) {
         c.checked === false ? el("span", { class: "tag risk-grey" }, icon("info"), "Not checked yet (no verified source)")
           : el("span", { class: covCls(c) }, covLabel(c)),
         c.bill ? el("span", { class: "tag tag-draft" }, icon("info"), "Bill, not yet enacted") : null,
-        c.draft ? el("span", { class: "tag tag-draft" }, icon("draft"), "Draft rules: not yet reviewed by a lawyer") : null));
+        c.draft && c.checked !== false ? rulesTag() : null));
     return card;
   });
 
@@ -1040,11 +1046,15 @@ function howMade(r) {
     el("li", {}, el("b", {}, "App version: "), el("span", { class: "mono" }, pv.app_git_sha)),
     ...pv.laws.map((l) => el("li", {},
       el("b", {}, `${l.country} · ${l.title}: `),
-      el("span", { class: `badge ${l.status === "reviewed" ? "risk-green" : "risk-grey"}` }, l.status === "reviewed" ? "Reviewed" : "Draft, not yet reviewed by a person"),
+      l.status === "reviewed" ? el("span", { class: "badge risk-green" }, "Signed off by a lawyer") : rulesTag(),
       ` · ${plural(l.provisions, "provision")}, built ${when(l.provisions_built)} · source `,
       el("span", { class: "mono", title: l.source_sha256 || "" }, `${l.source_file} sha256 ${short(l.source_sha256)}`),
       lawSource(l))),
   ];
+  rows.push(el("li", {}, el("b", {}, "Rules status: "),
+    "the rules (provisions) were drafted by AI from the official law texts. Every quote was then checked word for word, in code, "
+    + "against the cited page of the official file, and anything that did not match was dropped. A lawyer has not yet signed them off: "
+    + "a law shows as “Signed off by a lawyer” only once a person has reviewed every one of its provisions."));
   if (r.privacy && r.privacy.report_expires_at) {
     rows.push(el("li", {}, el("b", {}, "Video deleted: "), r.privacy.video_deleted_at ? when(r.privacy.video_deleted_at) : "not yet",
       " · ", el("b", {}, "Report will be deleted: "), when(r.privacy.report_expires_at)));
@@ -1121,7 +1131,7 @@ function provisionCard(cc, p, law) {
         el("span", { class: "prov-sec" }, `${p.section} · page ${p.page}`)),
       el("div", { class: "row wrap", style: "gap: 6px" },
         el("span", { class: `status-pill ${stCls}` }, st),
-        p.review && p.review.status !== "reviewed" ? el("span", { class: "tag tag-draft" }, icon("draft"), "Draft, not reviewed") : null,
+        p.review && p.review.status !== "reviewed" ? rulesTag(RULES_DRAFT_SHORT) : null,
         pdfLink(href, `Open PDF at p. ${p.page}`, ` of ${p.law_title}`))),
     el("blockquote", { class: "vquote" }, p.verbatim_text),
     el("dl", { class: "kv", style: "margin: 0" },
@@ -1142,7 +1152,7 @@ function ruleCardCard(cc, card, law) {
         el("span", { class: "prov-sec" }, `${card.section} · page ${card.page}`)),
       el("div", { class: "row wrap", style: "gap: 6px" },
         el("span", { class: "status-pill" }, "Basic rule card"),
-        card.needs_review ? el("span", { class: "tag tag-draft" }, icon("draft"), "Draft, not reviewed") : null,
+        card.needs_review ? rulesTag(RULES_DRAFT_SHORT) : null,
         pdfLink(href, `Open PDF at p. ${card.page}`, ` of ${card.law}`))),
     card.quote ? el("blockquote", { class: "vquote" }, card.quote) : null,
     el("dl", { class: "kv", style: "margin: 0" },
@@ -1327,7 +1337,7 @@ async function screenCountry(jobId, cc, stale) {
         el("div", { class: "dh-title" }, flag(cc), el("h1", { class: "h1" }, info.name),
           el("span", { class: covCls(info) }, covLabel(info)),
           c.method === "fallback" ? el("span", { class: "tag tag-draft" }, icon("info"), "Simplified check") : null,
-          c.rules_status !== "reviewed" ? el("span", { class: "tag tag-draft" }, icon("draft"), "Draft rules: not yet reviewed by a lawyer") : null),
+          c.rules_status !== "reviewed" && c.overall_risk !== "not_checked" ? rulesTag() : null),
         el("div", { class: "stack", style: "gap: 8px" },
           el("div", {}, el("span", { class: `badge badge-lg ${meta.cls}` }, icon(meta.icon), meta.verdict)),
           el("p", { class: "rcard-reason" }, verdictSub),

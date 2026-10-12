@@ -559,3 +559,6 @@ html.dark, html.dark body { background: #0b0d12; color-scheme: dark; }
 .issue-part { display: flex; flex-direction: column; gap: 14px; }
 .issue-part.titled + .issue-part.titled { border-top: 1px dashed var(--border-strong); padding-top: 16px; }
 .fix-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+
+/* Rules status: calm, factual (AI-drafted, quotes checked, not yet signed off) */
+.tag-rules { color: var(--text-2); background: var(--surface-2); border-color: var(--border); height: auto; min-height: 24px; padding-top: 3px; padding-bottom: 3px; white-space: normal; }
