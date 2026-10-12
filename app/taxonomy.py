@@ -23,6 +23,7 @@ class Leaf:
     label: str
     description: str
     category: Category
+    policy_only: bool = False  # set by deterministic code (app/synthetic.py), never by a model
 
     @property
     def parent(self) -> str:
@@ -34,7 +35,8 @@ def leaves() -> dict[str, Leaf]:
     raw = json.loads(TAXONOMY_PATH.read_text(encoding="utf-8"))["leaves"]
     out = {}
     for item in raw:
-        leaf = Leaf(item["id"], item["label"], item["description"], Category(item["category"]))
+        leaf = Leaf(item["id"], item["label"], item["description"], Category(item["category"]),
+                    bool(item.get("policy_only", False)))
         if leaf.id.count(".") != 1:
             raise ValueError(f"taxonomy leaf {leaf.id!r} must be <parent>.<leaf>")
         out[leaf.id] = leaf
@@ -101,5 +103,6 @@ def label(value: str) -> str:
 
 
 def prompt_list() -> str:
-    """One line per leaf, for prompts."""
-    return "\n".join(f"- {leaf.id}: {leaf.description}" for leaf in leaves().values())
+    """One line per leaf, for prompts (policy-only leaves are set in code, so not listed)."""
+    return "\n".join(f"- {leaf.id}: {leaf.description}" for leaf in leaves().values()
+                     if not leaf.policy_only)

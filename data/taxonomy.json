@@ -254,6 +254,20 @@
    "category": "misinformation_public_order"
   },
   {
+   "id": "misinfo.synthetic_unlabelled",
+   "label": "Signs of AI generation, no AI label",
+   "description": "The video shows signs of AI generation and carries no visible or spoken AI-generated label. Set by the AI-content check, not tagged by stage A.",
+   "category": "misinformation_public_order",
+   "policy_only": true
+  },
+  {
+   "id": "misinfo.deepfake_real_person",
+   "label": "Signs of AI generation depicting a real person",
+   "description": "The video shows signs of AI generation and appears to show or voice an identifiable real public figure. Set by the AI-content check, not tagged by stage A.",
+   "category": "impersonation_or_fraud",
+   "policy_only": true
+  },
+  {
    "id": "national_security.state_threat",
    "label": "National security",
    "description": "Content threatening national security, defence or state secrets.",

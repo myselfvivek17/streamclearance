@@ -23,10 +23,10 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field, ValidationError
 
-from app import config, events, gemini, metrics, provisions, taxonomy
+from app import config, events, gemini, media, metrics, provisions, taxonomy
 from app.schemas import (
     RISK_ORDER, Category, CountryReport, Drift, DriftCheck, Finding, Inventory, OverallRisk, Risk,
-    RuleCard, RulesStatus, Segment, Uncovered,
+    RuleCard, RulesStatus, Segment, SyntheticCheck, Uncovered,
 )
 from app.validate import validate_findings
 
@@ -48,12 +48,14 @@ class SegmentDraft(BaseModel):
     on_screen_text: str = ""
     leaves: list[str] = []
     idioms: list[str] = []
+    synthetic_signals: list[str] = []
 
 
 class StageADraft(BaseModel):
     """What Gemini returns for stage A; duration comes from ffprobe, not the model."""
     languages: list[str] = []
     segments: list[SegmentDraft] = []
+    synthetic: SyntheticCheck | None = None
 
 
 STAGE_A_SYSTEM = f"""You build a factual, timestamped inventory of a short video for a \
@@ -79,6 +81,26 @@ for clearly neutral segments.
 - idioms: figures of speech or slang in the speech that could read as literal violence, \
 crime, insult or threat if translated word for word (e.g. "this offer is a bomb", \
 "it's a killer deal"), quoted verbatim; [] if none.
+- synthetic_signals: signs of AI generation seen or heard in this segment (see below); [] if none.
+
+Also return "synthetic", a check for signs that the video was AI-generated or synthetically \
+altered. Describe evidence, never guess; when unsure, say less:
+- signals: concrete observations, each saying what and where, e.g. "0:04 the hand has six \
+fingers", "0:10 the sign's text is garbled", "lip movements do not match the speech", \
+"lighting on the face does not match the background", "the face morphs between frames", \
+"no blinking for 12 seconds", "the voice sounds synthetic or cloned (flat, metallic, \
+no breaths)", or a watermark, caption or spoken line saying the content is AI-made (e.g. \
+"AI generated", "Made with AI", Sora, Veo, Runway, Pika, Kling, Synthesia, HeyGen, \
+ElevenLabs, Midjourney). [] if none.
+- likelihood: "none" (no sign), "low" (one weak or ambiguous sign), "medium" (several clear \
+signs, or the video says it is AI-made), "high" (unmistakable artefacts throughout). \
+Default to "none" or "low" when unsure.
+- label_present: true only if the video itself shows or says, clearly, that it is \
+AI-generated or synthetic; label_text: that disclosure verbatim ("" if none).
+- depicts_real_person: true only if an identifiable real public figure (politician, \
+celebrity, official) appears to be shown or voiced, e.g. named on screen or in the speech, \
+or unmistakable; person_note: who, how they appear and what tells you. Never name a \
+private person, and never guess an identity from looks alone.
 
 Content taxonomy:
 {taxonomy.prompt_list()}"""
@@ -121,7 +143,21 @@ def stage_a(video_path: Path, duration_s: float | None = None, *, mock: bool | N
     return Inventory(
         duration_s=duration_s, languages=draft.languages, segments=kept,
         speech_transcribed=True,  # Gemini hears the audio track in the same call
+        synthetic=with_metadata(draft.synthetic or SyntheticCheck(), media.ai_metadata_hints(video_path)),
     )
+
+
+_LIKELIHOOD = ["none", "low", "medium", "high"]
+
+
+def with_metadata(check: SyntheticCheck, hints: list[str]) -> SyntheticCheck:
+    """Add file-metadata hints (an AI tool named in the encoder/comment/handler tags): a
+    tool writing its own name into the file is a clear sign, so at least "medium"."""
+    if not hints:
+        return check
+    level = max(_LIKELIHOOD.index(check.likelihood), _LIKELIHOOD.index("medium"))
+    return check.model_copy(update={"metadata_signals": hints, "likelihood": _LIKELIHOOD[level],
+                                    "signals": [*check.signals, *hints]})
 
 
 _MOCK_SEGMENTS = [
@@ -163,7 +199,8 @@ def mock_inventory(duration_s: float | None) -> Inventory:
             language="en",
             **tpl,
         ))
-    return Inventory(duration_s=round(duration, 2), languages=["en"], segments=segments)
+    return Inventory(duration_s=round(duration, 2), languages=["en"], segments=segments,
+                     synthetic=SyntheticCheck())
 
 
 
@@ -182,11 +219,34 @@ def inventory_events(inv: Inventory) -> None:
         tags = f" · tagged {', '.join(taxonomy.label(x) for x in s.leaves)}" if s.leaves else ""
         events.emit("watch", f"Watched {events.span(s.start_s, s.end_s)} · {what}{tags}",
                     stage="inventory", ref=events.span(s.start_s, s.end_s))
+    synthetic_event(inv)
     tagged = sum(1 for s in inv.segments if s.leaves)
     langs = ", ".join(inv.languages) or "none"
     speech = "yes" if has_speech(inv) else "no"
     events.emit("info", f"Inventory built: {len(inv.segments)} moments, {tagged} sensitive · "
                 f"languages: {langs} · speech: {speech}", stage="inventory")
+
+
+def synthetic_event(inv: Inventory) -> None:
+    syn = inv.synthetic
+    if syn is None:
+        return
+    signs = "; ".join(syn.signals[:3]) + (f" (+{len(syn.signals) - 3} more)" if len(syn.signals) > 3 else "")
+    text = (f"Looked for signs of AI generation: likelihood {syn.likelihood}"
+            + (f" · {signs}" if signs else " · no sign seen")
+            + (f" · AI label found: {events.quote(syn.label_text, 60)}" if syn.label_present
+               else " · no AI label")
+            + (" · appears to show or voice a real public figure" if syn.depicts_real_person else ""))
+    events.emit("ai", text, stage="ai")
+
+
+def finalize(rep: CountryReport, inventory: Inventory | None) -> None:
+    """Deterministic steps after a country's assessment (in place, before it is reported):
+    the AI-content check's consequence for this country."""
+    from app import synthetic
+
+    if inventory is not None:
+        synthetic.apply(rep, inventory)
 
 
 def country_done_event(rep: CountryReport) -> None:

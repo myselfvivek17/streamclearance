@@ -139,6 +139,34 @@ class LawInfo(BaseModel):
     authoritative_language: str | None = None
 
 
+SyntheticLikelihood = Literal["none", "low", "medium", "high"]
+
+
+class SyntheticCheck(BaseModel):
+    """Stage A: signs that the video was AI-generated or synthetically altered (video level).
+    Evidence only: `signals` are observations, never a verdict."""
+    likelihood: SyntheticLikelihood = "none"
+    signals: list[str] = []
+    label_present: bool = False  # the video itself discloses that it is AI-made
+    label_text: str = ""
+    depicts_real_person: bool = False  # an identifiable real public figure appears shown or voiced
+    person_note: str = ""
+    metadata_signals: list[str] = []  # AI-tool hints in the file's metadata tags (ffprobe), not the model
+
+
+AIOutcome = Literal["none", "note", "flag", "check", "not_checked"]
+
+
+class AIContentResult(BaseModel):
+    """What the AI-content check means in one country (deterministic, app/synthetic.py)."""
+    outcome: AIOutcome  # flag = a finding cites a provision; check = check manually; note = no flag
+    risk: Risk | None = None  # set for flag (red/amber) and for an uncited amber
+    leaf: str | None = None
+    provision_ids: list[str] = []
+    text: str = ""
+    suggested_fix: str = ""
+
+
 class _Timed(BaseModel):
     start_s: float = Field(ge=0)
     end_s: float = Field(ge=0)
@@ -161,6 +189,7 @@ class Segment(_Timed):
     idioms: list[str] = []  # figures of speech that may turn literal in translation
     categories: list[Category] = []  # legacy; derived from leaves when leaves are given
     frame: str | None = None  # thumbnail file name (app/frames.py), GET /api/jobs/{id}/frames/{name}
+    synthetic_signals: list[str] = []  # signs of AI generation seen in this segment
 
     @model_validator(mode="after")
     def _derive_categories(self):
@@ -178,6 +207,7 @@ class Inventory(BaseModel):
     languages: list[str] = []
     segments: list[Segment] = []
     speech_transcribed: bool | None = None  # None in mock mode
+    synthetic: SyntheticCheck | None = None  # None in reports made before the AI-content check
 
 
 class Finding(_Timed):
@@ -196,6 +226,7 @@ class Finding(_Timed):
     exception_reason: str = ""
     critic_note: str = ""
     obligation_ids: list[str] = []  # platform-obligation provisions for this leaf
+    video_level: bool = False  # about the whole video (AI-content check), not one moment
 
 
 class DriftCheck(_Timed):
@@ -213,6 +244,7 @@ class Uncovered(_Timed):
     category: Category
     leaf: str | None = None
     note: str = UNCOVERED_NOTE
+    video_level: bool = False  # about the whole video (AI-content check), not one moment
 
     @model_validator(mode="after")
     def _neutral(self):
@@ -243,6 +275,7 @@ class CountryReport(BaseModel):
     platform_obligations: list[Provision] = []  # retrieved for the leaves found, not dumped
     critic_changes: int = 0
     notes: list[str] = []
+    ai_content: AIContentResult | None = None  # the AI-content check's consequence here
 
     @model_validator(mode="after")
     def _no_clearance(self):

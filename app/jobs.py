@@ -131,6 +131,7 @@ async def run_job(job: dict[str, Any]) -> None:
     t_job = time.perf_counter()
     drift_task: asyncio.Task | None = None
     frames_task: asyncio.Task | None = None
+    seen_inventory: Inventory | None = None  # set once stage A is done
     job["status"] = "running"
     current = "inventory"
     try:
@@ -150,6 +151,7 @@ async def run_job(job: dict[str, Any]) -> None:
                             stage="country", country=cc)
                 _set(job, f"country:{cc}", "error", err or "failed")
             else:
+                pipeline.finalize(rep, seen_inventory)
                 n = len(rep.findings)
                 pipeline.country_done_event(rep)
                 _set(job, f"country:{cc}", "done",
@@ -162,7 +164,8 @@ async def run_job(job: dict[str, Any]) -> None:
                 return await pipeline.run_drift(inv, job["countries"], mock=mock)
 
         async def on_inventory(inv: Inventory) -> None:
-            nonlocal drift_task, frames_task
+            nonlocal drift_task, frames_task, seen_inventory
+            seen_inventory = inv
             pipeline.inventory_events(inv)
             # Thumbnails come from the video, so they are taken now (in parallel), before
             # the video is deleted at the end of the job.

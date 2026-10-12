@@ -718,15 +718,17 @@ function moments(report) {
   return [...seen.values()].sort((a, b) => a.start_s - b.start_s);
 }
 
+// Video-level entries (the AI-content check) are about the whole video, not one moment:
+// they are shown on the AI-content card, not painted over every moment of the timeline.
 function momentRisk(c, m) {
   let best = { risk: null, label: "" };
   for (const f of c.findings) {
-    if (overlaps(f, m) && riskMeta(f.risk).rank > riskMeta(best.risk).rank) best = { risk: f.risk, label: leafLabel(f) };
+    if (!f.video_level && overlaps(f, m) && riskMeta(f.risk).rank > riskMeta(best.risk).rank) best = { risk: f.risk, label: leafLabel(f) };
   }
   if (best.risk) return best;
   const d = (c.translation || []).find((x) => x.drift === "increased" && overlaps(x, m));
   if (d) return { risk: "amber", label: `Riskier when translated (${d.language})` };
-  const u = (c.uncovered || []).find((x) => overlaps(x, m));
+  const u = (c.uncovered || []).find((x) => !x.video_level && overlaps(x, m));
   if (u) return { risk: "grey", label: `${leafLabel(u)}: check manually` };
   return best;
 }
@@ -881,6 +883,41 @@ function reasonOf(c) {
   return "No moment matched a loaded law";
 }
 
+// ------------------------------------------------------------------ AI-generated content check
+
+const AI_LIKELIHOOD = { none: "No signs seen", low: "Weak signs only", medium: "Clear signs", high: "Strong signs" };
+
+function aiOutcome(a) {
+  if (!a) return el("span", { class: "tag" }, "Not assessed");
+  if (a.outcome === "flag") { const m = riskMeta(a.risk); return el("span", { class: `badge ${m.cls}` }, icon(m.icon), m.level); }
+  if (a.outcome === "check") return el("span", { class: `badge ${a.risk === "amber" ? "risk-amber" : "risk-grey"}` }, icon(a.risk === "amber" ? "warn" : "help"), "Check manually");
+  if (a.outcome === "not_checked") return el("span", { class: "badge risk-grey" }, icon("info"), "Not checked");
+  if (a.outcome === "note") return el("span", { class: "tag" }, icon("info"), "Noted, not flagged");
+  return el("span", { class: "tag" }, icon("check"), "No flag");
+}
+
+function aiCard(job) {
+  const r = job.report;
+  const syn = r.inventory && r.inventory.synthetic;
+  if (!syn) return null;
+  const strong = syn.likelihood === "medium" || syn.likelihood === "high";
+  const signals = syn.signals || [];
+  return el("section", { class: "card ai-card", "aria-label": "AI-generated content check" },
+    el("div", { class: "ai-head" },
+      el("h2", { class: "h3 row", style: "gap: 8px" }, icon("shield", "color: var(--text-3)"), "AI-generated content check"),
+      el("span", { class: `badge ${strong ? "risk-amber" : "risk-grey"}` }, icon(strong ? "warn" : "info"), AI_LIKELIHOOD[syn.likelihood] || syn.likelihood)),
+    el("p", { class: "small muted" }, "We looked for signs of AI generation: visual artefacts, a synthetic-sounding voice, AI labels or watermarks, and whether a real public figure seems to be shown or voiced. Signs are not proof either way."),
+    el("dl", { class: "kv", style: "margin: 0" },
+      el("dt", {}, "Signs seen"), el("dd", {}, signals.length ? el("ul", { class: "ai-signals" }, signals.map((x) => el("li", {}, x))) : "None"),
+      el("dt", {}, "AI label"), el("dd", {}, syn.label_present ? `Found: “${syn.label_text || "label"}”` : "Not found"),
+      syn.depicts_real_person ? [el("dt", {}, "Real person"), el("dd", {}, `Appears to show or voice a real public figure${syn.person_note ? `: ${syn.person_note}` : ""}`)] : null),
+    el("ul", { class: "ai-countries" }, r.countries.map((c) => el("li", {},
+      el("span", { class: "row", style: "gap: 8px" }, flag(c.country, false), el("b", {}, countryInfo(c.country).name), aiOutcome(c.ai_content)),
+      c.ai_content && c.ai_content.outcome !== "none" ? el("span", { class: "small", style: "color: var(--text-2)" }, c.ai_content.text) : null,
+      c.ai_content && c.ai_content.suggested_fix && ["flag", "check"].includes(c.ai_content.outcome)
+        ? el("span", { class: "small" }, el("b", {}, "Fix: "), c.ai_content.suggested_fix) : null))));
+}
+
 function reportNotes(job) {
   const r = job.report;
   const notes = [];
@@ -956,6 +993,7 @@ async function screenResults(jobId, stale) {
   mount(el("main", { class: "main" },
     pageHead(`Results · ${videoName()}`, headline, "Select a country to see each problem moment, why it matters and how to fix it."),
     reportNotes(job),
+    aiCard(job),
     el("section", { class: "card player-wrap", "aria-label": "Video and problem moments" },
       el("div", { class: "player-col" }, p.player, p.timeline),
       el("div", { class: "transcript" },
@@ -1127,7 +1165,7 @@ function liableOf(f, provs, cards) {
 function issueCard(job, c, f, p, provs, cards) {
   const m = riskMeta(f.risk);
   const label = leafLabel(f);
-  const quote = quoteAt(job.report, f);
+  const quote = f.video_level ? "" : quoteAt(job.report, f);
   const chev = icon("chev");
   chev.classList.add("chev");
   const toggleBtn = el("button", { class: "issue-toggle", type: "button", "aria-expanded": "false" },
@@ -1154,12 +1192,12 @@ function issueCard(job, c, f, p, provs, cards) {
       ownDuties.map((o) => `${o.section} (${o.law_id})`).join(", "), ". See Platform obligations below.")) : null,
     legal.length ? el("div", { class: "legal" }, disclosure(`Legal basis · ${plural(legal.length, "provision")}`, "scale", legal)) : null);
 
-  const still = frameUrl(job, f);
+  const still = f.video_level ? null : frameUrl(job, f);
   const art = el("article", { class: "issue" },
     el("div", { class: "issue-head" },
       el("div", { class: "issue-when" },
-        el("button", { class: "chip-time", type: "button", "aria-label": `Play ${range(f.start_s, f.end_s)}`, onclick: () => p.seek(f.start_s) },
-          icon("play"), range(f.start_s, f.end_s)),
+        el("button", { class: "chip-time", type: "button", "aria-label": f.video_level ? "Play from the start (whole video)" : `Play ${range(f.start_s, f.end_s)}`, onclick: () => p.seek(f.start_s) },
+          icon("play"), f.video_level ? "Whole video" : range(f.start_s, f.end_s)),
         thumb(still, `Still from the video at ${range(f.start_s, f.end_s)}`)),
       toggleBtn),
     preview, body);
@@ -1286,7 +1324,7 @@ async function screenCountry(jobId, cc, stale) {
       el("div", { class: "section-head" }, el("h2", { class: "h2" }, `Not covered by any loaded law (${unc.length})`),
         el("span", { class: "small muted" }, "Sensitive, but nothing we loaded applies")),
       unc.length ? el("div", { class: "stack", style: "gap: 10px" }, unc.map((u) => el("div", { class: "neutral-card" },
-        el("button", { class: "chip-time", type: "button", "aria-label": `Play ${range(u.start_s, u.end_s)}`, onclick: () => p.seek(u.start_s) }, icon("play"), range(u.start_s, u.end_s)),
+        el("button", { class: "chip-time", type: "button", "aria-label": u.video_level ? "Play from the start (whole video)" : `Play ${range(u.start_s, u.end_s)}`, onclick: () => p.seek(u.start_s) }, icon("play"), u.video_level ? "Whole video" : range(u.start_s, u.end_s)),
         el("div", { class: "stack grow", style: "gap: 6px" },
           el("div", { class: "row wrap" }, el("span", { class: "badge risk-grey" }, icon("help"), "Check manually"), el("span", { class: "h3" }, leafLabel(u))),
           el("p", { class: "small", style: "color: var(--text-2)" }, u.note || "The loaded law library does not cover this moment. Check it manually.")))))
