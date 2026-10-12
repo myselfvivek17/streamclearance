@@ -160,6 +160,7 @@ class Segment(_Timed):
     leaves: list[str] = []  # taxonomy leaves (app/taxonomy.py)
     idioms: list[str] = []  # figures of speech that may turn literal in translation
     categories: list[Category] = []  # legacy; derived from leaves when leaves are given
+    frame: str | None = None  # thumbnail file name (app/frames.py), GET /api/jobs/{id}/frames/{name}
 
     @model_validator(mode="after")
     def _derive_categories(self):

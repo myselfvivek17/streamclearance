@@ -19,7 +19,11 @@ browser ──upload──▶ Cloud Run (asia-southeast1)
                          │
                     law search: Vertex AI RAG Engine (asia-southeast1), law texts only
                          │
-                    jobs/<job_id>.json  (status + report)    (container disk)
+                    ffmpeg (local): one ~320 px JPEG still per flagged moment,
+                    taken before the video is deleted
+                         │
+                    jobs/<job_id>.json  (status + report + activity feed) (container disk)
+                    jobs/<job_id>/frames/<start ms>.jpg  (moment stills)  (container disk)
                     jobs/usage.log      (ids, model names, token counts)
                          │
 browser ◀──report── GET /api/jobs/<job_id>   (plays its own copy of the video)
@@ -27,7 +31,10 @@ browser ◀──report── GET /api/jobs/<job_id>   (plays its own copy of th
 
 The video leaves the browser once, for the check. The report holds what the
 video shows and says (transcript, on-screen text), the flagged moments and
-their legal reasons; it never holds the video. Every `/api` route needs the
+their legal reasons, one small still image per flagged moment, and the
+activity feed (`events`: what the agent watched, searched and decided, which
+quotes the video and the model); it never holds the video. Stills and feed
+are report data: kept and deleted with the report, never logged. Every `/api` route needs the
 access code when `SC_ACCESS_CODE` is set (`app/main.py` `access_code_gate`).
 
 ## Retention
@@ -37,7 +44,8 @@ access code when `SC_ACCESS_CODE` is set (`app/main.py` `access_code_gate`).
 | Uploaded video, its meta, derived files under `uploads/<id>*` | the check ends (done, failed or cancelled) | `app/jobs.py` `run_job` finally → `app/retention.py` `purge_video` |
 | Upload-bucket copy (videos > 19 MB) | the check ends; bucket lifecycle deletes leftovers after 1 day; soft delete off | `app/retention.py` `purge_video` → `app/gemini.py` `delete_gcs_objects` |
 | Uploaded video never analysed | `SC_UNUSED_VIDEO_TTL_MIN` (60) minutes | `app/retention.py` `sweep_unused_videos` |
-| Report (job record) | `SC_REPORT_TTL_DAYS` (7) days after creation, or "Delete this report now" | `app/retention.py` `expire_reports`, `delete_report`; `DELETE /api/jobs/{id}` |
+| Report (job record, incl. its activity feed) | `SC_REPORT_TTL_DAYS` (7) days after creation, or "Delete this report now" | `app/retention.py` `expire_reports`, `delete_report`; `DELETE /api/jobs/{id}` |
+| Moment stills (`jobs/<id>/frames/`), taken from the video before it is deleted | with the report (same TTL, same delete); folders without a report are swept | `app/frames.py`; `app/storage.py` `delete_job`, `delete_orphan_dirs` |
 | "Expired/deleted" marker (id + reason only) | one more TTL, so the UI can say "expired" | `app/storage.py` `sweep_gone` |
 | App logs, `jobs/usage.log` | container lifetime; Cloud Logging `_Default` 30 days | content-free: `app/logsafe.py`, `tests/test_logs.py` |
 | Cloud Run request logs (URL with ids, IP, time) | 30 days (Cloud Logging `_Default`) | Google Cloud |

@@ -113,15 +113,33 @@ class LocalStorage:
             return []
         return [p.stem for p in self.jobs.glob("*.json") if valid_id(p.stem)]
 
+    def frames_dir(self, job_id: str) -> Path | None:
+        """Moment thumbnails taken from the video (app/frames.py), stored with the report."""
+        return self.jobs / job_id / "frames" if valid_id(job_id) else None
+
     def delete_job(self, job_id: str, reason: str) -> None:
-        """Delete the job record and leave an empty-of-content marker (jobs/gone/<id>
-        holding only the reason), so later reads can say why it is gone."""
+        """Delete the job record and everything stored with it (jobs/<id>/: thumbnails), and
+        leave an empty-of-content marker (jobs/gone/<id> holding only the reason), so later
+        reads can say why it is gone."""
         if not valid_id(job_id):
             return
         (self.jobs / f"{job_id}.json").unlink(missing_ok=True)
+        shutil.rmtree(self.jobs / job_id, ignore_errors=True)
         gone = self.jobs / "gone"
         gone.mkdir(parents=True, exist_ok=True)
         (gone / job_id).write_text(reason, encoding="utf-8")
+
+    def delete_orphan_dirs(self, active: set[str]) -> int:
+        """Delete jobs/<id>/ folders (thumbnails) whose job record is gone, e.g. after a crash."""
+        if not self.jobs.exists():
+            return 0
+        n = 0
+        for p in self.jobs.iterdir():
+            if p.is_dir() and valid_id(p.name) and p.name not in active \
+                    and not (self.jobs / f"{p.name}.json").exists():
+                shutil.rmtree(p, ignore_errors=True)
+                n += 1
+        return n
 
     def gone_reason(self, job_id: str) -> str | None:
         """"expired" or "deleted" if this job was deleted, else None."""

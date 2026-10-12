@@ -35,7 +35,7 @@
     <ul>
       <li>The video you upload, its file name, size and length.</li>
       <li>The countries you choose.</li>
-      <li>The report: what the video shows and says (transcript and on-screen text), the moments flagged and why.</li>
+      <li>The report: what the video shows and says (transcript and on-screen text), the moments flagged and why, and a small still image of each flagged moment (when this copy of the app can take them).</li>
       <li>Standard web request logs kept by Google Cloud (address requested, IP address, time). They carry report ids, not your content.</li>
     </ul>
     <p>We only use this to run the check you asked for. No account, no tracking, no advertising.</p>
@@ -43,6 +43,7 @@
     <h2 class="h2">How long we keep it</h2>
     <ul>
       <li><b>Your video</b> is deleted as soon as its check ends, whether it finished, failed or was cancelled. A video you upload but never check is deleted after {{unused_ttl}}.</li>
+      <li>{{frames}}</li>
       <li><b>Reports</b> are deleted {{report_ttl}} after they are created. You can delete a report at any time with “Delete this report now”; it is removed straight away.</li>
       <li><b>Request logs</b> are kept by Google Cloud Logging for 30 days.</li>
       <li>Your browser keeps its own copy of the video you selected (to play it next to the report) until you close or reload the page, and remembers the file name and your last report id in its local storage.</li>

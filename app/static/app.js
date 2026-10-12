@@ -748,6 +748,19 @@ function quoteAt(report, x) {
   return s ? segText(s) || segScreen(s) : "";
 }
 
+// Moment thumbnails: one still per flagged moment, taken before the video was deleted (app/frames.py).
+function frameUrl(job, x) {
+  const s = moments(job.report).find((m) => m.frame && overlaps(m, x));
+  return s ? `/api/jobs/${encodeURIComponent(job.job_id)}/frames/${encodeURIComponent(s.frame)}` : null;
+}
+
+function thumb(src, alt, cls = "mthumb") {
+  if (!src) return null;
+  const img = el("img", { class: cls, src, alt, loading: "lazy", decoding: "async", width: "160", height: "90" });
+  img.addEventListener("error", () => img.remove());
+  return img;
+}
+
 // ------------------------------------------------------------------ video player + timeline
 
 function makePlayer(job, scope, { legend = false } = {}) {
@@ -779,9 +792,12 @@ function makePlayer(job, scope, { legend = false } = {}) {
     if (!w.risk || !dur) continue;
     const meta = riskMeta(w.risk);
     const aria = `Jump to ${range(m.start_s, m.end_s)}: ${w.label}, ${meta.level}`;
-    const b = el("button", { class: `tl-seg ${w.risk === "check" ? "grey" : w.risk}`, type: "button", "aria-label": aria, title: aria,
+    const still = frameUrl(job, m);
+    const b = el("button", { class: `tl-seg ${w.risk === "check" ? "grey" : w.risk}`, type: "button", "aria-label": aria, title: still ? null : aria,
       style: `left: ${(m.start_s / dur * 100).toFixed(2)}%; width: ${(Math.max(0.3, m.end_s - m.start_s) / dur * 100).toFixed(2)}%`,
-      onclick: (e) => { e.stopPropagation(); seek(m.start_s); } });
+      onclick: (e) => { e.stopPropagation(); seek(m.start_s); } },
+    still ? el("span", { class: `tl-tip ${m.start_s / dur > 0.6 ? "tl-tip-end" : ""}`, "aria-hidden": "true" },
+      thumb(still, ""), el("span", {}, `${range(m.start_s, m.end_s)} · ${w.label}`)) : null);
     b.moment = m;
     segs.push(b);
   }
@@ -900,7 +916,8 @@ async function screenResults(jobId, stale) {
     const speech = segText(m);
     const screen = segScreen(m);
     const btn = el("button", { class: "tr-item", type: "button", onclick: () => p.seek(m.start_s) },
-      el("span", { class: "tr-time" }, range(m.start_s, m.end_s)),
+      el("span", { class: "tr-time" }, range(m.start_s, m.end_s),
+        w.risk ? thumb(frameUrl(job, m), `Still from ${range(m.start_s, m.end_s)}`, "mthumb mthumb-sm") : null),
       el("span", { class: `dot ${meta.dot}`, "aria-hidden": "true" }),
       el("span", { class: "tr-text" },
         speech ? `“${speech}”` : screen ? [el("span", { class: "tr-src" }, "On screen"), screen] : el("span", { class: "muted" }, m.visuals || "No speech or text"),
@@ -1137,10 +1154,13 @@ function issueCard(job, c, f, p, provs, cards) {
       ownDuties.map((o) => `${o.section} (${o.law_id})`).join(", "), ". See Platform obligations below.")) : null,
     legal.length ? el("div", { class: "legal" }, disclosure(`Legal basis · ${plural(legal.length, "provision")}`, "scale", legal)) : null);
 
+  const still = frameUrl(job, f);
   const art = el("article", { class: "issue" },
     el("div", { class: "issue-head" },
-      el("button", { class: "chip-time", type: "button", "aria-label": `Play ${range(f.start_s, f.end_s)}`, onclick: () => p.seek(f.start_s) },
-        icon("play"), range(f.start_s, f.end_s)),
+      el("div", { class: "issue-when" },
+        el("button", { class: "chip-time", type: "button", "aria-label": `Play ${range(f.start_s, f.end_s)}`, onclick: () => p.seek(f.start_s) },
+          icon("play"), range(f.start_s, f.end_s)),
+        thumb(still, `Still from the video at ${range(f.start_s, f.end_s)}`)),
       toggleBtn),
     preview, body);
   toggleBtn.addEventListener("click", () => {

@@ -16,7 +16,7 @@ import time
 import uuid
 from typing import Any
 
-from app import config, events, gemini, metrics, pipeline, provenance, retention
+from app import config, events, frames, gemini, metrics, pipeline, provenance, retention
 from app.schemas import CountryReport, Inventory, Privacy, Report
 from app.storage import get_storage
 
@@ -130,6 +130,7 @@ async def run_job(job: dict[str, Any]) -> None:
     flusher = asyncio.create_task(_flush_events(job, feed))
     t_job = time.perf_counter()
     drift_task: asyncio.Task | None = None
+    frames_task: asyncio.Task | None = None
     job["status"] = "running"
     current = "inventory"
     try:
@@ -161,8 +162,11 @@ async def run_job(job: dict[str, Any]) -> None:
                 return await pipeline.run_drift(inv, job["countries"], mock=mock)
 
         async def on_inventory(inv: Inventory) -> None:
-            nonlocal drift_task
+            nonlocal drift_task, frames_task
             pipeline.inventory_events(inv)
+            # Thumbnails come from the video, so they are taken now (in parallel), before
+            # the video is deleted at the end of the job.
+            frames_task = asyncio.create_task(asyncio.to_thread(frames.extract, path, job["job_id"], inv))
             if any(config.COUNTRIES[cc].drift_languages for cc in job["countries"]) \
                     and pipeline.has_speech(inv):
                 _set(job, "translation", "running")
@@ -212,6 +216,11 @@ async def run_job(job: dict[str, Any]) -> None:
             _set(job, "translation", "error" if t_errors and not n else "done",
                  f"{n} line checks" + (f", {len(t_errors)} failed" if t_errors else ""))
 
+        made = await frames_task if frames_task is not None else {}
+        frames.attach(inventory, made)
+        if made:
+            events.emit("watch", f"Took {len(made)} still frame{'s' * (len(made) != 1)} of the flagged "
+                        "moments as visual evidence", stage="report")
         report = Report(
             video_id=job["video_id"],
             duration_s=inventory.duration_s,
@@ -246,6 +255,10 @@ async def run_job(job: dict[str, Any]) -> None:
         _saved_events.pop(job["job_id"], None)
         if drift_task is not None and not drift_task.done():
             drift_task.cancel()
+        if frames_task is not None and not frames_task.done():
+            # ffmpeg reads the video: let it finish (it has its own timeout) before deleting it
+            with contextlib.suppress(Exception, asyncio.CancelledError):
+                await asyncio.wait_for(asyncio.shield(frames_task), timeout=60)
         # The video is not needed any more, whatever happened: delete it before
         # the client sees the final status.
         deleted_at = retention.purge_video(job["video_id"])

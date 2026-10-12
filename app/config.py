@@ -211,6 +211,16 @@ def ffprobe_path() -> str | None:
     return str(candidate) if candidate and candidate.exists() else None
 
 
+def ffmpeg_path() -> str | None:
+    """ffmpeg for moment thumbnails (optional, like ffprobe)."""
+    found = shutil.which("ffmpeg")
+    if found:
+        return found
+    bin_dir = os.getenv("SC_FFMPEG_DIR")
+    candidate = Path(bin_dir) / "ffmpeg" if bin_dir else None
+    return str(candidate) if candidate and candidate.exists() else None
+
+
 @dataclass(frozen=True)
 class CountryLaw:
     code: str

@@ -5,7 +5,8 @@
   its analysis job ends, whether it finished, failed or was cancelled.
 - A video that is uploaded but never analysed is deleted after
   SC_UNUSED_VIDEO_TTL_MIN minutes.
-- A report (the job record) is deleted SC_REPORT_TTL_DAYS days after the job
+- A report (the job record, with the moment thumbnails taken from the video
+  before it was deleted) is deleted SC_REPORT_TTL_DAYS days after the job
   was created, by the sweeper and lazily when it is read, or at once on
   DELETE /api/jobs/{id}. A content-free marker (id + reason) is kept for as
   long again, so the UI can say "expired" rather than "not found".
@@ -94,5 +95,6 @@ def expire_reports(active: set[str], now: float | None = None) -> int:
         if job is not None and job_id not in active and report_expired(job, now):
             delete_report(job_id, "expired")
             n += 1
+    store.delete_orphan_dirs(active)
     store.sweep_gone(now - config.report_ttl_days() * 86400)
     return n

@@ -16,7 +16,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from app import config, jobs, logsafe, media, provisions, retention, taxonomy
+from app import config, frames, jobs, logsafe, media, provisions, retention, taxonomy
 from app.schemas import Category
 from app.storage import TooLarge, get_storage
 
@@ -137,6 +137,11 @@ def privacy_values() -> dict[str, str]:
                      " training on customer data without permission." if config.no_training() else
                      "This instance uses the Gemini API, whose terms depend on the plan: check them before"
                      " uploading anything confidential."),
+        "frames": ("<b>Still frames</b>: before your video is deleted, one small still image is taken"
+                   " from each flagged moment and shown next to the findings. The stills are part of the"
+                   f" report and are deleted with it, after {_duration(config.report_ttl_days(), 'day')}"
+                   " or when you delete the report." if config.ffmpeg_path() else
+                   "<b>Still frames</b>: none are kept. This copy of the app keeps no images from your video."),
         "caching": ("Caching of requests by Vertex AI is turned off for this project." if config.vertex_cache_disabled()
                     else "Vertex AI may keep requests in memory (not on disk) for up to 24 hours to answer"
                          " repeated requests faster, separated from other customers."),
@@ -323,6 +328,20 @@ def get_job(job_id: str, since: int = 0):
     job["events_total"] = len(feed)
     job["events"] = feed[max(0, since):]
     return job
+
+
+@app.get("/api/jobs/{job_id}/frames/{name}")
+def get_frame(job_id: str, name: str):
+    """A moment thumbnail of this report (behind the access gate, deleted with the report)."""
+    store = get_storage()
+    job = store.load_job(job_id)
+    if job is None or retention.report_expired(job) or not frames.valid_name(name):
+        raise HTTPException(404, "frame not found")
+    folder = store.frames_dir(job_id)
+    path = folder / name if folder else None
+    if path is None or not path.is_file():
+        raise HTTPException(404, "frame not found")
+    return FileResponse(path, media_type="image/jpeg", headers={"Cache-Control": "private, max-age=3600"})
 
 
 @app.delete("/api/jobs/{job_id}")
