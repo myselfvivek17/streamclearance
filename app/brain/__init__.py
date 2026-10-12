@@ -44,7 +44,8 @@ def _framing(findings: list[Finding]) -> str:
 
 def build_report(country: str, inventory: Inventory, kept: list[MomentAssessment],
                  removed: list[tuple[MomentAssessment, str]], v: verifier.Verified,
-                 critic_changes: int, notes: list[str]) -> CountryReport:
+                 critic_changes: int, notes: list[str], *, method: str = "agent",
+                 fallback_reason: str | None = None) -> CountryReport:
     by_id = provisions.by_id(country)
     findings: list[Finding] = []
     duties: dict[str, Provision] = {}
@@ -101,18 +102,21 @@ def build_report(country: str, inventory: Inventory, kept: list[MomentAssessment
         platform_obligations=platform_duties,
         critic_changes=critic_changes,
         notes=notes,
+        method=method,
+        fallback_reason=fallback_reason,
     )
 
 
 async def assess_country(inventory: Inventory, country: str, *, mock: bool) -> CountryReport:
     """assessor -> verifier -> critic -> report, for one country (no Workflow; used by tests)."""
-    assessments, notes = await agents.assess(inventory, country, mock=mock)
-    v = verifier.verify(assessments, country, inventory)
+    res = await agents.assess(inventory, country, mock=mock)
+    v = verifier.verify(res.assessments, country, inventory)
     verifier_event(country, v)
     verdicts, c_notes = await agents.critique(v.covered, inventory, country, mock=mock)
     kept, removed, changes = agents.apply_verdicts(v.covered, verdicts)
     agents.critic_event(country, v.covered, verdicts, removed, changes)
-    return build_report(country, inventory, kept, removed, v, changes, notes + c_notes)
+    return build_report(country, inventory, kept, removed, v, changes, res.notes + c_notes,
+                        method=res.method, fallback_reason=res.fallback_reason)
 
 
 def verifier_event(country: str, v: verifier.Verified) -> None:
@@ -191,8 +195,8 @@ async def run(
                         n = sum(1 for s in inv.segments if s.leaves)
                         await on_stage(f"country:{cc}", "running",
                                        f"assess: {n} sensitive moment(s)")
-                    ctx["assessments"], ctx["notes"] = await agents.assess(inv, cc, mock=mock)
-                return {"country": cc, "assessments": len(ctx["assessments"])}
+                    ctx["assessed"] = await agents.assess(inv, cc, mock=mock)
+                return {"country": cc, "assessments": len(ctx["assessed"].assessments)}
             except Exception as e:  # noqa: BLE001 - reported per country
                 return await fail(e)
 
@@ -200,7 +204,7 @@ async def run(
             if node_input.get("error") or "report" in ctx:
                 return node_input
             with metrics.stage(f"verifier:{cc}"):
-                ctx["verified"] = v = verifier.verify(ctx["assessments"], cc, state["inventory"])
+                ctx["verified"] = v = verifier.verify(ctx["assessed"].assessments, cc, state["inventory"])
             verifier_event(cc, v)
             return {"country": cc, "covered": len(v.covered), "dropped": v.dropped}
 
@@ -218,8 +222,10 @@ async def run(
                                                                 mock=mock)
                     kept, removed, changes = agents.apply_verdicts(v.covered, verdicts)
                     agents.critic_event(cc, v.covered, verdicts, removed, changes)
+                    res = ctx["assessed"]
                     ctx["report"] = build_report(cc, state["inventory"], kept, removed, v, changes,
-                                                 ctx["notes"] + notes)
+                                                 res.notes + notes, method=res.method,
+                                                 fallback_reason=res.fallback_reason)
             except Exception as e:  # noqa: BLE001
                 return await fail(e)
             rep: CountryReport = ctx["report"]

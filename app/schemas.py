@@ -276,6 +276,11 @@ class CountryReport(BaseModel):
     critic_changes: int = 0
     notes: list[str] = []
     ai_content: AIContentResult | None = None  # the AI-content check's consequence here
+    # How the assessment was made (brain only): by the assessor agent, or by the simplified
+    # check (retrieval in code + one structured call) when the agent's answer was unusable.
+    # Never hidden: the UI shows a "simplified check" note and the feed a warning.
+    method: Literal["agent", "fallback"] | None = None
+    fallback_reason: str | None = None  # app/brain/agents.py FALLBACK_REASONS
 
     @model_validator(mode="after")
     def _no_clearance(self):

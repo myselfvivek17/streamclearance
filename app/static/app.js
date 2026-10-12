@@ -975,7 +975,8 @@ async function screenResults(jobId, stale) {
       onclick: () => go(`#country/${jobId}/${c.country}`) },
     el("div", { class: "rcard-top" }, flag(c.country),
       el("span", { class: "stack grow" }, el("span", { class: "c-name" }, info.name), el("span", { class: "xsmall muted" }, covLabel(info)))),
-    el("div", {}, el("span", { class: `badge badge-lg ${meta.cls}` }, icon(meta.icon), meta.verdict)),
+    el("div", { class: "row wrap", style: "gap: 6px" }, el("span", { class: `badge badge-lg ${meta.cls}` }, icon(meta.icon), meta.verdict),
+      c.method === "fallback" ? el("span", { class: "tag tag-draft", title: "The assessor agent's answer could not be used; a simplified check was run instead." }, icon("info"), "Simplified check") : null),
     el("p", { class: "rcard-reason" }, reason),
     el("div", { class: "rcard-foot" }, el("span", {}, countLabel), el("span", { class: "go" }, "View details", icon("right"))));
   });
@@ -1296,6 +1297,7 @@ async function screenCountry(jobId, cc, stale) {
       el("section", { class: "card detail-head", "aria-label": "Verdict" },
         el("div", { class: "dh-title" }, flag(cc), el("h1", { class: "h1" }, info.name),
           el("span", { class: covCls(info) }, covLabel(info)),
+          c.method === "fallback" ? el("span", { class: "tag tag-draft" }, icon("info"), "Simplified check") : null,
           c.rules_status !== "reviewed" ? el("span", { class: "tag tag-draft" }, icon("draft"), "Draft rules: not yet reviewed by a lawyer") : null),
         el("div", { class: "stack", style: "gap: 8px" },
           el("div", {}, el("span", { class: `badge badge-lg ${meta.cls}` }, icon(meta.icon), meta.verdict)),

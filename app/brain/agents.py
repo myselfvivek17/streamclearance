@@ -19,9 +19,10 @@ import asyncio
 import json
 import logging
 import uuid
+from dataclasses import dataclass, field
 from typing import Literal
 
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, field_validator
 
 from app import config, events, gemini, metrics, provisions, retrieval, taxonomy
 from app.brain.models import adk_model, count_call, log_usage
@@ -32,7 +33,7 @@ log = logging.getLogger(__name__)
 
 
 class MomentAssessment(BaseModel):
-    """Assessor output for one (moment, leaf) in one country."""
+    """Assessor output for one (moment, leaf) in one country. Unknown keys are ignored."""
     start_s: float
     end_s: float
     leaf: str
@@ -44,12 +45,46 @@ class MomentAssessment(BaseModel):
     rationale: str = ""
     critic_note: str = ""  # set by us from the critic's verdict
 
+    @field_validator("covered_by", mode="before")
+    @classmethod
+    def _ids(cls, v):
+        if v is None:
+            return []
+        return [v] if isinstance(v, str) else v
+
+    @field_validator("risk", mode="before")
+    @classmethod
+    def _risk(cls, v):
+        return v.strip().lower() if isinstance(v, str) else v
+
 
 class CriticVerdict(BaseModel):
     index: int
     action: Literal["keep", "downgrade", "remove"] = "keep"
     risk: Risk | None = None  # new risk when downgrading
     reason: str = ""
+
+    @field_validator("action", "risk", mode="before")
+    @classmethod
+    def _lower(cls, v):
+        return v.strip().lower() if isinstance(v, str) else v
+
+
+@dataclass
+class Assessed:
+    """The assessor's answer for one country, and how it was reached."""
+    assessments: list[MomentAssessment]
+    notes: list[str] = field(default_factory=list)
+    method: Literal["agent", "fallback"] = "agent"
+    fallback_reason: str | None = None  # FALLBACK_REASONS code
+
+
+# Why the assessor agent's run was replaced by the simplified check.
+FALLBACK_REASONS = {
+    "no_json": "the agent's reply held no JSON",
+    "no_valid_items": "the agent's reply held no valid assessment",
+    "agent_error": "the agent run failed",
+}
 
 
 def moments(inventory: Inventory) -> list[dict]:
@@ -84,24 +119,65 @@ async def run_agent(agent, message: str) -> str:
     return text
 
 
+# Wrapper keys models put around the answer list, e.g. {"assessments": [...]}.
+WRAPPER_KEYS = ("assessments", "assessment", "items", "results", "findings", "verdicts", "moments",
+                "data", "output", "answer", "response")
+
+
+def _items(value, fields: set[str], inherited: dict | None = None, depth: int = 0) -> list:
+    """Flatten a model reply into candidate items for a list answer. Tolerates: a nested
+    list (one list per moment), JSON objects encoded as strings, a wrapper object
+    ({"assessments": [...]}), items grouped under their moment ({"start_s": 1, "end_s": 2,
+    "assessments": [{"leaf": ...}]}: the inner items inherit the times), and a dict keyed
+    by index or moment ({"0": {...}}). Anything else is returned as is, and dropped (with
+    its field names logged) by the caller."""
+    inherited = inherited or {}
+    if depth > 5:
+        return [value]
+    if isinstance(value, str):
+        try:
+            return _items(json.loads(value), fields, inherited, depth + 1)
+        except ValueError:
+            return [value]
+    if isinstance(value, list):
+        return [x for v in value for x in _items(v, fields, inherited, depth + 1)]
+    if not isinstance(value, dict):
+        return [value]
+    wrapped = [k for k, v in value.items() if k.lower() in WRAPPER_KEYS and isinstance(v, (list, dict))]
+    if wrapped:  # a wrapper, or a moment holding its items
+        moment = value.get("moment") if isinstance(value.get("moment"), dict) else value
+        times = {k: moment[k] for k in ("start_s", "end_s") if k in moment}
+        return [x for k in wrapped for x in _items(value[k], fields, {**inherited, **times}, depth + 1)]
+    if fields & set(value):
+        return [{**inherited, **value}]
+    if value and all(isinstance(v, dict) for v in value.values()):  # keyed by index / moment
+        return [x for v in value.values() for x in _items(v, fields, inherited, depth + 1)]
+    return [value]
+
+
 def _parse_list(text: str, model: type[BaseModel]) -> list:
     # Prefer the first value holding objects: prose before the answer may quote
     # a bracketed list of ids, which is not the answer.
     values = list(gemini.iter_json(text))
-    raw = next((v for v in values if isinstance(v, dict)
-                or (isinstance(v, list) and any(isinstance(x, dict) for x in v))),
-               values[0] if values else None)
+
+    def holds_objects(v, depth=0) -> bool:
+        if isinstance(v, dict):
+            return True
+        return isinstance(v, list) and depth < 3 and any(holds_objects(x, depth + 1) for x in v)
+
+    raw = next((v for v in values if holds_objects(v)), values[0] if values else None)
     if raw is None:
         raise ValueError("no JSON found in model output")
-    if isinstance(raw, dict):
-        lists = [v for v in raw.values() if isinstance(v, list)]
-        raw = lists[0] if len(lists) == 1 else [raw]
+    fields = set(model.model_fields)
     out = []
-    for item in raw:
+    for item in _items(raw, fields):
         try:
             out.append(model.model_validate(item))
         except ValidationError as e:
-            log.warning("dropping malformed %s: %s", model.__name__, e.errors()[0]["type"])
+            err = e.errors()[0]
+            # field names and the error type only: values are model output
+            where = ".".join(str(x) for x in err["loc"]) or type(item).__name__
+            log.warning("dropping malformed %s: %s at %s", model.__name__, err["type"], where)
     return out
 
 
@@ -127,7 +203,8 @@ liable, cleared or permitted (other laws may still apply).
 3. Check the provision's exceptions (e.g. education, awareness, news, government \
 advertisement). If one plausibly applies, set exception_applies=true and say why.
 
-Output ONLY a JSON array, one object per (moment, leaf), no prose:
+Output ONLY a flat JSON array of objects, one object per (moment, leaf): no prose, no \
+wrapper object, no nesting or grouping by moment, every object with its own start_s and end_s:
 {{"start_s": float, "end_s": float, "leaf": "<one leaf of that moment>", "covered_by": \
 ["<provision id>", ...], "risk": "red"|"amber"|"green", "exception_applies": bool, \
 "exception_reason": str, "suggested_fix": str, "rationale": str}}
@@ -212,15 +289,18 @@ def _assess_prompt(country: str, ms: list[dict], provs: dict[str, dict] | None =
     return text + "Assess every (moment, leaf) and reply with the JSON array only."
 
 
-async def assess(inventory: Inventory, country: str, *, mock: bool) -> tuple[list[MomentAssessment], list[str]]:
-    """Returns (assessments, notes)."""
+class _NoAssessments(ValueError):
+    pass
+
+
+async def assess(inventory: Inventory, country: str, *, mock: bool) -> Assessed:
     if mock:
         out = mock_assess(inventory, country)
         assessment_events(country, out)
-        return out, []
+        return Assessed(out)
     ms = moments(inventory)
     if not ms:
-        return [], []
+        return Assessed([])
     from google.adk import Agent
 
     lookup_provisions, search_law = make_tools(country, max_calls=config.ASSESSOR_MAX_TOOL_CALLS)
@@ -235,24 +315,28 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> tuple[lis
     try:
         items, provs = await asyncio.to_thread(prefetch, country, ms)
         text = await run_agent(agent, _assess_prompt(country, items, provs))
-        out = _parse_list(text, MomentAssessment)
+        try:
+            out = _parse_list(text, MomentAssessment)
+        except ValueError as e:
+            raise _NoAssessments("no_json") from e
         if not out:
-            raise ValueError("no assessments in the agent's reply")
+            raise _NoAssessments("no_valid_items")
         assessment_events(country, out)
-        return out, fallbacks
+        return Assessed(out, fallbacks)
     except gemini.GeminiUnavailable:
         raise
-    except Exception as e:  # noqa: BLE001 - fall back, and say so in the report
-        log.warning("%s: ADK assessor failed (%s); falling back to retrieval + one JSON call",
-                    country, type(e).__name__)
-        note = (f"Assessor fallback: ADK tool-calling run failed ({type(e).__name__}); "
-                "provisions were retrieved in Python and assessed in one JSON call.")
-        events.emit("warn", f"The assessor agent's run failed ({type(e).__name__}): switched to a "
-                    "simplified check (provisions retrieved in code, one structured call).",
+    except Exception as e:  # noqa: BLE001 - fall back, and say so in the report and the feed
+        reason = str(e) if isinstance(e, _NoAssessments) else "agent_error"
+        log.warning("%s: ADK assessor failed (%s, %s); falling back to retrieval + one JSON call",
+                    country, type(e).__name__, reason)
+        note = (f"Simplified check: {FALLBACK_REASONS[reason]} ({type(e).__name__}), so the provisions "
+                "were retrieved in code and assessed in one structured call instead of by the agent.")
+        events.emit("warn", f"The assessor agent's answer could not be used ({FALLBACK_REASONS[reason]}): "
+                    "switched to a simplified check (provisions retrieved in code, one structured call).",
                     stage="country", country=country)
         out = await _fallback_assess(country, ms)
         assessment_events(country, out)
-        return out, [note, *fallbacks]
+        return Assessed(out, [note, *fallbacks], method="fallback", fallback_reason=reason)
 
 
 def candidates(country: str, m: dict) -> list[dict]:
@@ -286,7 +370,8 @@ provisions' verbatim text and exceptions. For each finding decide:
 - "downgrade": covered, but arguable or an exception (education, news, satire, awareness, \
 government advertisement...) may apply -> give the lower "risk" ("amber" or "green");
 - "remove": the provision text does not actually cover this moment.
-Be strict about real coverage, not about tone. Output ONLY a JSON array: \
+Be strict about real coverage, not about tone. Output ONLY a flat JSON array of objects \
+(no wrapper object, no nesting): \
 [{"index": int, "action": "keep"|"downgrade"|"remove", "risk": "amber"|"green"|null, \
 "reason": str}] with one item per finding."""
 

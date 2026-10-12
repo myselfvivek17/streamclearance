@@ -1,0 +1,89 @@
+"""Assessor reliability: tolerant parsing of the agent's reply, and no silent fallback."""
+import asyncio
+import json
+
+import pytest
+
+from app import events, gemini, pipeline
+from app.brain import agents, assess_country
+from app.brain.agents import CriticVerdict, MomentAssessment, _parse_list
+
+A = {"start_s": 3.5, "end_s": 11.5, "leaf": "health.cure_claim", "covered_by": ["X"], "risk": "red"}
+B = {"start_s": 11.5, "end_s": 18.0, "leaf": "gambling.promotion", "covered_by": ["Y"], "risk": "amber"}
+INNER = lambda d: {k: v for k, v in d.items() if k not in ("start_s", "end_s")}  # noqa: E731
+
+
+@pytest.mark.parametrize("shape", [
+    [A, B],
+    [[A], [B]],  # one list per moment: was "dropping malformed MomentAssessment: model_type" x N
+    {"assessments": [A, B]},
+    {"assessments": [A, B], "summary": ["two moments"]},
+    [json.dumps(A), json.dumps(B)],  # objects encoded as strings
+    {"0": A, "1": B},
+    [{"start_s": 3.5, "end_s": 11.5, "assessments": [INNER(A)]},
+     {"moment": {"start_s": 11.5, "end_s": 18.0}, "assessments": [INNER(B)]}],
+    {"result": {"assessments": [A, B]}},
+])
+def test_known_shapes_parse(shape):
+    out = _parse_list("Here is my answer:\n```json\n" + json.dumps(shape) + "\n```", MomentAssessment)
+    assert [(a.start_s, a.leaf, a.covered_by) for a in out] == [
+        (3.5, "health.cure_claim", ["X"]), (11.5, "gambling.promotion", ["Y"])]
+
+
+def test_lenient_fields_and_unknown_keys():
+    out = _parse_list(json.dumps([{**A, "risk": "Red", "covered_by": "X", "confidence": 0.9}]), MomentAssessment)
+    assert out[0].risk == "red" and out[0].covered_by == ["X"]
+    assert _parse_list('[{"index": 0, "action": "Downgrade", "risk": "AMBER"}]', CriticVerdict)[0].risk == "amber"
+
+
+def test_malformed_items_logged_by_field_name_only(caplog):
+    out = _parse_list(json.dumps([A, {"leaf": "secret words here"}, 42]), MomentAssessment)
+    assert len(out) == 1
+    msgs = [r.getMessage() for r in caplog.records if "dropping malformed" in r.getMessage()]
+    assert len(msgs) == 2 and all("secret" not in m for m in msgs)
+    assert any("start_s" in m for m in msgs)
+
+
+def test_no_json_raises():
+    with pytest.raises(ValueError):
+        _parse_list("I could not decide.", MomentAssessment)
+
+
+def _inventory():
+    return pipeline.mock_inventory(26.0)
+
+
+@pytest.mark.parametrize("reply, reason", [("I could not decide.", "no_json"),
+                                           ('[{"note": "nothing"}]', "no_valid_items")])
+def test_fallback_is_recorded_not_silent(real_provisions, monkeypatch, reply, reason):
+    async def fake_agent(agent, message):
+        return reply
+
+    inv = _inventory()
+    seg = next(s for s in inv.segments if "health.cure_claim" in s.leaves)
+    monkeypatch.setattr(agents, "run_agent", fake_agent)
+    monkeypatch.setattr(gemini, "generate_json", lambda *a, **kw: [
+        {"start_s": seg.start_s, "end_s": seg.end_s, "leaf": "health.cure_claim",
+         "covered_by": ["MY/MAS1956/s3(1)"], "risk": "red", "rationale": "r", "suggested_fix": "f"}])
+    feed = events.start("job")
+
+    async def run():
+        res = await agents.assess(inv, "MY", mock=False)
+        assert res.method == "fallback" and res.fallback_reason == reason
+        assert res.notes[0].startswith("Simplified check:")
+        return await assess_country(inv, "MY", mock=True)  # report plumbing below
+
+    asyncio.run(run())
+    assert any(e["kind"] == "warn" and "simplified check" in e["text"] for e in feed.snapshot())
+
+
+def test_report_carries_method(real_provisions, monkeypatch):
+    async def fake_assess(inventory, country, *, mock):
+        return agents.Assessed(agents.mock_assess(inventory, country), ["Simplified check: x"],
+                               method="fallback", fallback_reason="agent_error")
+
+    monkeypatch.setattr(agents, "assess", fake_assess)
+    rep = asyncio.run(assess_country(_inventory(), "MY", mock=True))
+    assert rep.method == "fallback" and rep.fallback_reason == "agent_error"
+    assert "Simplified check: x" in rep.notes
+    assert rep.model_dump()["method"] == "fallback"
