@@ -469,6 +469,7 @@ html.dark, html.dark body { background: #0b0d12; color-scheme: dark; }
 .player.playing .player-center { opacity: 0; }
 .player.playing:hover .player-center, .player.playing:focus-within .player-center { opacity: 1; }
 .player .caption:empty { display: none; }
+.player .caption { white-space: pre-line; }
 .tl-base { cursor: pointer; }
 .tl-seek { position: absolute; inset: 0; padding: 0; border: 0; background: transparent; cursor: pointer; border-radius: 6px; }
 .legend-sw.grey { background: var(--grey-solid); }
@@ -565,3 +566,7 @@ html.dark, html.dark body { background: #0b0d12; color-scheme: dark; }
 
 /* programmatic focus on page headings (screen readers) needs no visible ring */
 .app h1[tabindex="-1"]:focus { outline: none; }
+
+/* English translation under non-English speech / on-screen text */
+.tr-en { display: block; margin-top: 4px; font-size: 13px; color: var(--text-2); }
+.issue-title .tr-en { font-weight: 400; }

@@ -159,3 +159,34 @@ def test_mapped_provisions_exist_verified_and_quoted(real_provisions):
                 law = next(x for x in provisions.laws_for(cc) if x.id == p.law_id)
                 pages = {x["page"]: x["text"] for x in json.loads(law.text_path.read_text(encoding="utf-8"))}
                 assert quote_on_page(p.verbatim_text, pages[p.page]), pid
+
+
+@pytest.mark.parametrize("signals,flag", [
+    (["The voiceover exhibits the flat inflection and robotic prosody of a text-to-speech voice."], False),
+    (["The voice sounds synthetic or text-to-speech generated."], False),
+    (["0:04 the hand has six fingers", "the voice sounds cloned"], True),
+    (["the face morphs between frames"], True),
+])
+def test_voice_only_signs_are_a_manual_check_not_a_flag(provs, signals, flag):
+    res = synthetic.consequence("IN", SyntheticCheck(likelihood="medium", signals=signals), checked=True)
+    assert (res.outcome == "flag") == flag
+    if not flag:
+        assert res.outcome == "check" and res.risk is None and not res.provision_ids
+
+
+def test_voice_only_flag_from_model_and_metadata_override(provs):
+    s = SyntheticCheck(likelihood="medium", signals=["odd audio"], voice_only=True)
+    assert synthetic.consequence("IN", s, checked=True).outcome == "check"
+    m = s.model_copy(update={"metadata_signals": ["encoder: Veo"]})
+    assert synthetic.consequence("IN", m, checked=True).outcome == "flag"
+
+
+def test_voice_only_real_person_still_escalates(provs):
+    s = SyntheticCheck(likelihood="medium", signals=["the voice sounds cloned"], depicts_real_person=True)
+    assert synthetic.consequence("IN", s, checked=True).risk == "red"
+
+
+def test_segment_english_field_is_optional():
+    from app.schemas import Segment
+    assert Segment(start_s=0, end_s=1).english == ""
+    assert Segment(start_s=0, end_s=1, transcript="آج", english="Today").english == "Today"

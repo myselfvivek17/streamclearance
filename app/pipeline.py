@@ -46,6 +46,7 @@ class SegmentDraft(BaseModel):
     claims: list[str] = []
     visuals: str = ""
     on_screen_text: str = ""
+    english: str = ""
     leaves: list[str] = []
     idioms: list[str] = []
     synthetic_signals: list[str] = []
@@ -69,6 +70,9 @@ Split the video into consecutive segments of roughly 3-15 seconds at natural bre
 - claims: factual or health/financial claims made, one per item
 - visuals: what is shown (people, actions, symbols, products, logos, flags, weapons, etc.)
 - on_screen_text: captions, overlays or signs, verbatim
+- english: a faithful English translation of the transcript (or, if there is no speech, \
+of the on-screen text) when it is not already English; "" when it is English or empty. \
+Translate meaning plainly; do not soften threats, slurs or claims.
 - leaves: zero or more ids from the content taxonomy below that the segment might \
 plausibly touch, most specific first (e.g. a casino promo code is "gambling.promotion", \
 not "drugs.promotion"; "this drink cures diabetes" is "health.cure_claim"). A demand \
@@ -76,7 +80,10 @@ for money or an act under threat ("pay me or I will ...") is "harassment.extorti
 "harassment.threats"; a threat to publish or send someone's intimate or private images \
 unless they pay or comply is "harassment.sextortion", "harassment.extortion" and \
 "harassment.threats" (add "sexual.non_consensual_imagery" too only if such images are \
-shown or said to have already been shared). Use the ids exactly as written. Leave empty \
+shown or said to have already been shared). A false alarm or rumour that could cause \
+public fear or panic (e.g. claims of poisoned supplies, attacks or disasters, urging people \
+to act or forward it) is "misinfo.public_order" and "hate.public_tranquillity". Use the ids \
+exactly as written. Leave empty \
 for clearly neutral segments.
 - idioms: figures of speech or slang in the speech that could read as literal violence, \
 crime, insult or threat if translated word for word (e.g. "this offer is a bomb", \
@@ -101,6 +108,9 @@ AI-generated or synthetic; label_text: that disclosure verbatim ("" if none).
 celebrity, official) appears to be shown or voiced, e.g. named on screen or in the speech, \
 or unmistakable; person_note: who, how they appear and what tells you. Never name a \
 private person, and never guess an identity from looks alone.
+- voice_only: true when every signal is about the voice alone (e.g. text-to-speech \
+narration over plain text or stock visuals) and no image, face or footage looks \
+AI-made or altered; false otherwise.
 
 Content taxonomy:
 {taxonomy.prompt_list()}"""

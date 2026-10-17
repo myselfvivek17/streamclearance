@@ -750,6 +750,10 @@ function worstRisk(countries, m) {
 
 const segText = (s) => (s.transcript || "").trim();
 const segScreen = (s) => (s.on_screen_text || "").trim().replace(/\s*\n\s*/g, " / ");
+const segEnglish = (s) => (s.english || "").trim();
+/** English translation line for non-English speech or on-screen text (stage A). */
+const englishLine = (s, cls = "tr-en") => (s && segEnglish(s) ? el("span", { class: cls, lang: "en" }, el("span", { class: "tr-src" }, "English"), segEnglish(s)) : null);
+const segAt = (report, x) => moments(report).find((m) => overlaps(m, x));
 
 function quoteAt(report, x) {
   const s = moments(report).find((m) => overlaps(m, x));
@@ -839,7 +843,7 @@ function makePlayer(job, scope, { legend = false } = {}) {
     track.setAttribute("aria-valuenow", String(Math.round(t)));
     track.setAttribute("aria-valuetext", `${fmt(t)} of ${fmt(dur)}`);
     const cur = ms.find((m) => t >= m.start_s && t < m.end_s);
-    caption.textContent = cur ? segText(cur) : "";
+    caption.textContent = cur ? segText(cur) + (segEnglish(cur) && segText(cur) ? `\n(${segEnglish(cur)})` : "") : "";
     for (const b of segs) b.classList.toggle("active", b.moment === cur);
     for (const fn of listeners) fn(t, cur);
   }
@@ -907,11 +911,13 @@ function aiCard(job) {
   const syn = r.inventory && r.inventory.synthetic;
   if (!syn) return null;
   const strong = syn.likelihood === "medium" || syn.likelihood === "high";
+  const voiceOnly = strong && (r.countries || []).some((c) => c.ai_content && c.ai_content.suggested_fix && c.ai_content.suggested_fix.startsWith("Optional:"));
   const signals = syn.signals || [];
   return el("section", { class: "card ai-card", "aria-label": "AI-generated content check" },
     el("div", { class: "ai-head" },
       el("h2", { class: "h3 row", style: "gap: 8px" }, icon("shield", "color: var(--text-3)"), "AI-generated content check"),
-      el("span", { class: `badge ${strong ? "risk-amber" : "risk-grey"}` }, icon(strong ? "warn" : "info"), AI_LIKELIHOOD[syn.likelihood] || syn.likelihood)),
+      voiceOnly ? el("span", { class: "badge risk-grey" }, icon("info"), "Synthetic voice only")
+        : el("span", { class: `badge ${strong ? "risk-amber" : "risk-grey"}` }, icon(strong ? "warn" : "info"), AI_LIKELIHOOD[syn.likelihood] || syn.likelihood)),
     el("p", { class: "small muted" }, "We looked for signs of AI generation: visual artefacts, a synthetic-sounding voice, AI labels or watermarks, and whether a real public figure seems to be shown or voiced. Signs are not proof either way."),
     el("dl", { class: "kv", style: "margin: 0" },
       el("dt", {}, "Signs seen"), el("dd", {}, signals.length ? el("ul", { class: "ai-signals" }, signals.map((x) => el("li", {}, x))) : "None"),
@@ -963,7 +969,8 @@ async function screenResults(jobId, stale) {
         w.risk ? thumb(frameUrl(job, m), `Still from ${range(m.start_s, m.end_s)}`, "mthumb mthumb-sm") : null),
       el("span", { class: `dot ${meta.dot}`, "aria-hidden": "true" }),
       el("span", { class: "tr-text" },
-        speech ? `“${speech}”` : screen ? [el("span", { class: "tr-src" }, "On screen"), screen] : el("span", { class: "muted" }, m.visuals || "No speech or text"),
+        speech ? el("span", { dir: "auto" }, `“${speech}”`) : screen ? [el("span", { class: "tr-src" }, "On screen"), el("span", { dir: "auto" }, screen)] : el("span", { class: "muted" }, m.visuals || "No speech or text"),
+        englishLine(m),
         el("span", { class: "tr-flag" }, w.risk ? `${meta.level} · ${w.label}` : "No issues")));
     btn.moment = m;
     return el("li", {}, btn);
@@ -973,9 +980,9 @@ async function screenResults(jobId, stale) {
   const cards = cs.map((c) => {
     const info = countryInfo(c.country);
     const meta = riskMeta(badgeOf(c));
-    const nf = c.findings.length; const nu = (c.uncovered || []).length;
+    const nf = groupMoments(c).length; const nu = uncoveredGroups(c).filter((g) => !g.inFinding).length;
     const countLabel = c.overall_risk === "not_checked" ? "Not checked"
-      : nf ? `${plural(nf, "issue")}${nu ? ` · ${nu} to check` : ""}` : nu ? `${nu} to check manually` : "Nothing to fix";
+      : nf ? `${plural(nf, "moment")} to fix${nu ? ` · ${nu} to check` : ""}` : nu ? `${plural(nu, "moment")} to check manually` : "Nothing to fix";
     const reason = reasonOf(c);
     return el("button", { class: "rcard", type: "button", "aria-label": `${info.name}: ${meta.verdict}. ${reason}. View details`,
       onclick: () => go(`#country/${jobId}/${c.country}`) },
@@ -1197,6 +1204,19 @@ function issueDetails(c, f, provs, cards, { titled }) {
     legal.length ? el("div", { class: "legal" }, disclosure(`Legal basis · ${plural(legal.length, "provision")}`, "scale", legal)) : null);
 }
 
+/** Manual-check moments: uncovered entries grouped by time range; ranges inside a moment that
+ * already has a finding are part of that moment, so they are not counted again. */
+function uncoveredGroups(c) {
+  const fm = groupMoments(c).filter((g) => !g.video_level);
+  const out = [];
+  for (const u of [...(c.uncovered || [])].sort((a, b) => a.start_s - b.start_s)) {
+    const g = out.find((x) => x.video_level === !!u.video_level && (u.video_level || (x.start_s === u.start_s && x.end_s === u.end_s)));
+    if (g) { if (!g.items.some((i) => i.leaf === u.leaf)) g.items.push(u); } else out.push({ start_s: u.start_s, end_s: u.end_s, video_level: !!u.video_level, items: [u] });
+  }
+  for (const g of out) g.inFinding = !g.video_level && fm.some((m) => overlaps(m, g));
+  return out;
+}
+
 /** Findings on the same or overlapping time range, as one moment (report `moments`; computed
  * here for reports made before it existed). Whole-video findings form their own moment. */
 function groupMoments(c) {
@@ -1225,7 +1245,8 @@ function momentCard(job, c, g, p, provs, cards) {
     el("span", { class: `badge ${m.cls}` }, icon(m.icon), m.level),
     el("span", { class: "issue-title" },
       el("b", {}, many ? `${plural(g.issues.length, "issue")}: ${joinWords(labels.map((l, i) => (i ? l.charAt(0).toLowerCase() + l.slice(1) : l)))}` : labels[0]),
-      quote ? el("span", {}, `“${quote}”`) : null),
+      quote ? el("span", { dir: "auto" }, `“${quote}”`) : null,
+      g.video_level ? null : englishLine(segAt(job.report, g))),
     chev);
   const fixes = [...new Set(g.issues.map((f) => f.suggested_fix).filter(Boolean))];
   const preview = el("div", { class: "fix-preview" }, icon("wrench", "color: var(--accent)"), el("b", {}, many && fixes.length > 1 ? "Fixes:" : "Fix:"),
@@ -1304,6 +1325,7 @@ async function screenCountry(jobId, cc, stale) {
   const nf = c.findings.length;
   const groups = groupMoments(c);
   const unc = c.uncovered || [];
+  const ug = uncoveredGroups(c);
   const obl = c.platform_obligations || [];
   const p = makePlayer(job, [c]);
   const back = () => go(`#results/${jobId}`);
@@ -1343,8 +1365,8 @@ async function screenCountry(jobId, cc, stale) {
           el("p", { class: "rcard-reason" }, verdictSub),
           c.risk_framing ? el("p", { class: "small muted" }, c.risk_framing) : null),
         el("div", { class: "stat-row" },
-          el("div", { class: "stat" }, el("b", {}, String(nf)), el("span", {}, "Issues to fix")),
-          el("div", { class: "stat" }, el("b", {}, String(unc.length)), el("span", {}, "To check manually")),
+          el("div", { class: "stat" }, el("b", {}, String(groups.length)), el("span", {}, groups.length === 1 ? "Moment to fix" : "Moments to fix")),
+          el("div", { class: "stat" }, el("b", {}, String(ug.length)), el("span", {}, "To check manually")),
           el("div", { class: "stat" }, el("b", {}, String(laws.length)), el("span", {}, "Laws checked"))),
         el("div", {}, disclosure(`Laws checked (${laws.length})`, "scale", lawList))),
       el("section", { class: "card mini-player", "aria-label": "Video" }, p.player, p.timeline)),
@@ -1352,8 +1374,8 @@ async function screenCountry(jobId, cc, stale) {
     notes.length ? el("div", { class: "notes", style: "margin-top: 20px" }, notes.map((n) => alertBox(n, "alert-grey", "info"))) : null,
 
     el("section", { class: "section", "aria-label": "Issues" },
-      el("div", { class: "section-head" }, el("h2", { class: "h2" }, `Issues to fix (${nf})`),
-        nf ? el("span", { class: "small muted" }, `${plural(groups.length, "moment")} · open one for the legal basis`) : null),
+      el("div", { class: "section-head" }, el("h2", { class: "h2" }, `Moments to fix (${groups.length})`),
+        nf ? el("span", { class: "small muted" }, `${plural(nf, "issue")} in ${plural(groups.length, "moment")} · open one for the legal basis`) : null),
       nf ? groups.map((g) => momentCard(job, c, g, p, provs, cards))
         : el("div", { class: "neutral-card" }, icon("info", "width: 18px; height: 18px; color: var(--text-3); margin-top: 2px"),
           el("div", {}, el("div", { class: "h3" }, notChecked ? "Nothing was checked" : "No moment matched a loaded law"),
@@ -1362,13 +1384,15 @@ async function screenCountry(jobId, cc, stale) {
               : `This does not mean the video is safe here. Coverage for ${info.name} is ${info.coverage || "basic"}${unc.length ? ", so see the moments to check manually below." : "."}`)))),
 
     el("section", { class: "section", "aria-label": "Not covered by any loaded law" },
-      el("div", { class: "section-head" }, el("h2", { class: "h2" }, `Not covered by any loaded law (${unc.length})`),
+      el("div", { class: "section-head" }, el("h2", { class: "h2" }, `Not covered by any loaded law (${ug.length})`),
         el("span", { class: "small muted" }, "Sensitive, but nothing we loaded applies")),
-      unc.length ? el("div", { class: "stack", style: "gap: 10px" }, unc.map((u) => el("div", { class: "neutral-card" },
-        el("button", { class: "chip-time", type: "button", "aria-label": u.video_level ? "Play from the start (whole video)" : `Play ${range(u.start_s, u.end_s)}`, onclick: () => p.seek(u.start_s) }, icon("play"), u.video_level ? "Whole video" : range(u.start_s, u.end_s)),
+      ug.length ? el("div", { class: "stack", style: "gap: 10px" }, ug.map((g) => el("div", { class: "neutral-card" },
+        el("button", { class: "chip-time", type: "button", "aria-label": g.video_level ? "Play from the start (whole video)" : `Play ${range(g.start_s, g.end_s)}`, onclick: () => p.seek(g.start_s) }, icon("play"), g.video_level ? "Whole video" : range(g.start_s, g.end_s)),
         el("div", { class: "stack grow", style: "gap: 6px" },
-          el("div", { class: "row wrap" }, el("span", { class: "badge risk-grey" }, icon("help"), "Check manually"), el("span", { class: "h3" }, leafLabel(u))),
-          el("p", { class: "small", style: "color: var(--text-2)" }, u.note || "The loaded law library does not cover this moment. Check it manually.")))))
+          el("div", { class: "row wrap" }, el("span", { class: "badge risk-grey" }, icon("help"), "Check manually"),
+            el("span", { class: "h3" }, joinWords([...new Set(g.items.map(leafLabel))].map((l, i) => (i ? l.charAt(0).toLowerCase() + l.slice(1) : l))))),
+          g.inFinding ? el("p", { class: "small muted" }, "Same moment as an issue above; these other concerns are not covered by a loaded law.") : null,
+          [...new Set(g.items.map((u) => u.note || "The loaded law library does not cover this moment. Check it manually."))].map((n) => el("p", { class: "small", style: "color: var(--text-2)" }, n))))))
         : el("p", { class: "small muted" }, "Nothing to check manually.")),
 
     translationSection(c, info, p),

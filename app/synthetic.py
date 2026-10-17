@@ -9,6 +9,7 @@ in code, never a model:
 |---|---|---|---|
 | none / low | any | any | note only |
 | medium / high | yes | no | note only: the video discloses it |
+| medium / high, voice only | no | no | check manually everywhere: a text-to-speech or synthetic-sounding voice alone is common narration, not a deceptive depiction |
 | medium / high | no | no | IN: amber finding (labelling duty, IT Rules r3(3)(a)(ii), r4(1A)); elsewhere: check manually (no labelling law loaded) |
 | medium / high | no | yes | red finding where a loaded law covers deepfakes / impersonation of a person (IN r3(3)(a)(i)(IV), r3(1)(b)(vi); SG OSRA s15); elsewhere amber, check manually |
 | medium / high | yes | yes | amber, check manually: the label lowers the risk of deceiving viewers but does not settle it |
@@ -42,6 +43,8 @@ PROVISIONS: dict[str, dict[str, list[str]]] = {
 
 FIX_LABEL = ("Add a clear “AI-generated” label on screen for the whole video (and say it at the "
              "start if it has audio), and declare it as AI-generated when you upload.")
+FIX_VOICE = ("Optional: if the voice imitates a real person or the platform asks for AI "
+             "disclosure, add an “AI voice” note in the caption or description.")
 FIX_PERSON = ("Don’t publish synthetic footage or voice of a real person without their consent. If "
               "it is satire, make that unmistakable and label it as AI-generated.")
 
@@ -51,6 +54,23 @@ def _readable(pid: str) -> str:
     from app.brain.tools import law_name
     parts = pid.split("/")
     return f"{law_name(parts[1])} {'/'.join(parts[2:])}" if len(parts) >= 3 else pid
+
+
+_VOICE = ("voice", "voiceover", "voice-over", "narration", "narrator", "text-to-speech", "tts",
+          "speech", "audio", "prosody", "intonation", "inflection", "breath")
+_VISUAL = ("face", "hand", "finger", "lip", "blink", "frame", "lighting", "shadow", "morph",
+           "artefact", "artifact", "image", "footage", "watermark", "background", "skin", "eye")
+
+
+def voice_only(syn: SyntheticCheck) -> bool:
+    """True when the only signs are a synthetic-sounding voice: the model says so, or every
+    signal is about the voice and none about the picture. File-metadata hints never count."""
+    if syn.metadata_signals or not syn.signals:
+        return False
+    if syn.voice_only:
+        return True
+    low = [s.lower() for s in syn.signals]
+    return all(any(w in s for w in _VOICE) for s in low) and not any(w in s for s in low for w in _VISUAL)
 
 
 def _signs(syn: SyntheticCheck) -> str:
@@ -100,6 +120,13 @@ def consequence(country: str, syn: SyntheticCheck, *, checked: bool) -> AIConten
         return AIContentResult(outcome="note", text=(
             f"{_signs(syn)}. The video carries an AI label ({events.quote(syn.label_text, 60)}): "
             "noted, not flagged."))
+    if voice_only(syn):
+        return AIContentResult(
+            outcome="check", leaf=UNLABELLED, suggested_fix=FIX_VOICE, text=(
+                f"{_signs(syn)}, and no AI label. Only the voice seems synthetic (for example "
+                "text-to-speech narration); no image or footage looked AI-made. A synthetic voice "
+                "alone is common narration, so this is not flagged for "
+                f"{name}. Check manually only if the voice imitates a real person."))
     ids = cited(UNLABELLED)
     if ids:
         return AIContentResult(

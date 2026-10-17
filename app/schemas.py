@@ -151,6 +151,7 @@ class SyntheticCheck(BaseModel):
     label_text: str = ""
     depicts_real_person: bool = False  # an identifiable real public figure appears shown or voiced
     person_note: str = ""
+    voice_only: bool = False  # the only signs are a synthetic-sounding voice (e.g. text-to-speech narration)
     metadata_signals: list[str] = []  # AI-tool hints in the file's metadata tags (ffprobe), not the model
 
 
@@ -185,6 +186,7 @@ class Segment(_Timed):
     claims: list[str] = []
     visuals: str = ""
     on_screen_text: str = ""
+    english: str = ""  # English translation of the speech (or on-screen text if no speech) when not English
     leaves: list[str] = []  # taxonomy leaves (app/taxonomy.py)
     idioms: list[str] = []  # figures of speech that may turn literal in translation
     categories: list[Category] = []  # legacy; derived from leaves when leaves are given
