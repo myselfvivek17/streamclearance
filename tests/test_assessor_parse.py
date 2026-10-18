@@ -92,7 +92,7 @@ def test_report_carries_method(real_provisions, monkeypatch):
 def test_agent_run_retried_on_rate_limit(monkeypatch):
     calls = []
 
-    async def flaky(agent, message):
+    async def flaky(agent, message, **kw):
         calls.append(1)
         if len(calls) < 3:
             raise RuntimeError("critic_MY: 429 RESOURCE_EXHAUSTED")
@@ -110,7 +110,7 @@ def test_agent_run_retried_on_rate_limit(monkeypatch):
     assert asyncio.run(agents.run_agent(A(), "m")) == "[]" and len(calls) == 3
     calls.clear()
 
-    async def broken(agent, message):
+    async def broken(agent, message, **kw):
         calls.append(1)
         raise RuntimeError("bad request")
 

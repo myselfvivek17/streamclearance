@@ -1,8 +1,9 @@
 """The LLM agents of the brain: country assessor and critic (Google ADK `Agent`s).
 
 Assessor: one per country. Its prompt carries the exact-lookup provisions for
-every moment (`prefetch`); tools `lookup_provisions` and `search_law` answer at
-most SC_ASSESSOR_MAX_TOOL_CALLS calls. Returns one MomentAssessment per (sensitive moment, leaf). If ADK tool calling
+every moment (`prefetch`), so its only tool is `search_law` (free text), answering at
+most SC_ASSESSOR_MAX_TOOL_CALLS calls: a lookup tool would only repeat the prefetch, at
+the cost of a model round trip that re-sends the whole conversation. Returns one MomentAssessment per (sensitive moment, leaf). If ADK tool calling
 fails, it falls back to: retrieval in Python -> one
 JSON call with the retrieved provisions in the prompt. The fallback is noted
 in the report.
@@ -108,27 +109,35 @@ def _rate_limited(e: BaseException) -> bool:
 
 
 async def run_agent(agent, message: str, *, retries: int | None = None) -> str:
-    """run_agent_once, retried with backoff on rate limits (429), like app/gemini.py
-    `with_retry` for direct calls; a retry starts a fresh session."""
+    """run_agent_once, retried with backoff on rate limits (429) that got past the model's
+    own in-call retries (app/brain/models.py); a retry starts a fresh session. All attempts
+    share one deadline (SC_AGENT_TIMEOUT_S), so retries can't stretch a country's time."""
     retries = config.GEMINI_MAX_RETRIES if retries is None else retries
+    loop = asyncio.get_running_loop()
+    deadline = loop.time() + config.AGENT_TIMEOUT_S
     for attempt in range(retries + 1):
         try:
-            return await run_agent_once(agent, message)
+            return await run_agent_once(agent, message, timeout=deadline - loop.time())
         except gemini.GeminiUnavailable:
             raise
         except Exception as e:  # noqa: BLE001 - ADK surfaces several types
             if not _rate_limited(e) or attempt == retries:
                 raise
             delay = min(30.0, 2.0 * 2**attempt) + random.uniform(0, 1)
+            if loop.time() + delay >= deadline:
+                raise asyncio.TimeoutError from e
             log.warning("%s: rate limited, retry %d/%d in %.1fs", agent.name, attempt + 1, retries, delay)
             await asyncio.sleep(delay)
     raise AssertionError("unreachable")
 
 
-async def run_agent_once(agent, message: str) -> str:
-    """_run_agent with a deadline (SC_AGENT_TIMEOUT_S): a hung model request must not hang
-    the job. Raises TimeoutError."""
-    return await asyncio.wait_for(_run_agent(agent, message), timeout=config.AGENT_TIMEOUT_S)
+async def run_agent_once(agent, message: str, *, timeout: float | None = None) -> str:
+    """_run_agent with a deadline (default SC_AGENT_TIMEOUT_S): a hung model request must
+    not hang the job. Raises TimeoutError."""
+    timeout = config.AGENT_TIMEOUT_S if timeout is None else timeout
+    if timeout <= 0:
+        raise asyncio.TimeoutError
+    return await asyncio.wait_for(_run_agent(agent, message), timeout=timeout)
 
 
 async def _run_agent(agent, message: str) -> str:
@@ -358,13 +367,13 @@ async def assess(inventory: Inventory, country: str, *, mock: bool) -> Assessed:
         return Assessed([])
     from google.adk import Agent
 
-    lookup_provisions, search_law = make_tools(country, max_calls=config.ASSESSOR_MAX_TOOL_CALLS)
+    _, search_law = make_tools(country, max_calls=config.ASSESSOR_MAX_TOOL_CALLS)
     fallbacks = retrieval.track_fallbacks()  # law-search errors -> a report note
     agent = Agent(
         name=f"country_assessor_{country}", model=adk_model(),
         instruction=ASSESSOR_INSTRUCTION.format(country=country,
                                                 max_calls=config.ASSESSOR_MAX_TOOL_CALLS),
-        tools=[lookup_provisions, search_law],
+        tools=[search_law],
         generate_content_config=agent_config(),  # the assessor keeps the default thinking
         before_model_callback=count_call, after_model_callback=log_usage,
     )

@@ -19,10 +19,21 @@ def stage_of(agent_name: str) -> str:
     return f"{role.removeprefix('country_')}:{cc}" if role else agent_name
 
 
-def adk_model() -> str:
-    """Gemini model id for the ADK agents."""
+# A rate limit (429) or server error on one model call of an agent is retried inside that
+# call: retried from outside (agents.run_agent) it restarts the agent's whole conversation,
+# tool rounds included (measured: one country took 200+ s that way on a 30 s video).
+RETRY_CODES = [429, 500, 502, 503, 504]
+
+
+def adk_model():
+    """Gemini model for the ADK agents, retrying a failed call in place."""
+    from google.adk.models.google_llm import Gemini
+    from google.genai import types
+
     config.apply_adk_env()
-    return config.SC_MODEL_SMART
+    return Gemini(model=config.SC_MODEL_SMART, retry_options=types.HttpRetryOptions(
+        attempts=config.GEMINI_MAX_RETRIES + 1, initial_delay=2.0, max_delay=20.0,
+        http_status_codes=RETRY_CODES))
 
 
 def agent_config(thinking: str | None = None):

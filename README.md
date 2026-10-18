@@ -146,8 +146,12 @@ GOOGLE_CLOUD_PROJECT=booming-entity-510706-e9 SC_PORT=8431 ./run.sh
   runs at thinking level `SC_CRITIC_THINKING` (default low; the assessor keeps
   the model default); text calls are hedged after `SC_HEDGE_AFTER_S` +
   `SC_HEDGE_TEXT_PER_S` × video seconds; law-search results are cached per
-  (country, query); ADK agent runs are retried with backoff on 429 like direct
-  calls. Translation is one batched call per step (translate, blind
+  (country, query). A 429 or 5xx on one model call of an ADK agent is retried
+  inside that call (`app/brain/models.py`), not by restarting the agent's whole
+  conversation, and all retries of an agent run share one deadline
+  (`SC_AGENT_TIMEOUT_S`); the assessor's only tool is `search_law`, since its
+  prompt already carries the looked-up provisions (30 s clip, local: 670 s →
+  98 s; one country had spent 645 s in restarted runs). Translation is one batched call per step (translate, blind
   back-translate, judge) per country, never one call per line.
 - Cost: every call (direct and ADK) appends its token counts to
   `jobs/usage.log`; `SC_MAX_CALLS_PER_JOB` (default 40) is a hard cap per job.
