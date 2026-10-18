@@ -156,3 +156,33 @@ def test_trailing_commas_tolerated():
     assert [(a.leaf, a.covered_by) for a in out] == [("health.cure_claim", []), ("gambling.promotion", ["X"])]
     assert out[0].rationale == "Not covered, see [1, 2]."
     assert agents.reply_shape("[]") == "list[]" and agents.reply_shape("none") == "no JSON (4 chars)"
+
+
+def test_rate_limit_retries_share_one_deadline(monkeypatch):
+    """Each 429 used to restart the agent with a fresh SC_AGENT_TIMEOUT_S: one country ran
+    for 645 s. Now every attempt gets only what is left of one deadline."""
+    from app import config
+
+    budgets = []
+
+    async def limited(agent, message, *, timeout):
+        budgets.append(timeout)
+        await asyncio.sleep(0.03)
+        raise RuntimeError("429 RESOURCE_EXHAUSTED")
+
+    class A:
+        name = "country_assessor_MY"
+
+    monkeypatch.setattr(config, "AGENT_TIMEOUT_S", 0.1)
+    monkeypatch.setattr(agents, "run_agent_once", limited)
+    monkeypatch.setattr(agents.random, "uniform", lambda a, b: 0)
+    with pytest.raises(asyncio.TimeoutError):
+        asyncio.run(agents.run_agent(A(), "m"))
+    assert budgets[0] <= 0.1 and len(budgets) == 1  # the 2 s backoff would pass the deadline
+
+
+def test_agent_model_retries_a_failed_call_in_place():
+    from app.brain.models import adk_model
+
+    m = adk_model()
+    assert 429 in m.retry_options.http_status_codes and m.retry_options.attempts > 1
