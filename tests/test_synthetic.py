@@ -6,7 +6,7 @@ import pytest
 
 from app import config, pipeline, provisions, synthetic, taxonomy
 from app.pipeline import StageADraft
-from app.schemas import CountryReport, Inventory, Report, Segment, SyntheticCheck
+from app.schemas import Category, CountryReport, Inventory, Report, Segment, SyntheticCheck
 from tools.build_rules import quote_on_page
 
 from conftest import FFMPEG
@@ -116,6 +116,8 @@ def test_apply_flag_adds_a_cited_video_level_finding(provs):
     assert {p.id for p in rep.cited_provisions} == set(f.rule_card_ids)
     assert rep.overall_risk == "amber" and rep.badge == "amber"
     assert "label" in f.suggested_fix
+    # its own category, not misinformation (the IN live report said misinformation_public_order)
+    assert f.category == Category.synthetic_unlabelled
     synthetic.apply(rep, _inv(**STRONG))  # applied once only
     assert len(rep.findings) == 1
 

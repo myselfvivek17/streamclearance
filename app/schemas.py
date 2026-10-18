@@ -72,6 +72,7 @@ class Category(str, Enum):
     intellectual_property = "intellectual_property"
     national_security_or_sovereignty = "national_security_or_sovereignty"
     impersonation_or_fraud = "impersonation_or_fraud"
+    synthetic_unlabelled = "synthetic_unlabelled"  # AI-generated or synthetic media without a label
     other = "other"
 
 

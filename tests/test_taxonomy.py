@@ -21,3 +21,10 @@ def test_parent_matching_and_categories():
     assert taxonomy.is_target("gambling") and not taxonomy.is_leaf("gambling")
     assert taxonomy.category_of("religion.insult") == Category.religious_offence
     assert taxonomy.clean(["Gambling.Promotion", "bogus.leaf", "gambling.promotion"]) == ["gambling.promotion"]
+
+
+def test_unlabelled_synthetic_media_has_its_own_category():
+    for leaf in ("misinfo.synthetic_unlabelled", "misinfo.synthetic_media"):
+        assert taxonomy.category_of(leaf) == Category.synthetic_unlabelled
+    assert taxonomy.category_of("misinfo.public_order") == Category.misinformation_public_order
+    assert taxonomy.category_of("misinfo.deepfake_real_person") == Category.impersonation_or_fraud

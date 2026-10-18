@@ -160,6 +160,7 @@ def test_taxonomy_labels():
         t = client.get("/api/taxonomy").json()
     assert t["leaves"]["gambling.promotion"] == "Gambling promotion"
     assert t["categories"]["illegal_goods_or_gambling"] == "Illegal goods or gambling"
+    assert t["categories"]["synthetic_unlabelled"] == "AI-generated content without a label"
 
 
 def test_video_meta(tiny_video):

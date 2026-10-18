@@ -190,13 +190,17 @@ def countries():
     return [_country(c) for c in config.COUNTRIES.values()]
 
 
+CATEGORY_LABELS = {Category.synthetic_unlabelled: "AI-generated content without a label"}
+
+
 @app.get("/api/taxonomy")
 def get_taxonomy():
     """Labels for taxonomy leaves (report `leaf`) and legacy categories (report `category`)."""
     leaves = taxonomy.leaves().values()
     return {
         "leaves": {leaf.id: leaf.label for leaf in leaves},
-        "categories": {cat.value: cat.value.replace("_or_", " or ").replace("_", " ").capitalize()
+        "categories": {cat.value: CATEGORY_LABELS.get(cat, cat.value.replace("_or_", " or ")
+                                                      .replace("_", " ").capitalize())
                        for cat in Category},
     }
 

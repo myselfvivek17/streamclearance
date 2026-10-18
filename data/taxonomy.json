@@ -251,13 +251,13 @@
    "id": "misinfo.synthetic_media",
    "label": "Unlabelled synthetic media",
    "description": "AI-generated or synthetically altered audio, video or images (deepfakes) presented as real or without a label.",
-   "category": "misinformation_public_order"
+   "category": "synthetic_unlabelled"
   },
   {
    "id": "misinfo.synthetic_unlabelled",
    "label": "Signs of AI generation, no AI label",
    "description": "The video shows signs of AI generation and carries no visible or spoken AI-generated label. Set by the AI-content check, not tagged by stage A.",
-   "category": "misinformation_public_order",
+   "category": "synthetic_unlabelled",
    "policy_only": true
   },
   {
