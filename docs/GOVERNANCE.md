@@ -70,7 +70,8 @@ reads also expire reports lazily (`GET /api/jobs/{id}`). Each report records
 - **Severity floors** (`app/floors.py`): after the critic, fixed rules in code
   raise (never lower) gambling promotion and serious cure / stop-your-medicine
   claims to red when a cited in-force provision binding the publisher
-  genuinely matches; each raise is noted on the finding and in the feed.
+  genuinely matches (for stop-your-medicine, a health advertising guideline
+  binding the advertiser also counts); each raise is noted on the finding and in the feed.
   Judgement calls run at temperature 0 with a fixed seed.
 - **AI-generated content check** (`app/synthetic.py`): the model only
   reports evidence (signs, label, real person); a fixed table in code decides

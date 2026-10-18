@@ -246,13 +246,17 @@ temperature `SC_JUDGE_TEMPERATURE` (default 0) with a fixed seed
 rating, is skipped when an exception (news, education...) applies, and needs
 a cited provision that genuinely matches: a content provision of an in-force
 law (not a bill or guideline) that targets the leaf and binds the person who
-publishes (creator, advertiser or both).
+publishes (creator, advertiser or both). One exception: for telling viewers to
+stop their medicine, a health advertising guideline binding the advertiser also
+counts (Malaysia's MOH guideline 5.11: "should not encourage consumers to
+discontinue the use of prescribed medicines"), so that moment is red in
+Malaysia every run, as in Australia.
 
 | Leaf | Floor | Only when the moment... |
 |---|---|---|
 | `gambling.promotion` | red | (always: promoting gambling is an offence under the cited law) |
 | `health.cure_claim` | red | names a serious disease, or tells viewers to stop their medicine |
-| `health.misinformation` | red | tells viewers to stop their medicine or treatment |
+| `health.misinformation` | red | tells viewers to stop their medicine or treatment (in-force law or guideline) |
 
 A raised finding says so (`floor_note`, "Fixed severity rule" in the UI, and a
 feed event).

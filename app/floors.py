@@ -5,14 +5,19 @@ finding's risk, never lowers it, and only when:
 - the finding's leaf is in the table below and no exception was found to apply;
 - at least one cited provision genuinely matches: a content provision of an in-force
   law (not a bill, not a guideline) that targets the leaf and binds the person who
-  publishes (creator, advertiser or both), so the conduct is an offence for them;
+  publishes (creator, advertiser or both), so the conduct is an offence for them.
+  One exception: telling viewers to stop their medicine is dangerous enough that a
+  health regulator's advertising guideline binding the advertiser also counts (e.g. MY
+  MOH guideline 5.11 "should not encourage consumers to discontinue the use of
+  prescribed medicines"); without it, the same Malaysian video went red or amber from
+  run to run;
 - the moment's own words meet the floor's test (e.g. a serious disease is named).
 
 | leaf | floor | moment test |
 |---|---|---|
 | gambling.promotion | red | none: promoting gambling where the cited law makes that an offence |
 | health.cure_claim | red | names a serious disease, or tells viewers to stop their medicine |
-| health.misinformation | red | tells viewers to stop their medicine or treatment |
+| health.misinformation | red | tells viewers to stop their medicine or treatment (in-force law or guideline) |
 """
 from __future__ import annotations
 
@@ -61,8 +66,9 @@ FLOORS: dict[str, Floor] = {f.leaf: f for f in [
           "claims to cure a serious disease or tells viewers to stop their medicine, under a cited "
           "in-force provision that binds the advertiser", _serious_or_stop),
     Floor("health.misinformation", "red",
-          "tells viewers to stop their medicine or treatment, under a cited in-force provision that "
-          "binds the publisher", _stop),
+          "tells viewers to stop their medicine or treatment, under a cited provision (in-force law "
+          "or health advertising guideline) that binds the publisher", _stop,
+          law_statuses=("in_force", "amended", "guideline")),
 ]}
 
 

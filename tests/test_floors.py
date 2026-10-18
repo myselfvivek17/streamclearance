@@ -34,6 +34,13 @@ def _case(cc, leaf, risk, ids, text, **kw):
     # stop your medicine -> red for health misinformation too
     ("IN", "health.misinformation", "amber", ["IN/ITRULES2021/r3(1)(b)(v)"], STOP, "red"),
     ("IN", "health.misinformation", "amber", ["IN/ITRULES2021/r3(1)(b)(v)"], CURE, "amber"),
+    # MY stop-your-medicine flipped red/amber between runs: either MOH guideline the
+    # assessor cites for it gives red (5.11: "discontinue ... prescribed medicines")
+    ("MY", "health.misinformation", "amber", ["MY/MOHADV/5.11"], STOP, "red"),
+    ("MY", "health.misinformation", "amber", ["MY/MOHADV/4.11"], STOP, "red"),
+    ("AU", "health.misinformation", "amber", ["AU/TGACODE2021/s9(3)(b)-(e)"], STOP, "red"),
+    # no stop-medicine line: the guideline gives no floor
+    ("MY", "health.misinformation", "amber", ["MY/MOHADV/5.11"], CURE, "amber"),
     # never lowers
     ("MY", "gambling.promotion", "red", ["MY/CGHA1953/s4(1)(g)"], GAMBLING, "red"),
     # a leaf without a floor
@@ -74,3 +81,11 @@ def test_stop_medicine_phrases():
         assert floors.STOP_MEDICINE.search(t), t
     for t in ["stop scrolling and buy", "medicine cabinet makeover"]:
         assert not floors.STOP_MEDICINE.search(t), t
+
+
+def test_stop_medicine_is_red_in_every_run(real_provisions):
+    """The same MY moment, as assessed in two live runs (amber on 4.11, red on 5.11),
+    ends red both times; the cure claim at that moment stays red on the in-force law."""
+    for ids, risk in [(["MY/MOHADV/4.11"], "amber"), (["MY/MOHADV/5.11"], "red")]:
+        rep, f, _ = _case("MY", "health.misinformation", risk, ids, STOP)
+        assert f.risk == "red" and rep.overall_risk == "red"
