@@ -271,6 +271,30 @@ def generate_json(
     return _parse(resp, model)
 
 
+def generate_json_with_images(
+    contents: list[str | bytes],
+    response_schema: Any,
+    *,
+    model: str | None = None,
+    system_instruction: str | None = None,
+    temperature: float = 0.2,
+    thinking: str | None = None,
+    hedge_after: float | None = None,
+) -> Any:
+    """One call over text and JPEG images (bytes items), in the given order -> JSON."""
+    from google.genai import types
+
+    model = model or config.SC_MODEL_FAST
+    cfg = _config(response_schema, system_instruction, temperature, thinking)
+    parts = [types.Part.from_bytes(data=c, mime_type="image/jpeg") if isinstance(c, bytes) else c
+             for c in contents]
+    log.info("gemini.generate_json_with_images model=%s images=%d", model,
+             sum(isinstance(c, bytes) for c in contents))
+    resp = _generate(_get_client(), model, parts, cfg, what="generate_json_with_images",
+                     hedge_after=hedge_after if hedge_after is not None else config.HEDGE_AFTER_S)
+    return _parse(resp, model)
+
+
 def generate_json_with_video(
     video_path: Path,
     mime_type: str,

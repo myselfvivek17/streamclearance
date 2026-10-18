@@ -19,6 +19,7 @@ is takedown or geo-blocking in that country.
 | `app/jobs.py` | Background analysis jobs, status persisted to `jobs/<id>.json` |
 | `app/events.py` | The job's agent activity feed (real pipeline steps, never logged) |
 | `app/frames.py` | One still per flagged moment (ffmpeg), stored and deleted with the report |
+| `app/ai_verify.py` | Checks stage A's visual signs of AI generation against frames of the video; drops what doesn't hold |
 | `app/synthetic.py` | AI-generated content check: signs of AI generation → per-country consequence (fixed table) |
 | `app/floors.py` | Severity floors applied after the critic (same video → same rating) |
 | `app/main.py` | FastAPI routes + optional access code + static UI |
@@ -46,7 +47,13 @@ is takedown or geo-blocking in that country.
 - **AI-generated content check** (`app/synthetic.py`): stage A also reports
   signs of AI generation (artefacts, synthetic voice, AI labels or
   watermarks, a real public figure shown or voiced) as evidence only, plus
-  AI-tool names in the file's metadata tags. A fixed table turns that into
+  AI-tool names in the file's metadata tags. Stage A can report signs that
+  are not there, so every visual sign is first checked against frames taken
+  at the time it names (or across the video), in one batched yes/no call that
+  answers no when unsure (`app/ai_verify.py`); unconfirmed signs are left out
+  (only counted) and the likelihood is recomputed from the rest. Voice-only
+  signs and file metadata are not visual, so they are kept. Runs alongside
+  the countries; each country's consequence waits for it. A fixed table turns that into
   each country's consequence: India amber when there are clear signs and no
   AI label (IT Rules r3(3)(a)(ii), r4(1A)); red for a real person where a
   loaded law covers it (India r3(3)(a)(i)(IV), r3(1)(b)(vi); Singapore OSRA

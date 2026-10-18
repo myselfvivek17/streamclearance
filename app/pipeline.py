@@ -214,9 +214,10 @@ def mock_inventory(duration_s: float | None) -> Inventory:
 
 
 
-def inventory_events(inv: Inventory) -> None:
+def inventory_events(inv: Inventory, *, ai: bool = True) -> None:
     """Feed events for what stage A saw and heard: one per segment with a claim or a
-    taxonomy leaf, then a summary."""
+    taxonomy leaf, then a summary. ai=False: the signs of AI generation are reported
+    later, once verified (app/ai_verify.py)."""
     for s in inv.segments:
         if not (s.leaves or s.claims):
             continue
@@ -229,7 +230,8 @@ def inventory_events(inv: Inventory) -> None:
         tags = f" · tagged {', '.join(taxonomy.label(x) for x in s.leaves)}" if s.leaves else ""
         events.emit("watch", f"Watched {events.span(s.start_s, s.end_s)} · {what}{tags}",
                     stage="inventory", ref=events.span(s.start_s, s.end_s))
-    synthetic_event(inv)
+    if ai:
+        synthetic_event(inv)
     tagged = sum(1 for s in inv.segments if s.leaves)
     langs = ", ".join(inv.languages) or "none"
     speech = "yes" if has_speech(inv) else "no"

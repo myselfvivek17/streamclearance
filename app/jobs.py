@@ -16,7 +16,7 @@ import time
 import uuid
 from typing import Any
 
-from app import config, events, frames, gemini, metrics, pipeline, provenance, retention
+from app import ai_verify, config, events, frames, gemini, metrics, pipeline, provenance, retention
 from app.schemas import CountryReport, Inventory, Privacy, Report
 from app.storage import get_storage
 
@@ -131,6 +131,7 @@ async def run_job(job: dict[str, Any]) -> None:
     t_job = time.perf_counter()
     drift_task: asyncio.Task | None = None
     frames_task: asyncio.Task | None = None
+    ai_task: asyncio.Task | None = None  # verifies stage A's signs of AI generation
     seen_inventory: Inventory | None = None  # set once stage A is done
     job["status"] = "running"
     current = "inventory"
@@ -151,6 +152,8 @@ async def run_job(job: dict[str, Any]) -> None:
                             stage="country", country=cc)
                 _set(job, f"country:{cc}", "error", err or "failed")
             else:
+                if ai_task is not None:
+                    await asyncio.shield(ai_task)  # the AI-content check uses verified signs only
                 pipeline.finalize(rep, seen_inventory)
                 n = len(rep.findings)
                 pipeline.country_done_event(rep)
@@ -163,10 +166,24 @@ async def run_job(job: dict[str, Any]) -> None:
             with metrics.timed("translation"):
                 return await pipeline.run_drift(inv, job["countries"], mock=mock)
 
+        async def verify_ai(inv: Inventory) -> str | None:
+            """Stage A's visual signs of AI generation, checked against frames before
+            anything uses or shows them (app/ai_verify.py); runs alongside the countries."""
+            try:
+                with metrics.stage("ai_verify"):
+                    error = await asyncio.to_thread(ai_verify.verify, path, inv, mock=mock)
+            except Exception as e:  # noqa: BLE001 - e.g. the call budget: show no visual sign
+                log.error("AI-sign verification failed: %s", type(e).__name__)
+                ai_verify.drop_visual(inv)
+                error = f"AI-content check: the visual signs could not be verified ({type(e).__name__})."
+            pipeline.synthetic_event(inv)
+            return error
+
         async def on_inventory(inv: Inventory) -> None:
-            nonlocal drift_task, frames_task, seen_inventory
+            nonlocal drift_task, frames_task, ai_task, seen_inventory
             seen_inventory = inv
-            pipeline.inventory_events(inv)
+            pipeline.inventory_events(inv, ai=False)
+            ai_task = asyncio.create_task(verify_ai(inv))
             # Thumbnails come from the video, so they are taken now (in parallel), before
             # the video is deleted at the end of the job.
             frames_task = asyncio.create_task(asyncio.to_thread(frames.extract, path, job["job_id"], inv))
@@ -219,6 +236,8 @@ async def run_job(job: dict[str, Any]) -> None:
             _set(job, "translation", "error" if t_errors and not n else "done",
                  f"{n} line checks" + (f", {len(t_errors)} failed" if t_errors else ""))
 
+        if ai_task is not None and (ai_error := await ai_task):
+            errors.append(ai_error)
         made = await frames_task if frames_task is not None else {}
         frames.attach(inventory, made)
         if made:
@@ -258,6 +277,8 @@ async def run_job(job: dict[str, Any]) -> None:
         _saved_events.pop(job["job_id"], None)
         if drift_task is not None and not drift_task.done():
             drift_task.cancel()
+        if ai_task is not None and not ai_task.done():
+            ai_task.cancel()
         if frames_task is not None and not frames_task.done():
             # ffmpeg reads the video: let it finish (it has its own timeout) before deleting it
             with contextlib.suppress(Exception, asyncio.CancelledError):

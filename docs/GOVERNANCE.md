@@ -74,7 +74,9 @@ reads also expire reports lazily (`GET /api/jobs/{id}`). Each report records
   binding the advertiser also counts); each raise is noted on the finding and in the feed.
   Judgement calls run at temperature 0 with a fixed seed.
 - **AI-generated content check** (`app/synthetic.py`): the model only
-  reports evidence (signs, label, real person); a fixed table in code decides
+  reports evidence (signs, label, real person); each visual sign must then be
+  confirmed on frames of the video by a second, strict yes/no call
+  (`app/ai_verify.py`), or it is left out; a fixed table in code decides
   each country's consequence and cites only provisions listed there (tests
   check each quote on its page). Wording is "signs of AI generation".
 - **No silent fallback, no hang**: a simplified assessor check is recorded

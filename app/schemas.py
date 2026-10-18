@@ -153,6 +153,10 @@ class SyntheticCheck(BaseModel):
     person_note: str = ""
     voice_only: bool = False  # the only signs are a synthetic-sounding voice (e.g. text-to-speech narration)
     metadata_signals: list[str] = []  # AI-tool hints in the file's metadata tags (ffprobe), not the model
+    # Set by app/ai_verify.py: the visual signs were checked against frames of the video;
+    # `unconfirmed` signs did not hold up and were left out (counted, never shown).
+    verified: bool = False
+    unconfirmed: int = 0
 
 
 AIOutcome = Literal["none", "note", "flag", "check", "not_checked"]
