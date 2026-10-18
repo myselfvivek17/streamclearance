@@ -4,7 +4,7 @@
                           run in parallel (Workflow.max_concurrency)  -> join -> reporter
 
 - perceiver: existing stage A (tags moments with taxonomy leaves);
-- assessor_XX: ADK Agent with lookup_provisions / search_law tools (app/brain/agents.py);
+- assessor_XX: ADK Agent, prompt carries the looked-up provisions, tool search_law (app/brain/agents.py);
 - verifier_XX: plain Python (app/brain/verifier.py);
 - critic_XX: ADK Agent, one pass;
 - countries without provisions yet fall back to legacy stage B on their rule cards.
@@ -42,6 +42,52 @@ def _framing(findings: list[Finding]) -> str:
             "or geo-blocking of this video in this country, not liability for the creator.")
 
 
+def _same_moment(a: MomentAssessment, b: MomentAssessment) -> bool:
+    return (a.start_s < b.end_s and b.start_s < a.end_s) or a.start_s == b.start_s
+
+
+def dedupe_citations(country: str, found: list[MomentAssessment]) -> list[MomentAssessment]:
+    """A provision is cited by one finding per moment only. It stays with the finding it
+    fits best: the one it is the only basis of, else the one whose leaf comes first in the
+    provision's targets, else the riskier, else the first. A finding left with no citation
+    (two findings resting on the same single provision) is merged into that finding: the
+    worse risk, both rationales."""
+    by_id = provisions.by_id(country)
+    out = [a.model_copy() for a in found]
+    merged: set[int] = set()
+    for i, a in enumerate(out):
+        if i in merged:
+            continue
+        for pid in list(dict.fromkeys(a.covered_by)):
+            group = [j for j, b in enumerate(out) if j not in merged and pid in b.covered_by
+                     and _same_moment(a, b)]
+            if len(group) < 2:
+                continue
+            targets = by_id[pid].targets if pid in by_id else []
+
+            def rank(j: int) -> tuple:
+                b = out[j]
+                fit = next((k for k, t in enumerate(targets) if taxonomy.covers(t, b.leaf)), len(targets))
+                return (len(set(b.covered_by)) > 1, fit, -RISK_ORDER[b.risk], j)
+
+            owner = min(group, key=rank)
+            for j in group:
+                if j == owner:
+                    continue
+                b = out[j]
+                rest = [x for x in b.covered_by if x != pid]
+                if rest:
+                    out[j] = b.model_copy(update={"covered_by": rest})
+                    continue
+                o = out[owner]
+                out[owner] = o.model_copy(update={
+                    "risk": max(o.risk, b.risk, key=RISK_ORDER.__getitem__),
+                    "rationale": " ".join(x for x in (o.rationale, b.rationale) if x),
+                    "exception_applies": o.exception_applies and b.exception_applies})
+                merged.add(j)
+    return [a for j, a in enumerate(out) if j not in merged]
+
+
 def build_report(country: str, inventory: Inventory, kept: list[MomentAssessment],
                  removed: list[tuple[MomentAssessment, str]], v: verifier.Verified,
                  critic_changes: int, notes: list[str], *, method: str = "agent",
@@ -49,9 +95,8 @@ def build_report(country: str, inventory: Inventory, kept: list[MomentAssessment
     by_id = provisions.by_id(country)
     findings: list[Finding] = []
     duties: dict[str, Provision] = {}
-    for a in sorted(kept, key=lambda a: -RISK_ORDER[a.risk]):
-        if a.risk == "green":
-            continue
+    cited_once = dedupe_citations(country, [a for a in kept if a.risk != "green"])
+    for a in sorted(cited_once, key=lambda a: -RISK_ORDER[a.risk]):
         cited = [by_id[pid] for pid in a.covered_by]
         obligations = retrieval.obligations(country, [a.leaf])
         for p in obligations:

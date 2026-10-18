@@ -175,3 +175,43 @@ def test_uncovered_note_from_assessor_is_neutral(real_provisions):
 def test_brain_country_without_verified_provisions_is_not_checked(real_provisions):
     rep = brain.build_report("PK", _inv(), [], [], verifier.Verified(), 0, [])
     assert rep.overall_risk == "not_checked" and rep.badge == "not_checked"
+
+
+def test_a_provision_is_cited_once_per_moment(real_provisions):
+    """AU live run: s9(3)(b)-(e) was cited by the cure-claim finding and, alone, by the
+    misinformation finding at the same moment. It stays with the finding it is the only
+    basis of; another moment may still cite it."""
+    from app.schemas import Inventory, Segment
+
+    stop = "This herbal tea cured my diabetes in just 2 weeks, so you can stop taking your medicine."
+    inv = Inventory(duration_s=30, segments=[
+        Segment(start_s=4, end_s=11, transcript=stop, leaves=["health.cure_claim", "health.misinformation"]),
+        Segment(start_s=20, end_s=25, transcript=stop, leaves=["health.misinformation"])])
+    shared = "AU/TGACODE2021/s9(3)(b)-(e)"
+    a = lambda s, e, leaf, ids: MomentAssessment(start_s=s, end_s=e, leaf=leaf, covered_by=ids, risk="red")
+    kept = [a(4, 11, "health.cure_claim", ["AU/TGACODE2021/s9(1)", "AU/TGACODE2021/s28",
+                                           "AU/TGACODE2021/s24(3)", shared]),
+            a(4, 11, "health.misinformation", [shared]),
+            a(20, 25, "health.misinformation", [shared])]
+    rep = brain.build_report("AU", inv, kept, [], verifier.Verified(covered=kept), 0, [])
+    by = {(f.start_s, f.leaf): f.rule_card_ids for f in rep.findings}
+    assert shared not in by[(4, "health.cure_claim")]
+    assert by[(4, "health.cure_claim")] == ["AU/TGACODE2021/s9(1)", "AU/TGACODE2021/s28", "AU/TGACODE2021/s24(3)"]
+    assert by[(4, "health.misinformation")] == [shared]
+    assert by[(20, "health.misinformation")] == [shared]
+    for g in rep.moments:
+        ids = [pid for f in g.issues for pid in f.rule_card_ids]
+        assert len(ids) == len(set(ids))
+
+
+def test_findings_resting_on_one_provision_are_merged(real_provisions):
+    from app.brain import dedupe_citations
+
+    shared = "AU/TGACODE2021/s9(3)(b)-(e)"
+    a = lambda leaf, risk, why: MomentAssessment(start_s=4, end_s=11, leaf=leaf, covered_by=[shared],
+                                                 risk=risk, rationale=why)
+    out = dedupe_citations("AU", [a("health.cure_claim", "amber", "cure"),
+                                  a("health.misinformation", "red", "stop")])
+    # s9(3)(b)-(e) lists health.cure_claim before health.misinformation in its targets
+    assert len(out) == 1 and out[0].leaf == "health.cure_claim"
+    assert out[0].risk == "red" and out[0].rationale == "cure stop"

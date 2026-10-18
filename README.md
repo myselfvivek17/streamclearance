@@ -55,7 +55,10 @@ is takedown or geo-blocking in that country.
   AI-generated". No C2PA check (paused: needs Vivek).
 - **Findings grouped by moment** (`CountryReport.moments`): issues on the
   same or overlapping time range are one row with the worst risk; each issue
-  keeps its own sections and fix. `findings` stays the flat list.
+  keeps its own sections and fix. `findings` stays the flat list. A provision
+  is cited by one issue per moment only (`brain.dedupe_citations`): it stays
+  with the issue it fits best (its only basis, else the leaf it targets
+  first); two issues resting on the same single provision are merged.
 - **No silent fallback**: if the assessor agent's answer cannot be used, the
   simplified check (retrieval in code + one structured call) runs and the
   report says so (`method: "fallback"`, `fallback_reason`, a feed warning,
